@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400;500;600;700&display=swap');
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.hour {
+  display: flex;
+  flex-align: space-between;
+  text-align: center;
+}
+
+.hour > div {
+  width: 100%;
+  min-width: 50px;
+}
+
+.hour > div:first-child {
+  color: #888;
+  font-size: 0.8em;
+  padding-top: 1px;
+  box-sizing: border-box;
+}
+
+.hour > time {
+  width: 100%;
+  min-width: 70px;
+}
+
+.hour[data-current='true'] {
+  background: #ffd7001a;
+}
+
+.hour:first-child > time:first-of-type,
+.hour:nth-child(12) > time:last-of-type,
+.hour:nth-child(13) > time:first-of-type,
+.hour:last-child > time:last-of-type {
+  font-weight: bold;
+}
+
+.sign {
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: center;
+  padding-left: 15px;
+}
+
+.house {
+  font-family: 'Noto Emoji';
+  font-weight: 700;
+  opacity: 0.5;
+}
+
+.house[data-at-home='true'] {
+  opacity: 1;
+  color: gold;
+}
+
+.house[data-decline='true'] {
+  background: crimson;
+}
+
+.house[data-exaltation='true'] {
+  opacity: 1;
+}
+
+.house[data-fall='true'] {
+  opacity: 0;
+}

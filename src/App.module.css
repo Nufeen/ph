@@ -12,14 +12,21 @@
   min-width: 300px;
 }
 
-.layout section > svg{
-width: 100%;
+.layout section:first-of-type {
+  width: 100%;
+  min-width: 450px;
+}
+
+.layout section > svg {
+  width: 100%;
+  height: auto;
 }
 
 @media (max-width: 500px) {
   .layout {
     width: 100vw;
   }
+
   .layout section {
     min-width: 100vw;
     box-sizing: border-box;
@@ -41,69 +48,4 @@ header {
 h4 button {
   margin-left: 10px;
   margin-right: 10px;
-}
-
-.hour {
-  display: flex;
-  flex-align: space-between;
-  text-align: center;
-}
-
-.hour > div {
-  width: 100%;
-  min-width: 50px;
-}
-
-.hour > div:first-child {
-  color: #888;
-  font-size: 0.8em;
-  padding-top: 1px;
-  box-sizing: border-box;
-}
-
-.hour > time {
-  width: 100%;
-  min-width: 70px;
-}
-
-.hour[data-current="true"] {
-  background: #ffd7001a;
-}
-
-.hour:first-child > time:first-of-type,
-.hour:nth-child(12) > time:last-of-type,
-.hour:nth-child(13) > time:first-of-type,
-.hour:last-child > time:last-of-type {
-  font-weight: bold;
-}
-
-.sign {
-  font-weight: bold;
-  text-align: center;
-  font-family: sans-serif;
-}
-
-.card {
-  padding: 2em;
-}
-
-.house {
-  padding-top: 3px;
-  filter: grayscale(1) brightness(0.5);
-  opacity: 0.3;
-}
-
-.house[data-at-home="true"] {
-  filter: none;
-  opacity: 1;
-}
-.house[data-decline="true"] {
-  background: crimson;
-}
-.house[data-exaltation="true"] {
-  border: 1px green solid;
-}
-.house[data-fall="true"] {
-  opacity: 0;
-  border: 1px red solid;
 }

@@ -1,0 +1,41 @@
+.wrap {
+  padding-right: 15px;
+}
+
+.planet {
+  display: flex;
+}
+
+.planet[data-weak='true'] {
+  background: hsla(6, 100%, 50%, 0.2);
+}
+
+.planet[data-strong='true'] {
+  background: hsla(120, 100%, 20%, 0.3);
+}
+
+.planet > div {
+  width: 100%;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.planet:first-of-type > div {
+  font-size: 0.7em;
+}
+
+.planet > div[data-dignity='true'] {
+  border: 1px solid green;
+}
+
+.planet > div[data-decline='true'] {
+  border: 1px solid red;
+}
+
+.planet > div[data-exaltation='true'] {
+  border: 1px solid gold;
+}
+
+.planet > div[data-fall='true'] {
+  border: 1px solid brown;
+}

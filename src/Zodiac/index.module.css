@@ -1,35 +1,38 @@
 .figure {
   color: white;
 }
+
 .figure circle:nth-of-type(2) {
   fill: #242424;
 }
+
 @media (prefers-color-scheme: light) {
   .figure {
     color: #213547;
   }
-.figure circle:nth-of-type(2) {
-  fill: white;
+
+  .figure circle:nth-of-type(2) {
+    fill: white;
+  }
 }
 
-}
 .figure circle {
   stroke-width: 1px;
   stroke: currentColor;
   fill: none;
 }
 
-
-.figure text {
+.figure {
   font-size: 9px;
+  font-family: sans-serif;
 }
 
 .house {
-filter: grayscale(1);
+  font-family: 'Noto Emoji';
+  font-weight: 700;
 }
 
-
 text.planet {
-font-size: 11px;
-font-weight: bold;
+  font-size: 11px;
+  font-weight: bold;
 }
