@@ -48,6 +48,10 @@
   padding-left: 15px;
 }
 
+.sign[data-divine='true'] {
+  color: gold;
+}
+
 .house {
   font-family: 'Noto Emoji';
   font-weight: 700;

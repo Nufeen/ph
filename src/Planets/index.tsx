@@ -186,6 +186,11 @@ function Line(props: Props & {planet: Planet}) {
     +in_fall +
     +peregrine
 
+  /**
+   * Accidental
+   */
+  const sunHouse = house('Sun', now)
+
   return (
     <div
       key={planet}
@@ -193,7 +198,7 @@ function Line(props: Props & {planet: Planet}) {
       data-strong={sum >= 5}
       data-weak={sum <= -5}
     >
-      <div>{planets[planet]}</div>
+      <div data-divine={dignity[sunHouse - 1] == planet}>{planets[planet]}</div>
       {false && (
         <div
           data-dignity={dignity[H - 1] == planet}

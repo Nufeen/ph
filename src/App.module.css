@@ -27,7 +27,8 @@
     width: 100vw;
   }
 
-  .layout section {
+  .layout section,
+  .layout section:first-of-type {
     min-width: 100vw;
     box-sizing: border-box;
   }

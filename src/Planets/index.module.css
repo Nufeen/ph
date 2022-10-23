@@ -20,6 +20,11 @@
   font-size: 0.9em;
 }
 
+.planet > div:first-of-type {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
 .planet:first-of-type > div {
   font-size: 0.7em;
 }
@@ -38,4 +43,8 @@
 
 .planet > div[data-fall='true'] {
   border: 1px solid brown;
+}
+
+.planet div[data-divine='true'] {
+  color: gold;
 }

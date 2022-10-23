@@ -36,3 +36,14 @@ text.planet {
   font-size: 11px;
   font-weight: bold;
 }
+
+.planet[data-burn='true'] {
+  fill: red;
+}
+.planet[data-in-mid-of-sun='true'] {
+  fill: gold;
+}
+
+.planet[data-planet='Sun'] {
+  fill: gold;
+}

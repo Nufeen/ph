@@ -72,13 +72,18 @@ type HourProps = {
 
 function Hour(d: HourProps & {calendarDay: Date}) {
   const H = house(d.planet, d.calendarDay)
+  const sunHouse = house('Sun', d.calendarDay)
 
   return (
     <div key={d.n} className={s.hour} data-current={d.current}>
       <div>{d.n}</div>
       <time>{new Date(d.start).toLocaleTimeString(locale)}</time>
       <time>{new Date(d.end).toLocaleTimeString(locale)}</time>
-      <div className={s.sign} data-planet={d.planet}>
+      <div
+        className={s.sign}
+        data-planet={d.planet}
+        data-divine={dignity[sunHouse - 1] == d.planet}
+      >
         {planets[d.planet]}
       </div>
       <div
