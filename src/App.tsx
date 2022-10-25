@@ -15,14 +15,37 @@ const cities = {
 const locale = 'ru-RU'
 const city = 'Moscow'
 
+function valid(dateString: string) {
+  const date = new Date(dateString)
+  return date instanceof Date && !isNaN(+date)
+}
+
 function App() {
   const [lat, setLat] = useState(cities[city][0])
   const [lng, setLng] = useState(cities[city][1])
 
-  const [date, setDate] = useState(new Date())
+  const dateString = window.location.hash.replace('#', '')
+  const now = valid(dateString) ? new Date(dateString) : new Date()
+
+  const [date, setDate] = useState(now)
 
   function handleTimeClick() {
+    history.pushState(
+      '',
+      document.title,
+      window.location.pathname + window.location.search
+    )
     setDate(new Date())
+  }
+
+  function handleDateInput(e) {
+    if (!valid(e.target.value)) {
+      return
+    }
+
+    const x = new Date(e.target.value)
+    window.location.hash = e.target.value
+    setDate(x)
   }
 
   function handlePositionClick() {
@@ -42,9 +65,19 @@ function App() {
     <div className={s.Hours}>
       <header>
         <h4>
-          <button onClick={handleTimeClick}>t</button>
-          {today.toLocaleDateString(locale)}
+          <button onClick={handleTimeClick}>now</button>
+
+          <input
+            type="datetime-local"
+            onInput={handleDateInput}
+            defaultValue={
+              valid(dateString)
+                ? dateString
+                : today.toISOString().substring(0, 16)
+            }
+          />
         </h4>
+
         <h4>
           <span>
             {lat.toFixed(2)}, {lng.toFixed(2)}

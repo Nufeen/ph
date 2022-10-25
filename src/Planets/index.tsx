@@ -104,7 +104,6 @@ export default function PlanetsTable(props: Props) {
     <div className={s.wrap}>
       <div className={s.planet}>
         <div></div>
-        {false && <div>house</div>}
 
         <div>own </div>
         <div>exalt.</div>
@@ -127,7 +126,7 @@ export default function PlanetsTable(props: Props) {
 
 function Line(props: Props & {planet: Planet}) {
   const {planet} = props
-  const now = new Date()
+  const now = new Date(props.calendarDay)
 
   const H = house(planet, now)
 
@@ -199,16 +198,6 @@ function Line(props: Props & {planet: Planet}) {
       data-weak={sum <= -5}
     >
       <div data-divine={dignity[sunHouse - 1] == planet}>{planets[planet]}</div>
-      {false && (
-        <div
-          data-dignity={dignity[H - 1] == planet}
-          data-decline={detriment[H - 1] == planet}
-          data-exaltation={exaltation[H - 1] == planet}
-          data-fall={fall[H - 1] == planet}
-        >
-          {H}
-        </div>
-      )}
 
       <div>{in_own_house}</div>
       <div>
