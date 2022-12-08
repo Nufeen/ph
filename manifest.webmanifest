@@ -1,1 +1,1 @@
-{"name":"Planetary hours","short_name":"Hours","start_url":"/","display":"standalone","background_color":"#000","lang":"en","scope":"/","description":"Checing current hours","theme_color":"#000","icons":[{"src":"logo.png","sizes":"530x530","type":"image/png"}]}
+{"name":"Planetary hours","short_name":"Hours","start_url":"https://nufeen.github.io/ph/","display":"standalone","background_color":"#000","lang":"en","scope":"https://nufeen.github.io/ph/","description":"Checing current hours","theme_color":"#000","icons":[{"src":"logo.png","sizes":"530x530","type":"image/png"}]}
