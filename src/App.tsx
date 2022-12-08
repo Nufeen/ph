@@ -12,7 +12,6 @@ const cities = {
   Kazan: [55.796289, 49.108795]
 }
 
-const locale = 'ru-RU'
 const city = 'Moscow'
 
 function valid(dateString: string) {

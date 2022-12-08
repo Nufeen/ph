@@ -5,9 +5,7 @@ import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 import s from './index.module.css'
 
 // https://en.wikipedia.org/wiki/Planetary_hours
-import haldeanTable from '../assets/circle.json'
 import planets from '../assets/planets.json'
-import houses from '../assets/houses.json'
 
 // https://en.wikipedia.org/wiki/Astrological_sign#Dignity_and_detriment,_exaltation_and_fall
 import dignity from '../assets/dignity.json'
@@ -97,8 +95,6 @@ const triplicity = {
 }
 
 export default function PlanetsTable(props: Props) {
-  const {lat, lng, calendarDay, today} = props
-
   const P = Object.keys(planets) as Planet[]
   return (
     <div className={s.wrap}>
