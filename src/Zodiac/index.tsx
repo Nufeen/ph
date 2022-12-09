@@ -3,6 +3,8 @@
 
 import React from 'react'
 
+import Stars from './Stars'
+
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
@@ -94,6 +96,7 @@ export default function Zodiac(props: Props) {
 
       <TraditionalPlanetes {...{calendarDay, zero, x0, y0}} />
       <Aspects {...{calendarDay, zero, x0, y0}} />
+      <Stars {...{calendarDay, zero, x0, y0}} />
     </svg>
   )
 }

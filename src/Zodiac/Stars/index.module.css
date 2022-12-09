@@ -1,0 +1,38 @@
+.starline,
+.text {
+  opacity: 0;
+}
+
+circle:hover + .starline,
+circle:hover ~ .text {
+  opacity: 1;
+}
+
+.starline[data-visible='true'],
+.text[data-visible='true'] {
+  opacity: 0.3;
+}
+
+circle.star.star {
+  stroke-width: 10;
+  stroke: rgba(0, 0, 0, 0.1);
+  fill: white;
+}
+
+circle.star.star[data-type='evil'] {
+  fill: red;
+}
+
+circle.star.star[data-type='royal'] {
+  fill: gold;
+}
+
+.text {
+  font-size: 6px;
+  background: gold;
+  pointer-events: none;
+  display: block;
+  transform: translateX(-50%);
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+}
