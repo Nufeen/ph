@@ -9,7 +9,7 @@ import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
 const {sin, cos} = Math
 
-import raw from './stars.json'
+import raw from '../../assets/stars.json'
 import planets from '../../assets/planets.json'
 
 const z = [
