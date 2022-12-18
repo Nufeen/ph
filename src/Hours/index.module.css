@@ -74,3 +74,26 @@
 .house[data-fall='true'] {
   opacity: 0;
 }
+
+.moonday {
+  position: absolute;
+  margin-top: -7px;
+  font-size: 7px;
+}
+
+/* happy and unhappy days following Kolesnikov */
+.moonday[data-day='9'],
+.moonday[data-day='19'],
+.moonday[data-day='29'] {
+  color: red;
+}
+
+.moonday[data-day='6'],
+.moonday[data-day='10'],
+.moonday[data-day='16'],
+.moonday[data-day='20'],
+.moonday[data-day='21'],
+.moonday[data-day='27'],
+.moonday[data-day='30'] {
+  color: deepskyblue;
+}

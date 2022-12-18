@@ -1,6 +1,14 @@
 import React from 'react'
 import {getSunrise, getSunset} from 'sunrise-sunset-js'
-import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
+import {
+  Body,
+  Ecliptic,
+  GeoVector,
+  SearchMoonQuarter,
+  NextMoonQuarter,
+  SearchRiseSet,
+  Observer
+} from 'astronomy-engine'
 
 import s from './index.module.css'
 
@@ -41,6 +49,7 @@ export default function HourTable(props: Props) {
   const nightHourL = (t2 - t1) / 12
 
   const now = new Date().getTime()
+
   const dailyN = ~~((12 * (now - t0)) / (t1 - t0))
   const nightlyN = ~~((12 * (now - t1)) / (t2 - t1) + 12)
   const N = now < t1 ? dailyN : nightlyN
@@ -50,7 +59,12 @@ export default function HourTable(props: Props) {
     n: i + 1,
     planet: planet as Planet,
     start: i < 12 ? t0 + i * dayHourL : t1 + (i - 12) * nightHourL,
-    end: i < 12 ? t0 + (i + 1) * dayHourL : t1 + (i - 11) * nightHourL
+    end: i < 12 ? t0 + (i + 1) * dayHourL : t1 + (i - 11) * nightHourL,
+    moonday: moonday(
+      i < 12 ? t0 + i * dayHourL : t1 + (i - 12) * nightHourL,
+      lat,
+      lng
+    )
   }))
 
   return (
@@ -68,6 +82,7 @@ type HourProps = {
   planet: Planet
   start: number
   end: number
+  moonday: number
 }
 
 function Hour(d: HourProps & {calendarDay: Date}) {
@@ -85,6 +100,11 @@ function Hour(d: HourProps & {calendarDay: Date}) {
         data-divine={dignity[sunHouse - 1] == d.planet}
       >
         {planets[d.planet]}
+        {d.planet == 'Moon' && (
+          <sup data-day={d.moonday} className={s.moonday}>
+            {d.moonday}
+          </sup>
+        )}
       </div>
       <div
         className={s.house}
@@ -105,4 +125,45 @@ function house(body: keyof typeof Body, date: Date) {
   const pos = Ecliptic(x)
   const house = ~~(pos.elon / 30) + 1
   return house
+}
+
+// https://en.wikipedia.org/wiki/Lunar_month
+// We follow european tradition
+// First day starts at the new moon moment
+// Next days start at the moonrise for exact location
+function moonday(timestamp: number, lat: number, lng: number) {
+  // 29.5 is average so fn can lie a bit
+  // abut the exact beginning of the first day
+  const t0 = new Date(timestamp - 29.5 * 24 * 60 * 60 * 1000)
+
+  // Search for prev lunar month day
+  // Loop is a recommedded way of using its interface
+  // https://github.com/cosinekitty/astronomy/tree/master/source/js#SearchMoonQuarter
+  let q = SearchMoonQuarter(t0)
+  while (q.quarter != 0) {
+    q = NextMoonQuarter(q)
+  }
+
+  // 0 is meters above the sea
+  // Ideally that should be provided by user
+  // or kept for certain locations
+  // For now fn can lie a bit for places high above the sea
+  const o = new Observer(lat, lng, 0)
+
+  // Build the table of all lunar days per month
+  const daystarts = [q.time.date]
+  let t = q.time.date
+  for (let i = 0; i < 30; i++) {
+    const n = t.getTime()
+    const t2 = new Date(n + 60 * 1000)
+    const moonrise = SearchRiseSet(Body.Moon, o, +1, t2, 30)
+    t = moonrise.date
+    daystarts.push(t)
+  }
+
+  // We could use timestamps directly but extra
+  // transform is quite useful for debug purposes
+  const tss = daystarts.map(x => x.getTime())
+
+  return tss.findIndex(x => x > timestamp) || 1
 }
