@@ -1,0 +1,20 @@
+* text=auto
+
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.gif  binary
+*.ico  binary
+*.webp binary
+
+*.ttf   binary
+*.eot   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+
+*.gz  binary
+*.tar binary
+*.zip binary
+
+package-lock.json -diff

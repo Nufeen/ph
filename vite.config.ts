@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite'
 import {VitePWA} from 'vite-plugin-pwa'
 import react from '@vitejs/plugin-react'
+import dsv from '@rollup/plugin-dsv'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +13,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    dsv(), 
     VitePWA({
       devOptions: {
         enabled: true,

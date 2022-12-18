@@ -7,21 +7,27 @@ import Zodiac from './Zodiac'
 import HourTable from './Hours'
 import PlanetsTable from './Planets'
 
-const cities = {
-  Moscow: [55.753215, 37.622504],
-  Kazan: [55.796289, 49.108795]
-}
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import cityCSV from './assets/cities.csv'
 
-const city = 'Moscow'
+const cities = cityCSV.reduce(
+  (a, {city, lat, lng}) => ({...a, [city]: [+lat, +lng]}),
+  {}
+)
 
 function valid(dateString: string) {
   const date = new Date(dateString)
   return date instanceof Date && !isNaN(+date)
 }
 
+const LS = window.localStorage
+
 function App() {
-  const [lat, setLat] = useState(cities[city][0])
-  const [lng, setLng] = useState(cities[city][1])
+  const city = LS.getItem('city') ?? ''
+
+  const [lat, setLat] = useState(cities?.[city]?.[0] ?? 0)
+  const [lng, setLng] = useState(cities?.[city]?.[1] ?? 0)
 
   const dateString = window.location.hash.replace('#', '')
   const now = valid(dateString) ? new Date(dateString) : new Date()
@@ -47,9 +53,18 @@ function App() {
     setDate(x)
   }
 
+  function handleTransitCitySelect(e) {
+    const city = e.target.value
+    const [lat, lng] = cities[city]
+    LS.setItem('city', city)
+    setLat(lat)
+    setLng(lng)
+  }
+
   function handlePositionClick() {
     navigator.geolocation.getCurrentPosition(position => {
       if (!position) return
+      LS.setItem('city', '')
       setLat(position?.coords?.latitude)
       setLng(position?.coords?.longitude)
     })
@@ -62,11 +77,14 @@ function App() {
 
   return (
     <div className={s.Hours}>
-      <header>
-        <h4>
-          <button onClick={handleTimeClick}>now</button>
-
+      <header className={s.header}>
+        <section className={s.transitButtons}>
+          <button onClick={handleTimeClick}>set time to current</button>
+          <button onClick={handlePositionClick}>use geolocation</button>
+        </section>
+        <section className={s.transit}>
           <input
+            className={s.input}
             type="datetime-local"
             onInput={handleDateInput}
             defaultValue={
@@ -75,14 +93,27 @@ function App() {
                 : today.toISOString().substring(0, 16)
             }
           />
-        </h4>
-
-        <h4>
+          <select
+            className={s.select}
+            onChange={handleTransitCitySelect}
+            value={city}
+          >
+            <option disabled value="">
+              Location
+            </option>
+            {Object.keys(cities).map(x => (
+              <option key={x} value={x}>
+                {x}
+              </option>
+            ))}
+          </select>
+        </section>
+        <section className={s.transitInfo}>
+          <span>Transit:</span>
           <span>
             {lat.toFixed(2)}, {lng.toFixed(2)}
           </span>
-          <button onClick={handlePositionClick}>g</button>
-        </h4>
+        </section>
       </header>
 
       <main className={s.layout}>

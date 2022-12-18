@@ -34,19 +34,37 @@
   }
 }
 
-h4 {
-  color: #888;
+.header {
+  position: sticky;
+  top: 0;
+  background: #222;
+  z-index: 10;
 }
 
-header {
+.header section {
   display: flex;
-  flex-align: space-between;
+  gap: 10px;
   align-items: center;
   justify-content: space-between;
   font-size: 0.8em;
+  padding: 0;
 }
 
-h4 button {
-  margin-left: 10px;
-  margin-right: 10px;
+.header section + section {
+  margin-top: 5px;
+}
+
+.select,
+.input {
+  width: 100%;
+  max-width: 100%;
+}
+
+.transitButtons button {
+  width: 100%;
+}
+
+.transitInfo {
+  color: gray;
+  font-size: 7px;
 }
