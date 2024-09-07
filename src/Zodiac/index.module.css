@@ -1,19 +1,5 @@
-.figure {
-  color: white;
-}
-
 .figure circle:nth-of-type(2) {
   fill: #242424;
-}
-
-@media (prefers-color-scheme: light) {
-  .figure {
-    color: #213547;
-  }
-
-  .figure circle:nth-of-type(2) {
-    fill: white;
-  }
 }
 
 .figure circle {

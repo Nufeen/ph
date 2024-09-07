@@ -11,24 +11,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "astronomy-engine": "^2.1.5",
+    "astronomy-engine": "^2.1.19",
     "ephemeris": "^2.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sunrise-sunset-js": "^2.2.1"
   },
   "devDependencies": {
-    "@rollup/plugin-dsv": "^3.0.1",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.40.0",
-    "@typescript-eslint/parser": "^5.40.0",
-    "@vitejs/plugin-react": "^2.1.0",
-    "eslint": "^8.25.0",
-    "eslint-plugin-react": "^7.31.10",
-    "prettier": "2.8.1",
-    "typescript": "^4.6.4",
-    "vite": "^3.1.6",
-    "vite-plugin-pwa": "^0.13.1"
+    "@rollup/plugin-dsv": "^3.0.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.4.0",
+    "@typescript-eslint/parser": "^8.4.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react": "^7.35.2",
+    "prettier": "3.3.3",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.3",
+    "vite-plugin-pwa": "^0.20.5"
   }
 }

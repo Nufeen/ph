@@ -37,7 +37,6 @@
 .header {
   position: sticky;
   top: 0;
-  background: #222;
   z-index: 10;
 }
 
@@ -62,6 +61,7 @@
 
 .transitButtons button {
   width: 100%;
+  color: aliceblue;
 }
 
 .transitInfo {

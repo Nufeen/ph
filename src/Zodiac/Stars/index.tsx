@@ -27,7 +27,7 @@ const z = [
   'Pisces'
 ] as const
 
-type Sign = typeof z[number]
+type Sign = (typeof z)[number]
 
 const stars = raw.map(parse)
 
@@ -37,6 +37,7 @@ export default function Stars({calendarDay, zero, x0, y0}) {
       {stars.map(({name, elon, type}) => (
         <g key={name}>
           <circle
+            data-visible={planetAspect(elon, calendarDay)}
             className={s.star}
             data-star={name}
             data-type={type}

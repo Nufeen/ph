@@ -12,7 +12,7 @@ import PlanetsTable from './Planets'
 import cityCSV from './assets/cities.csv'
 
 const cities = cityCSV.reduce(
-  (a, {city, lat, lng}) => ({...a, [city]: [+lat, +lng]}),
+  (a: any, {city, lat, lng}: any) => ({...a, [city]: [+lat, +lng]}),
   {}
 )
 
@@ -23,6 +23,90 @@ function valid(dateString: string) {
 
 const LS = window.localStorage
 
+function ControlPane(props) {
+  function handleTimeClick() {
+    history.pushState(
+      '',
+      document.title,
+      window.location.pathname + window.location.search
+    )
+    props.setDate(new Date())
+  }
+
+  function handlePositionClick() {
+    navigator.geolocation.getCurrentPosition(position => {
+      if (!position) return
+      LS.setItem('city', '')
+      props.setLat(position?.coords?.latitude)
+      props.setLng(position?.coords?.longitude)
+    })
+  }
+
+  function handleDateInput(e) {
+    if (!valid(e.target.value as string)) {
+      return
+    }
+
+    const x = new Date(e.target.value)
+    window.location.hash = e.target.value.toString()
+    props.setDate(x)
+  }
+
+  function handleTransitCitySelect(e) {
+    const city = e.target.value
+    const [lat, lng] = cities[city]
+    LS.setItem('city', city)
+    props.setLat(lat)
+    props.setLng(lng)
+  }
+
+  return (
+    <>
+      <section className={s.transitButtons}>
+        <button onClick={handleTimeClick}>set time to current</button>
+        <button onClick={handlePositionClick}>use geolocation</button>
+      </section>
+
+      <section className={s.transit}>
+        <input
+          key={props.dateString}
+          className={s.input}
+          type="datetime-local"
+          onInput={handleDateInput}
+          defaultValue={
+            valid(props.dateString)
+              ? props.dateString
+              : props.today.toISOString().substring(0, 16)
+          }
+        />
+        <select
+          className={s.select}
+          onChange={handleTransitCitySelect}
+          value={props.city}
+        >
+          <option disabled value="">
+            Location
+          </option>
+          {Object.keys(cities).map(x => (
+            <option key={x} value={x}>
+              {x}
+            </option>
+          ))}
+        </select>
+      </section>
+      <section className={s.transitInfo}>
+        <span></span>
+        <span>
+          {props.lat.toFixed(2)}, {props.lng.toFixed(2)}
+        </span>
+      </section>
+    </>
+  )
+}
+
+/**
+ * Layout and global state is set here
+ */
 function App() {
   const city = LS.getItem('city') ?? ''
 
@@ -34,42 +118,6 @@ function App() {
 
   const [date, setDate] = useState(now)
 
-  function handleTimeClick() {
-    history.pushState(
-      '',
-      document.title,
-      window.location.pathname + window.location.search
-    )
-    setDate(new Date())
-  }
-
-  function handleDateInput(e) {
-    if (!valid(e.target.value)) {
-      return
-    }
-
-    const x = new Date(e.target.value)
-    window.location.hash = e.target.value
-    setDate(x)
-  }
-
-  function handleTransitCitySelect(e) {
-    const city = e.target.value
-    const [lat, lng] = cities[city]
-    LS.setItem('city', city)
-    setLat(lat)
-    setLng(lng)
-  }
-
-  function handlePositionClick() {
-    navigator.geolocation.getCurrentPosition(position => {
-      if (!position) return
-      LS.setItem('city', '')
-      setLat(position?.coords?.latitude)
-      setLng(position?.coords?.longitude)
-    })
-  }
-
   const calendarDay = date
   const cDaySunrise = getSunrise(lat, lng, calendarDay)
   const morning = calendarDay.getTime() < cDaySunrise.getTime()
@@ -78,42 +126,9 @@ function App() {
   return (
     <div className={s.Hours}>
       <header className={s.header}>
-        <section className={s.transitButtons}>
-          <button onClick={handleTimeClick}>set time to current</button>
-          <button onClick={handlePositionClick}>use geolocation</button>
-        </section>
-        <section className={s.transit}>
-          <input
-            className={s.input}
-            type="datetime-local"
-            onInput={handleDateInput}
-            defaultValue={
-              valid(dateString)
-                ? dateString
-                : today.toISOString().substring(0, 16)
-            }
-          />
-          <select
-            className={s.select}
-            onChange={handleTransitCitySelect}
-            value={city}
-          >
-            <option disabled value="">
-              Location
-            </option>
-            {Object.keys(cities).map(x => (
-              <option key={x} value={x}>
-                {x}
-              </option>
-            ))}
-          </select>
-        </section>
-        <section className={s.transitInfo}>
-          <span>Transit:</span>
-          <span>
-            {lat.toFixed(2)}, {lng.toFixed(2)}
-          </span>
-        </section>
+        <ControlPane
+          {...{setLat, setLng, setDate, lat, lng, city, dateString, today}}
+        />
       </header>
 
       <main className={s.layout}>
