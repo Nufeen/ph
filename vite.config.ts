@@ -11,6 +11,7 @@ export default defineConfig({
       transformMixedEsModules: true
     }
   },
+
   plugins: [
     react(),
     dsv(), 

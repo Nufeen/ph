@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/prop-types */
 
-import React from 'react'
+import React, {useEffect} from 'react'
 
 import Stars from './Stars'
 
@@ -14,6 +14,8 @@ import houses from '../assets/houses.json'
 import dignity from '../assets/dignity.json'
 import exaltation from '../assets/exaltation.json'
 
+import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
+
 const {sin, cos, abs} = Math
 
 const l = [...Array(12).keys()]
@@ -22,12 +24,43 @@ type P = keyof typeof planets
 
 type Props = {
   calendarDay: Date
+  lat: number
+  lng: number
 }
 
-const helperLine = false
+function getHouse(calendarDay: Date, latitude: number, longitude: number) {
+  const year = calendarDay.getFullYear()
+  const month = calendarDay.getMonth()
+  const date = calendarDay.getDate()
+  const hour = calendarDay.getHours()
+  const minute = calendarDay.getMinutes()
+
+  const origin = new Origin({
+    year,
+    month, // 0 = January, 11 = December!
+    date,
+    hour,
+    minute,
+    latitude,
+    longitude
+  })
+
+  const horoscope = new Horoscope({
+    origin: origin,
+    houseSystem: 'placidus',
+    zodiac: 'tropical',
+    aspectPoints: ['bodies', 'points', 'angles'],
+    aspectWithPoints: ['bodies', 'points', 'angles'],
+    aspectTypes: ['major', 'minor'],
+    customOrbs: {},
+    language: 'en'
+  })
+
+  return horoscope.Houses
+}
 
 export default function Zodiac(props: Props) {
-  const {calendarDay} = props
+  const {calendarDay, lat, lng} = props
 
   const x0 = 150
   const y0 = 155
@@ -39,67 +72,85 @@ export default function Zodiac(props: Props) {
   const zero = -90
 
   return (
-    <svg width="300" height="300" viewBox="0 0 300 300" className={s.figure}>
-      <circle cx={x0} cy={y0} r={r} />
+    <div className={s.wrapper}>
+      <svg width="300" height="300" viewBox="0 0 300 300" className={s.figure}>
+        <circle cx={x0} cy={y0} r={r} />
 
-      {l.map(i => (
+        {l.map(i => (
+          <line
+            key={i}
+            x1={x0}
+            y1={y0}
+            x2={x0 + r * sin((i * 30 * 3.14 + zero) / 180)}
+            y2={y0 + r * cos((i * 30 * 3.14 + zero) / 180)}
+            stroke="currentColor"
+          />
+        ))}
+
+        <circle cx={x0} cy={y0} r="100" />
+        <circle cx={x0} cy={y0} r="70" />
+        <circle cx={x0} cy={y0} r="144" />
+
+        {l.map(i => (
+          <text
+            className={s.house}
+            key={i}
+            fill="currentColor"
+            x={x0 - 5 + (r - 15) * sin(((i * 30 + zero + 15) * 3.14) / 180)}
+            y={y0 + 3 + (r - 15) * cos(((i * 30 + zero + 15) * 3.14) / 180)}
+          >
+            {houses[i]}
+          </text>
+        ))}
+
+        <Houses {...{calendarDay, zero, x0, y0, lat, lng}} />
+        <TraditionalPlanetes {...{calendarDay, zero, x0, y0}} />
+        <Aspects {...{calendarDay, zero, x0, y0}} />
+        <Stars {...{calendarDay, zero, x0, y0}} />
+      </svg>
+    </div>
+  )
+}
+
+function Houses({calendarDay, zero, x0, y0, lat, lng}) {
+  const H = getHouse(calendarDay, lat, lng)
+
+  function deg(i) {
+    const x = H[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
+    return ((x + zero) * 3.14) / 180
+  }
+
+  const l = 155
+  const A = ['ASC', 2, 3, 'IC', 5, 6, 'DSC', 8, 9, 'MC', 11, 12]
+
+  return (
+    <>
+      {H.map((_, i) => (
         <line
-          key={i}
-          x1={x0}
-          y1={y0}
-          x2={x0 + r * sin((i * 30 * 3.14 + zero) / 180)}
-          y2={y0 + r * cos((i * 30 * 3.14 + zero) / 180)}
           stroke="currentColor"
+          strokeOpacity={i % 3 == 0 ? 0.4 : 0.1}
+          x1={x0 + (l - 56) * sin(deg(i))}
+          y1={y0 + (l - 56) * cos(deg(i))}
+          x2={x0 + l * sin(deg(i))}
+          y2={y0 + l * cos(deg(i))}
         />
       ))}
 
-      <circle cx={x0} cy={y0} r="100" />
-      <circle cx={x0} cy={y0} r="70" />
-      <circle cx={x0} cy={y0} r="144" />
-
-      {l.map(i => (
+      {H.map((_, i) => (
         <text
-          className={s.house}
-          key={i}
           fill="currentColor"
-          x={x0 - 5 + (r - 15) * sin(((i * 30 + zero + 15) * 3.14) / 180)}
-          y={y0 + 3 + (r - 15) * cos(((i * 30 + zero + 15) * 3.14) / 180)}
-        >
-          {houses[i]}
-        </text>
-      ))}
-
-      {helperLine &&  l.map(i => (
-        <text
-          className={s.dignity}
+          fontSize={5}
+          opacity={0.5}
           key={i}
-          fill={i == sunHouse - 1 ? 'gold' : 'gray'}
-          x={x0 - 4 + (r + 7) * sin(((i * 30 + zero + 15) * 3.14) / 180)}
-          y={y0 + 3 + (r + 7) * cos(((i * 30 + zero + 15) * 3.14) / 180)}
+          x={x0 + (l + 1) * sin(deg(i)) - 7}
+          y={y0 + (l + 5) * cos(deg(i))}
         >
-          {planets[dignity[i]]}
+          {i % 3
+            ? ''
+            : `${A[i]} ${~~(H[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
         </text>
       ))}
-
-      {helperLine && l.map(
-        i =>
-          exaltation[i] && (
-            <text
-              className={s.exaltation}
-              key={i}
-              fill="chocolate"
-              x={x0 - 4 + (r + 7) * sin(((i * 30 + zero + 10) * 3.14) / 180)}
-              y={y0 + 3 + (r + 7) * cos(((i * 30 + zero + 10) * 3.14) / 180)}
-            >
-              {planets[exaltation[i]]}
-            </text>
-          )
-      )}
-
-      <TraditionalPlanetes {...{calendarDay, zero, x0, y0}} />
-      <Aspects {...{calendarDay, zero, x0, y0}} />
-      <Stars {...{calendarDay, zero, x0, y0}} />
-    </svg>
+    </>
   )
 }
 

@@ -133,7 +133,7 @@ function App() {
 
       <main className={s.layout}>
         <section>
-          <Zodiac calendarDay={calendarDay} />
+          <Zodiac {...{calendarDay, lat, lng}} />
           <PlanetsTable
             lat={lat}
             lng={lng}

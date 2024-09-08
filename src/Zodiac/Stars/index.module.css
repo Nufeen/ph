@@ -19,6 +19,10 @@ circle.star.star {
   fill: white;
 }
 
+circle.star.star:not([data-visible='true']){
+  display: none;
+}
+
 circle.star.star[data-type='evil'] {
   fill: red;
 }
