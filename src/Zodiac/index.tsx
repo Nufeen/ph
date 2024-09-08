@@ -127,6 +127,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
     <>
       {H.map((_, i) => (
         <line
+          key={i}
           stroke="currentColor"
           strokeOpacity={i % 3 == 0 ? 0.4 : 0.1}
           x1={x0 + (l - 56) * sin(deg(i))}

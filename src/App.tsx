@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import {getSunrise} from 'sunrise-sunset-js'
 
 import s from './App.module.css'
@@ -24,12 +24,17 @@ function valid(dateString: string) {
 const LS = window.localStorage
 
 function ControlPane(props) {
-  function handleTimeClick() {
+  const inputRef = useRef(null)
+
+  function handleCurrentTimeSetterClick() {
     history.pushState(
       '',
       document.title,
       window.location.pathname + window.location.search
     )
+
+    inputRef.current.value = new Date().toISOString().slice(0, -5)
+
     props.setDate(new Date())
   }
 
@@ -63,13 +68,15 @@ function ControlPane(props) {
   return (
     <>
       <section className={s.transitButtons}>
-        <button onClick={handleTimeClick}>set time to current</button>
+        <button onClick={handleCurrentTimeSetterClick}>
+          set time to current
+        </button>
         <button onClick={handlePositionClick}>use geolocation</button>
       </section>
 
       <section className={s.transit}>
         <input
-          key={props.dateString}
+          ref={inputRef}
           className={s.input}
           type="datetime-local"
           onInput={handleDateInput}
