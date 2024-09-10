@@ -15,7 +15,7 @@ export default function ControlPane(props) {
 
   const [country, setCountry] = useState(LS.getItem('country') ?? null)
 
-  let cities = getCitiesByCountryCode(country) ?? []
+  let cities = (country && getCitiesByCountryCode(country)) ?? []
 
   let uniqueNames = new Set()
   cities = cities.reduce((acc, item) => {
