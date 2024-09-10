@@ -25,6 +25,8 @@ const LS = window.localStorage
 function App() {
   const lss = JSON.parse(LS.getItem('settings'))
 
+  const center = useRef(null)
+
   const [settings, setSettings] = useState(
     lss ?? {
       objects: {
@@ -39,6 +41,11 @@ function App() {
           Pluto: true,
           Neptune: true,
           Uranus: true
+        },
+        celestialPoints: {
+          lilith: true,
+          northnode: true,
+          southnode: true
         }
       }
     }
@@ -50,8 +57,8 @@ function App() {
   const [lng, setLng] = useState(0)
 
   useEffect(() => {
-    document.getElementById('focus').focus()
-  })
+    center.current.scrollIntoView()
+  }, [])
 
   const dateString = window.location.hash.replace('#', '')
   const now = valid(dateString) ? new Date(dateString) : new Date()
@@ -77,7 +84,7 @@ function App() {
             <Settings />
           </section>
 
-          <section id="focus" ref={el => el && el.scrollIntoView()}>
+          <section ref={el => (center.current = el)}>
             <Zodiac {...{calendarDay, lat, lng}} />
             <PlanetsTable
               lat={lat}

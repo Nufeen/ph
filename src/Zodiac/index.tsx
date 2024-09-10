@@ -102,7 +102,8 @@ export default function Zodiac(props: Props) {
         ))}
 
         <Houses {...{calendarDay, zero, x0, y0, lat, lng}} />
-        <Planetes {...{calendarDay, zero, x0, y0}} />
+        <Planets {...{calendarDay, zero, x0, y0}} />
+        <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
         <Aspects {...{calendarDay, zero, x0, y0}} />
         <Stars {...{calendarDay, zero, x0, y0}} />
       </svg>
@@ -154,8 +155,116 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
     </>
   )
 }
+function Fictive({calendarDay, zero, x0, y0, lat, lng}) {
+  const {settings} = useContext(SettingContext)
 
-function Planetes({calendarDay, zero, x0, y0}) {
+  const year = calendarDay.getFullYear()
+  const month = calendarDay.getMonth()
+  const date = calendarDay.getDate()
+  const hour = calendarDay.getHours()
+  const minute = calendarDay.getMinutes()
+
+  const origin = new Origin({
+    year,
+    month, // 0 = January, 11 = December!
+    date,
+    hour,
+    minute,
+    latitude: lat,
+    longitude: lng
+  })
+
+  const horoscope = new Horoscope({
+    origin: origin,
+    houseSystem: 'placidus',
+    zodiac: 'tropical',
+    aspectPoints: ['bodies', 'points', 'angles'],
+    aspectWithPoints: ['bodies', 'points', 'angles'],
+    aspectTypes: ['major', 'minor'],
+    customOrbs: {},
+    language: 'en'
+  })
+
+  const ldd =
+    horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic.DecimalDegrees
+
+  const lilithDeg = ((ldd + zero) * 3.14) / 180
+
+  const nndd =
+    horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic.DecimalDegrees
+
+  const northnodeDeg = ((nndd + zero) * 3.14) / 180
+
+  return (
+    <>
+      {settings.objects.celestialPoints.lilith && (
+        <>
+          <text
+            fill="violet"
+            fontSize={8}
+            x={x0 + 93 * sin(lilithDeg)}
+            y={y0 + 95 * cos(lilithDeg)}
+          >
+            ⚸
+          </text>
+
+          <circle
+            className={s.fictive}
+            stroke="violet"
+            strokeWidth="3"
+            cx={x0 + 70 * sin(lilithDeg)}
+            cy={y0 + 70 * cos(lilithDeg)}
+            r="1"
+          />
+        </>
+      )}
+      {settings.objects.celestialPoints.northnode && (
+        <>
+          <text
+            fill="violet"
+            fontSize={8}
+            x={x0 + 90 * sin(northnodeDeg) - 7}
+            y={y0 + 90 * cos(northnodeDeg)}
+          >
+            ☊
+          </text>
+
+          <circle
+            className={s.fictive}
+            stroke="violet"
+            strokeWidth="3"
+            cx={x0 + 70 * sin(northnodeDeg)}
+            cy={y0 + 70 * cos(northnodeDeg)}
+            r="1"
+          />
+        </>
+      )}
+      {settings.objects.celestialPoints.southnode && (
+        <>
+          <text
+            fill="violet"
+            fontSize={8}
+            x={x0 - 90 * sin(northnodeDeg) - 7}
+            y={y0 - 90 * cos(northnodeDeg)}
+          >
+            ☋
+          </text>
+          <circle
+            className={s.fictive}
+            fill="violet"
+            stroke="violet"
+            strokeWidth="3"
+            cx={x0 - 70 * sin(northnodeDeg)}
+            cy={y0 - 70 * cos(northnodeDeg)}
+            r="1"
+          />
+        </>
+      )}
+    </>
+  )
+}
+
+function Planets({calendarDay, zero, x0, y0}) {
   const sunPos = pos('Sun', calendarDay)
   const {settings} = useContext(SettingContext)
 
@@ -174,7 +283,7 @@ function Planetes({calendarDay, zero, x0, y0}) {
             x={
               x0 -
               5 +
-              (88 + (key == 'Sun' ? -10 : 0)) *
+              (88 + (key == 'Sun' ? -10 : 0) + (key == 'Moon' ? -7 : 0)) *
                 sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
             }
             y={

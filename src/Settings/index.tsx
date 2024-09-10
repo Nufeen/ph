@@ -9,7 +9,7 @@ const LS = window.localStorage
 const PlanetCheckboxTable = () => {
   const {settings, setSettings} = useContext(SettingContext)
 
-  function handleVisibility(planet) {
+  function handlePlanetVisibility(planet) {
     const s = {
       ...settings,
       objects: {
@@ -17,6 +17,21 @@ const PlanetCheckboxTable = () => {
         planets: {
           ...settings.objects.planets,
           [planet]: !settings.objects.planets[planet]
+        }
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handlePointVisibility(point) {
+    const s = {
+      ...settings,
+      objects: {
+        ...settings.objects,
+        celestialPoints: {
+          ...(settings.objects?.celestialPoints || {}),
+          [point]: !settings.objects.celestialPoints?.[point]
         }
       }
     }
@@ -34,14 +49,29 @@ const PlanetCheckboxTable = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(planets).map((planet, index) => (
-            <tr key={index}>
+          {Object.keys(planets).map(planet => (
+            <tr key={planet}>
               <td>{planet}</td>
               <td>
                 <input
                   type="checkbox"
                   checked={settings.objects.planets[planet]}
-                  onChange={() => handleVisibility(planet)}
+                  onChange={() => handlePlanetVisibility(planet)}
+                />
+              </td>
+            </tr>
+          ))}
+
+          <hr />
+
+          {['lilith', 'northnode', 'southnode'].map(point => (
+            <tr key={point}>
+              <td>{point}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.objects.celestialPoints?.[point]}
+                  onChange={() => handlePointVisibility(point)}
                 />
               </td>
             </tr>

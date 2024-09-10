@@ -23,6 +23,11 @@
   stroke: currentColor;
   fill: none;
 }
+.figure circle.fictive {
+  stroke-width: 1px;
+  stroke: violet;
+  fill: none;
+}
 
 .house {
   font-family: 'Noto Emoji';

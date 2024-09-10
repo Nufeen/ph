@@ -22,6 +22,10 @@ export default defineConfig({
         navigateFallback: 'index.html'
       },
 
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3000000
+      },
+
       manifest: {
         name: 'Planetary hours',
         short_name: 'Hours',
