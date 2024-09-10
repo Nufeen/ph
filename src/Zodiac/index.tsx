@@ -11,8 +11,6 @@ import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
 import planets from '../assets/planets.json'
 import houses from '../assets/houses.json'
-import dignity from '../assets/dignity.json'
-import exaltation from '../assets/exaltation.json'
 
 import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
 
@@ -128,8 +126,8 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
       {H.map((_, i) => (
         <line
           key={i}
-          stroke="currentColor"
-          strokeOpacity={i % 3 == 0 ? 0.4 : 0.1}
+          stroke="violet"
+          strokeOpacity={i % 3 == 0 ? 0.4 : 0.2}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
           x2={x0 + l * sin(deg(i))}
@@ -139,7 +137,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
 
       {H.map((_, i) => (
         <text
-          fill="currentColor"
+          fill="violet"
           fontSize={5}
           opacity={0.5}
           key={i}
