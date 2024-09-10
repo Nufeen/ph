@@ -1,11 +1,14 @@
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import {getSunrise} from 'sunrise-sunset-js'
+import {SettingContext, SettingDispatchContext} from './SettingContext.js'
 
 import s from './App.module.css'
 
 import Zodiac from './Zodiac'
 import HourTable from './Hours'
 import PlanetsTable from './Planets'
+
+import Settings from './Settings'
 
 import ControlPane from './Controls'
 
@@ -20,8 +23,35 @@ const LS = window.localStorage
  * Layout and global state is set here
  */
 function App() {
+  const lss = JSON.parse(LS.getItem('settings'))
+
+  const [settings, setSettings] = useState(
+    lss ?? {
+      objects: {
+        planets: {
+          Saturn: true,
+          Jupiter: true,
+          Mars: true,
+          Sun: true,
+          Venus: true,
+          Mercury: true,
+          Moon: true,
+          Pluto: true,
+          Neptune: true,
+          Uranus: true
+        }
+      }
+    }
+  )
+
+  const value = {settings, setSettings}
+
   const [lat, setLat] = useState(0)
   const [lng, setLng] = useState(0)
+
+  useEffect(() => {
+    document.getElementById('focus').focus()
+  })
 
   const dateString = window.location.hash.replace('#', '')
   const now = valid(dateString) ? new Date(dateString) : new Date()
@@ -34,34 +64,40 @@ function App() {
   const today = morning ? new Date(+new Date() - 86400000) : calendarDay
 
   return (
-    <div className={s.Hours}>
-      <header className={s.header}>
-        <ControlPane
-          {...{setLat, setLng, setDate, lat, lng, dateString, today}}
-        />
-      </header>
-
-      <main className={s.layout}>
-        <section>
-          <Zodiac {...{calendarDay, lat, lng}} />
-          <PlanetsTable
-            lat={lat}
-            lng={lng}
-            calendarDay={calendarDay}
-            today={today}
+    <SettingContext.Provider value={value}>
+      <div className={s.Hours}>
+        <header className={s.header}>
+          <ControlPane
+            {...{setLat, setLng, setDate, lat, lng, dateString, today}}
           />
-        </section>
+        </header>
 
-        <section>
-          <HourTable
-            lat={lat}
-            lng={lng}
-            calendarDay={calendarDay}
-            today={today}
-          />
-        </section>
-      </main>
-    </div>
+        <main className={s.layout} dir="ltr">
+          <section>
+            <Settings />
+          </section>
+
+          <section id="focus" ref={el => el && el.scrollIntoView()}>
+            <Zodiac {...{calendarDay, lat, lng}} />
+            <PlanetsTable
+              lat={lat}
+              lng={lng}
+              calendarDay={calendarDay}
+              today={today}
+            />
+          </section>
+
+          <section>
+            <HourTable
+              lat={lat}
+              lng={lng}
+              calendarDay={calendarDay}
+              today={today}
+            />
+          </section>
+        </main>
+      </div>
+    </SettingContext.Provider>
   )
 }
 

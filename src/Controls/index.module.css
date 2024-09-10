@@ -8,6 +8,8 @@
     'bottom bottom';
 
   gap: 10px;
+
+  max-width: 900px;
 }
 
 .wrapper section:first-child {

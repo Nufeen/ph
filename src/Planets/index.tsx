@@ -95,7 +95,10 @@ const triplicity = {
 }
 
 export default function PlanetsTable(props: Props) {
-  const P = Object.keys(planets) as Planet[]
+  const P = Object.keys(planets).filter(
+    x => !['Neptune', 'Pluto', 'Uranus'].includes(x)
+  )
+
   return (
     <div className={s.wrap}>
       <div className={s.planet}>

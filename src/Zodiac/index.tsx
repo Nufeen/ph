@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/prop-types */
 
-import React, {useEffect} from 'react'
+import React, {useContext} from 'react'
+
+import {SettingContext} from '../SettingContext.js'
 
 import Stars from './Stars'
 
@@ -65,8 +67,6 @@ export default function Zodiac(props: Props) {
 
   const r = 130
 
-  const sunHouse = house('Sun', calendarDay)
-
   const zero = -90
 
   return (
@@ -102,7 +102,7 @@ export default function Zodiac(props: Props) {
         ))}
 
         <Houses {...{calendarDay, zero, x0, y0, lat, lng}} />
-        <TraditionalPlanetes {...{calendarDay, zero, x0, y0}} />
+        <Planetes {...{calendarDay, zero, x0, y0}} />
         <Aspects {...{calendarDay, zero, x0, y0}} />
         <Stars {...{calendarDay, zero, x0, y0}} />
       </svg>
@@ -112,6 +112,8 @@ export default function Zodiac(props: Props) {
 
 function Houses({calendarDay, zero, x0, y0, lat, lng}) {
   const H = getHouse(calendarDay, lat, lng)
+
+  if (!lat && !lng) return null
 
   function deg(i) {
     const x = H[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
@@ -153,41 +155,48 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
   )
 }
 
-function TraditionalPlanetes({calendarDay, zero, x0, y0}) {
+function Planetes({calendarDay, zero, x0, y0}) {
   const sunPos = pos('Sun', calendarDay)
+  const {settings} = useContext(SettingContext)
 
   return (
     <>
-      {Object.entries(planets).map(([key, value]: any) => (
-        <text
-          data-planet={key}
-          data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
-          data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
-          className={s.planet}
-          key={key}
-          fill="currentColor"
-          x={
-            x0 -
-            5 +
-            (88 + (key == 'Sun' ? -10 : 0)) *
-              sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
-          }
-          y={
-            y0 +
-            5 +
-            +(85 + (key == 'Sun' ? -10 : 0)) *
-              cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
-          }
-        >
-          {value}
-        </text>
-      ))}
+      {Object.entries(planets)
+        .filter(([key]) => settings.objects.planets[key])
+        .map(([key, value]: any) => (
+          <text
+            data-planet={key}
+            data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
+            data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
+            className={s.planet}
+            key={key}
+            fill="currentColor"
+            x={
+              x0 -
+              5 +
+              (88 + (key == 'Sun' ? -10 : 0)) *
+                sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+            }
+            y={
+              y0 +
+              5 +
+              +(85 + (key == 'Sun' ? -10 : 0)) *
+                cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+            }
+          >
+            {value}
+          </text>
+        ))}
     </>
   )
 }
 
 function Aspects({calendarDay, zero, x0, y0}) {
-  const l = Object.keys(planets) as P[]
+  const {settings} = useContext(SettingContext)
+
+  const l = (Object.keys(planets) as P[]).filter(
+    key => settings.objects.planets[key]
+  )
 
   const aspectTable = l.reduce((a, planet1, i) => {
     a[i] = a[i] || []
@@ -244,13 +253,6 @@ function pos(body: keyof typeof Body, date: Date) {
   const x = GeoVector(Body[body], date, false)
   const pos = Ecliptic(x)
   return pos.elon
-}
-
-function house(body: keyof typeof Body, date: Date) {
-  const x = GeoVector(Body[body], date, false)
-  const pos = Ecliptic(x)
-  const house = ~~(pos.elon / 30) + 1
-  return house
 }
 
 function checkAspect(planet1, planet2, calendarDay) {

@@ -24,15 +24,13 @@
   fill: none;
 }
 
-
-
 .house {
   font-family: 'Noto Emoji';
   font-weight: 700;
 }
 
 text.planet {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: bold;
 }
 

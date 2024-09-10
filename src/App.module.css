@@ -4,17 +4,11 @@
   scroll-snap-points-y: repeat(300px);
   scroll-snap-type: y mandatory;
   overflow: auto;
-  width: 100%;
+  scroll-snap-align: center;
 }
 
 .layout section {
   width: 100%;
-  min-width: 300px;
-}
-
-.layout section:first-of-type {
-  width: 100%;
-  min-width: 450px;
 }
 
 .layout section > svg {
@@ -38,6 +32,8 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  display: flex;
+  justify-content: center;
 }
 
 .header section {
@@ -68,5 +64,3 @@
   color: gray;
   font-size: 7px;
 }
-
-
