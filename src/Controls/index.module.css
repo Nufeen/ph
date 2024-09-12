@@ -4,12 +4,20 @@
   grid-template-columns: 1fr 1fr;
 
   grid-template-areas:
-    'section1 section2'
-    'bottom bottom';
+    'bottom bottom'
+    'section1 section2';
 
-  gap: 10px;
+  column-gap: 10px;
 
   max-width: 900px;
+  margin-bottom: 10px;
+
+  font-size: 0.9em;
+}
+
+.wrapper section {
+  margin: 0;
+  padding: 0;
 }
 
 .wrapper section:first-child {
@@ -23,6 +31,7 @@
 
 .transitInfo {
   grid-area: bottom;
+  line-height: 1em;
 }
 
 .reset {

@@ -130,7 +130,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
         <line
           key={i}
           stroke="violet"
-          strokeOpacity={i % 3 == 0 ? 0.4 : 0.2}
+          strokeOpacity={i % 3 == 0 ? 0.6 : 0.3}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
           x2={x0 + l * sin(deg(i))}
@@ -142,7 +142,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
         <text
           fill="violet"
           fontSize={5}
-          opacity={0.5}
+          opacity={0.6}
           key={i}
           x={x0 + (l + 1) * sin(deg(i)) - 7}
           y={y0 + (l + 5) * cos(deg(i))}

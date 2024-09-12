@@ -1,20 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400;500;600;700&display=swap');
 
 .wrap {
+  font-size: 0.9em;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  margin: 0 auto;
 }
 
 .hour {
   display: flex;
-  flex-align: space-between;
   text-align: center;
 }
 
 .hour > div {
-  width: 100%;
   min-width: 50px;
 }
 
@@ -26,7 +24,6 @@
 }
 
 .hour > time {
-  width: 100%;
   min-width: 70px;
 }
 

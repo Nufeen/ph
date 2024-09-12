@@ -16,6 +16,16 @@
   height: auto;
 }
 
+.tables {
+  position: relative;
+}
+
+.tablesSelector {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 @media (max-width: 500px) {
   .layout {
     width: 100vw;
@@ -26,6 +36,13 @@
     min-width: 100vw;
     box-sizing: border-box;
   }
+}
+
+.tablesSelector button {
+  border-radius: 8px;
+  padding: 0.4em 0.6em;
+  font-size: 0.7em;
+  cursor: pointer;
 }
 
 .header {

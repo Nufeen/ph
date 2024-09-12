@@ -1,5 +1,21 @@
 .wrapper {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 0.9em;
+  width: 100%;
+}
+
+.wrapper hr {
+  width: 30%;
+  margin-top: 1em;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  opacity: 0.6;
+}
+
+.thead th {
+  font-size: 0.7em;
+  opacity: 0.6;
 }

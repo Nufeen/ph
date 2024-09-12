@@ -1,0 +1,31 @@
+.table {
+  font-size: 0.9em;
+  padding-left: 15px;
+  padding-top: 5px;
+  line-height: 1.2em;
+  margin: 0 auto;
+}
+
+.sign {
+  font-family: 'Noto Emoji';
+  font-weight: 700;
+  padding-left: 10px;
+  padding-right: 14px;
+}
+
+.house {
+  text-align: center;
+  opacity: 0.7;
+  font-size: 0.7;
+  padding-left: 10px;
+  padding-right: 14px;
+}
+
+.degrees {
+  text-align: center;
+}
+
+.thead th {
+  font-size: 0.7em;
+  opacity: 0.6;
+}

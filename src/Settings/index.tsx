@@ -42,7 +42,7 @@ const PlanetCheckboxTable = () => {
   return (
     <div className={s.wrapper}>
       <table>
-        <thead>
+        <thead className={s.thead}>
           <tr>
             <th></th>
             <th>On</th>
@@ -61,9 +61,13 @@ const PlanetCheckboxTable = () => {
               </td>
             </tr>
           ))}
+        </tbody>
+      </table>
 
-          <hr />
+      <hr />
 
+      <table>
+        <tbody>
           {['lilith', 'northnode', 'southnode'].map(point => (
             <tr key={point}>
               <td>{point}</td>
