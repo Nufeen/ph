@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 import {getSunrise} from 'sunrise-sunset-js'
 import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
+import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
 import Zodiac from './Zodiac'
 import HourTable from './Hours'
@@ -10,6 +11,11 @@ import Settings from './Settings'
 import ControlPane from './Controls'
 
 import s from './App.module.css'
+
+// https://www.astro.com/astrowiki/en/Fixed_star_list
+// 2000 position
+import stardata from './assets/stars.json'
+import planets from './assets/planets.json'
 
 import {SettingContext} from './SettingContext.js'
 import {CelestialContext} from './CelestialContext.js'
@@ -49,6 +55,25 @@ function reduceToElements(horoscope) {
     return acc
   }, {})
 }
+
+const z = [
+  'Ari',
+  'Tau',
+  'Gem',
+  'Can',
+  'Leo',
+  'Vir',
+  'Lib',
+  'Sco',
+  'Sag',
+  'Cap',
+  'Aqu',
+  'Pis'
+] as const
+
+const stars = stardata
+  .map(parse)
+  .filter(x => (['α', 'β', 'γ'] as const).includes(x.size))
 
 /**
  * Layout and global state is set here
@@ -120,7 +145,9 @@ function App() {
 
   return (
     <SettingContext.Provider value={settingsContextValue}>
-      <CelestialContext.Provider value={horoscope}>
+      <CelestialContext.Provider
+        value={{horoscope, stars: connectedStars(calendarDay)}}
+      >
         <div className={s.Hours}>
           <header className={s.header}>
             <ControlPane
@@ -140,7 +167,7 @@ function App() {
                     {Object.entries(reduceToElements(horoscope))
                       .sort((a, b) => b[1] - a[1])
                       .map(([s, v]) => (
-                        <tr>
+                        <tr key={s}>
                           <td>{elements[s]}</td>
                           <td>{v}</td>
                         </tr>
@@ -229,4 +256,38 @@ function getHoroscope(calendarDay: Date, latitude: number, longitude: number) {
   })
 
   return horoscope
+}
+
+function pos(body: keyof typeof Body, date: Date) {
+  const x = GeoVector(Body[body], date, false)
+  const pos = Ecliptic(x)
+  return pos.elon
+}
+
+function parse(d) {
+  return {
+    name: d[0],
+    elon: elon(d[2], d[3]),
+    size: d[1][0]
+  }
+}
+
+function elon(s, sign) {
+  const [deg, min] = s.split('°')
+  const n = z.findIndex(x => x == sign)
+  return n >= 0 ? n * 30 + +deg + +min / 60 : null
+}
+
+function connectedStars(calendarDay) {
+  type P = keyof typeof planets
+
+  const out = Object.keys(planets).reduce((a, x: any, i) => {
+    return {...a, [x]: findStar(pos(x, calendarDay))}
+  }, {})
+
+  return out
+}
+
+function findStar(elon) {
+  return stars.filter(x => Math.abs(x.elon - elon) < 1)
 }

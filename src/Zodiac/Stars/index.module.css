@@ -1,26 +1,12 @@
-.starline,
-.text {
-  opacity: 0;
-}
-
 circle:hover + .starline,
 circle:hover ~ .text {
   opacity: 1;
-}
-
-.starline[data-visible='true'],
-.text[data-visible='true'] {
-  opacity: 0.3;
 }
 
 circle.star.star {
   stroke-width: 10;
   stroke: rgba(0, 0, 0, 0.1);
   fill: white;
-}
-
-circle.star.star:not([data-visible='true']){
-  display: none;
 }
 
 circle.star.star[data-type='evil'] {

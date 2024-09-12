@@ -143,6 +143,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
           fill="violet"
           fontSize={5}
           opacity={0.6}
+          fontWeight={'bold'}
           key={i}
           x={x0 + (l + 1) * sin(deg(i)) - 7}
           y={y0 + (l + 5) * cos(deg(i))}

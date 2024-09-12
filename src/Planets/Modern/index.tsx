@@ -41,7 +41,7 @@ const romanNumbers = [
 ]
 
 export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
-  const horoscope = useContext(CelestialContext)
+  const {horoscope, stars} = useContext(CelestialContext)
 
   const {settings} = useContext(SettingContext)
 
@@ -68,6 +68,10 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
               </td>
 
               <td className={s.house}>{romanNumbers[body.House?.id - 1]}</td>
+
+              <td className={s.star}>
+                {stars[body.label].map(x => `${x.name} (${x.size})`).join(', ')}
+              </td>
             </tr>
           ))}
       </tbody>
