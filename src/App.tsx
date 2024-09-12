@@ -21,6 +21,35 @@ function valid(dateString: string) {
 
 const LS = window.localStorage
 
+const elementMap = {
+  aries: 'fire',
+  taurus: 'earth',
+  gemini: 'air',
+  cancer: 'water',
+  leo: 'fire',
+  virgo: 'earth',
+  libra: 'air',
+  scorpio: 'water',
+  sagittarius: 'fire',
+  capricorn: 'earth',
+  aquarius: 'air',
+  pisces: 'water'
+}
+
+const elements = {water: '🜄', fire: '🜂', earth: '🜃', air: '🜁'}
+
+function reduceToElements(horoscope) {
+  return Object.values(horoscope.CelestialBodies).reduce((acc, body: any) => {
+    const sign = body?.Sign?.key
+    if (!sign) return acc
+    if (!acc[elementMap[sign]]) {
+      acc[elementMap[sign]] = 0
+    }
+    acc[elementMap[sign]] += 1
+    return acc
+  }, {})
+}
+
 /**
  * Layout and global state is set here
  */
@@ -105,7 +134,23 @@ function App() {
             </section>
 
             <section className={s.tables} ref={el => (center.current = el)}>
+              <div className={s.elements}>
+                <table>
+                  <tbody>
+                    {Object.entries(reduceToElements(horoscope))
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([s, v]) => (
+                        <tr>
+                          <td>{elements[s]}</td>
+                          <td>{v}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
               <Zodiac {...{calendarDay, lat, lng}} />
+
               <div className={s.tablesSelector}>
                 <button
                   disabled={settings.interface?.planets == 'modern'}
