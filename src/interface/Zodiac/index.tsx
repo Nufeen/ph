@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/prop-types */
 
-import React, {useContext} from 'react'
+import {useContext} from 'react'
 
 import {SettingContext} from '../../SettingContext.js'
 

@@ -32,3 +32,12 @@
 .star {
   font-size: 0.8em;
 }
+
+.retro {
+  font-weight: bold;
+  font-size: 0.7em;
+  color: #a06f33;
+  display: inline-block;
+  margin-bottom: -2px;
+  padding-right: 3px;
+}

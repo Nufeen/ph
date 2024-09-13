@@ -60,6 +60,7 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
           .filter((body: any) => settings.objects.planets[body.label])
           .map((body: any, i) => (
             <tr key={i}>
+              <td className={s.retro}>{body.isRetrograde && 'R'}</td>
               <td>{body.label}</td>
               <td className={s.sign}>{icons[body?.Sign?.label]}</td>
               <td className={s.degrees}>
