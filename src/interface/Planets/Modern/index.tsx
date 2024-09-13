@@ -49,7 +49,7 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
-          <th> </th>
+          <th></th>
           <th className={s.sign}></th>
           <th></th>
           <th className={s.house}>house</th>
@@ -72,7 +72,7 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
                     .map(x => `${x.name} (${x.size})`)
                     .join(', ')}
                 </td>
-              )}{' '}
+              )}
             </tr>
           ))}
       </tbody>

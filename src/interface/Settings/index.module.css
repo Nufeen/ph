@@ -45,3 +45,8 @@
   font-size: 0.7em;
   opacity: 0.6;
 }
+
+.wrapper input[type='checkbox'] {
+  margin-top: 1px;
+  display: block;
+}

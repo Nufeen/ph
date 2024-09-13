@@ -1,7 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react'
+import {useState, useRef, useEffect} from 'react'
 import {getSunrise} from 'sunrise-sunset-js'
-import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
-import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
 import Zodiac from './interface/Zodiac'
 import ElementsTable from './interface/Elements'
@@ -21,6 +19,8 @@ import {connectedStars} from './compute/stars'
 import {SettingContext} from './SettingContext.js'
 import {CelestialContext} from './CelestialContext.js'
 
+import defaultSettings from './defaultSettings.json'
+
 function valid(dateString: string) {
   const date = new Date(dateString)
   return date instanceof Date && !isNaN(+date)
@@ -32,40 +32,13 @@ const LS = window.localStorage
  * Layout and global state is set here
  */
 function App() {
-  const lss = JSON.parse(LS.getItem('settings'))
+  const localSavedSettings = JSON.parse(LS.getItem('settings'))
 
-  const center = useRef(null)
-
+  /**
+   * Interface settings management
+   */
   const [settings, setSettings] = useState(
-    lss ?? {
-      objects: {
-        planets: {
-          Saturn: true,
-          Jupiter: true,
-          Mars: true,
-          Sun: true,
-          Venus: true,
-          Mercury: true,
-          Moon: true,
-          Pluto: true,
-          Neptune: true,
-          Uranus: true
-        },
-        celestialPoints: {
-          lilith: true,
-          northnode: true,
-          southnode: true
-        },
-        fixedStars: {
-          chart: true,
-          table: true
-        }
-      },
-      interface: {
-        planets: 'modern',
-        elements: true
-      }
-    }
+    localSavedSettings ?? defaultSettings
   )
 
   const settingsContextValue = {settings, setSettings}
@@ -73,10 +46,17 @@ function App() {
   const [lat, setLat] = useState(0)
   const [lng, setLng] = useState(0)
 
+  /**
+   * Setting cenered scroll position on mobile phones
+   */
+  const center = useRef(null)
   useEffect(() => {
     center.current.scrollIntoView()
   }, [])
 
+  /**
+   * Time management
+   */
   const dateString = window.location.hash.replace('#', '')
   const now = valid(dateString) ? new Date(dateString) : new Date()
 
@@ -84,11 +64,14 @@ function App() {
 
   const calendarDay = date
   const cDaySunrise = getSunrise(lat, lng, calendarDay)
-  const morning = calendarDay.getTime() < cDaySunrise.getTime()
+  const morning = calendarDay.getTime() < cDaySunrise.getTime() // for planet hours
   const today = morning ? new Date(+new Date() - 86400000) : calendarDay
 
   const horoscope = getHoroscope(date, lat, lng)
 
+  /**
+   * TODO move to separate component: Planets/ModernitySelector
+   */
   function modernPlanets() {
     const s = {...settings, interface: {planets: 'modern'}}
     setSettings(s)

@@ -1,0 +1,29 @@
+{
+  "objects": {
+    "planets": {
+      "Saturn": true,
+      "Jupiter": true,
+      "Mars": true,
+      "Sun": true,
+      "Venus": true,
+      "Mercury": true,
+      "Moon": true,
+      "Pluto": true,
+      "Neptune": true,
+      "Uranus": true
+    },
+    "celestialPoints": {
+      "lilith": true,
+      "northnode": true,
+      "southnode": true
+    },
+    "fixedStars": {
+      "chart": true,
+      "table": true
+    }
+  },
+  "interface": {
+    "planets": "modern",
+    "elements": true
+  }
+}
