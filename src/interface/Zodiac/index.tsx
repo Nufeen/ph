@@ -62,6 +62,8 @@ function getHouse(calendarDay: Date, latitude: number, longitude: number) {
 export default function Zodiac(props: Props) {
   const {calendarDay, lat, lng} = props
 
+  const {settings} = useContext(SettingContext)
+
   const x0 = 150
   const y0 = 155
 
@@ -105,7 +107,10 @@ export default function Zodiac(props: Props) {
         <Planets {...{calendarDay, zero, x0, y0}} />
         <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
         <Aspects {...{calendarDay, zero, x0, y0}} />
-        <Stars {...{calendarDay, zero, x0, y0}} />
+
+        {settings.objects.celestialPoints?.fixedStars?.chart && (
+          <Stars {...{calendarDay, zero, x0, y0}} />
+        )}
       </svg>
     </div>
   )

@@ -62,16 +62,17 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
             <tr key={i}>
               <td>{body.label}</td>
               <td className={s.sign}>{icons[body?.Sign?.label]}</td>
-
               <td className={s.degrees}>
                 {body.ChartPosition?.Horizon?.ArcDegreesFormatted30}
               </td>
-
               <td className={s.house}>{romanNumbers[body.House?.id - 1]}</td>
-
-              <td className={s.star}>
-                {stars[body.label].map(x => `${x.name} (${x.size})`).join(', ')}
-              </td>
+              {settings.objects.celestialPoints?.fixedStars?.table && (
+                <td className={s.star}>
+                  {stars[body.label]
+                    .map(x => `${x.name} (${x.size})`)
+                    .join(', ')}
+                </td>
+              )}{' '}
             </tr>
           ))}
       </tbody>

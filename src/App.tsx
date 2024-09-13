@@ -55,10 +55,15 @@ function App() {
           lilith: true,
           northnode: true,
           southnode: true
+        },
+        fixedStars: {
+          chart: true,
+          table: true
         }
       },
       interface: {
-        planets: 'modern'
+        planets: 'modern',
+        elements: true
       }
     }
   )
@@ -114,8 +119,9 @@ function App() {
             </section>
 
             <section className={s.tables} ref={el => (center.current = el)}>
-              <ElementsTable {...{horoscope}} />
-
+              {settings.interface?.elements && (
+                <ElementsTable {...{horoscope}} />
+              )}
               <Zodiac {...{calendarDay, lat, lng}} />
 
               <div className={s.tablesSelector}>
