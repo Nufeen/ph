@@ -3,7 +3,7 @@
 
 import React, {useContext} from 'react'
 
-import {SettingContext} from '../SettingContext.js'
+import {SettingContext} from '../../SettingContext.js'
 
 import Stars from './Stars'
 
@@ -11,8 +11,8 @@ import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
-import planets from '../assets/planets.json'
-import houses from '../assets/houses.json'
+import planets from '../../assets/planets.json'
+import houses from '../../assets/houses.json'
 
 import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
 

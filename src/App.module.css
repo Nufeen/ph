@@ -81,19 +81,3 @@
   color: gray;
   font-size: 7px;
 }
-
-.elements {
-  position: absolute;
-  font-size: 0.6em;
-  line-height: 1.2em;
-  right: 0;
-  opacity: 0.8;
-  margin-right: 2px;
-}
-.elements td:first-child {
-  margin-top: -1px;
-}
-
-.elements tr {
-  display: flex;
-}

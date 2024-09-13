@@ -2,9 +2,9 @@ import React, {useContext} from 'react'
 import {getSunrise, getSunset} from 'sunrise-sunset-js'
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
-import {CelestialContext} from '../../CelestialContext.js'
+import {CelestialContext} from '../../../CelestialContext.js'
 
-import {SettingContext} from '../../SettingContext.js'
+import {SettingContext} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 

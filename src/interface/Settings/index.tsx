@@ -1,8 +1,8 @@
 import React, {useContext} from 'react'
-import {SettingContext} from '../SettingContext.js'
+import {SettingContext} from '../../SettingContext.js'
 import s from './index.module.css'
 
-import planets from '../assets/planets.json'
+import planets from '../../assets/planets.json'
 
 const LS = window.localStorage
 

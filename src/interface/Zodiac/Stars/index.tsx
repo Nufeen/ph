@@ -5,7 +5,7 @@ import {useContext} from 'react'
 
 import s from './index.module.css'
 
-import {CelestialContext} from '../../CelestialContext.js'
+import {CelestialContext} from '../../../CelestialContext.js'
 
 const {sin, cos} = Math
 

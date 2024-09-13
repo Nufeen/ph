@@ -13,15 +13,15 @@ import {
 import s from './index.module.css'
 
 // https://en.wikipedia.org/wiki/Planetary_hours
-import haldeanTable from '../assets/circle.json'
-import planets from '../assets/planets.json'
-import houses from '../assets/houses.json'
+import haldeanTable from '../../assets/circle.json'
+import planets from '../../assets/planets.json'
+import houses from '../../assets/houses.json'
 
 // https://en.wikipedia.org/wiki/Astrological_sign#Dignity_and_detriment,_exaltation_and_fall
-import dignity from '../assets/dignity.json'
-import detriment from '../assets/detriment.json'
-import fall from '../assets/fall.json'
-import exaltation from '../assets/exaltation.json'
+import dignity from '../../assets/dignity.json'
+import detriment from '../../assets/detriment.json'
+import fall from '../../assets/fall.json'
+import exaltation from '../../assets/exaltation.json'
 
 const locale = 'ru-RU'
 
