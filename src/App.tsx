@@ -187,7 +187,7 @@ function App() {
                     id="aspectLine"
                     name="aspectLine"
                     min="1"
-                    max="7"
+                    max="8"
                     value={settings.interface.aspectOrb ?? 4}
                     onChange={e => {
                       const s = {

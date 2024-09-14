@@ -143,7 +143,7 @@ export default function ControlPane(props) {
             </button>
 
             <input
-              key={data[chartType].date}
+              // key={data[chartType].date} // TODO shift
               ref={inputRef}
               className={s.input}
               type="datetime-local"
