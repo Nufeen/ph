@@ -64,7 +64,7 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
               <td>{body.label}</td>
               <td className={s.sign}>{icons[body?.Sign?.label]}</td>
               <td className={s.degrees}>
-                {body.ChartPosition?.Horizon?.ArcDegreesFormatted30}
+                {body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30}
               </td>
               <td className={s.house}>{romanNumbers[body.House?.id - 1]}</td>
               {settings.objects.celestialPoints?.fixedStars?.table && (
