@@ -17,6 +17,12 @@
   align-items: center;
 }
 
+.layout section.right {
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+}
+
 .layout section.left {
   width: 90%;
   display: flex;
@@ -37,9 +43,7 @@
 }
 
 .tablesSelector {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  margin: 10px;
 }
 
 @media (max-width: 500px) {
@@ -91,4 +95,30 @@
 .transitInfo {
   color: gray;
   font-size: 7px;
+}
+
+.aspectLine {
+  font-size: 0.8em;
+  line-height: 10px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  input {
+    appearance: none;
+    background: transparent;
+    position: relative;
+  }
+}
+
+.aspectLine input::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  width: 90%;
+  height: 1px;
+  background-color: gray;
+  margin: 0 auto;
+  z-index: -1;
 }

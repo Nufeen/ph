@@ -179,6 +179,35 @@ function App() {
               )}
               <Zodiac {...{calendarDay: natalData.date, lat, lng}} />
 
+              {settings.interface?.orbMultiplier && (
+                <div className={s.aspectLine}>
+                  Orb multiplier:
+                  <input
+                    type="range"
+                    id="aspectLine"
+                    name="aspectLine"
+                    min="1"
+                    max="7"
+                    value={settings.interface.aspectOrb ?? 4}
+                    onChange={e => {
+                      const s = {
+                        ...settings,
+                        interface: {
+                          ...settings.interface,
+                          aspectOrb: +e.target.value
+                        }
+                      }
+                      setSettings(s)
+
+                      LS.setItem('settings', JSON.stringify(s))
+                    }}
+                  />
+                  {(100 * (settings.interface.aspectOrb ?? 4)) / 4}%
+                </div>
+              )}
+            </section>
+
+            <section className={s.right}>
               <div className={s.tablesSelector}>
                 <button
                   disabled={settings.interface?.planets == 'modern'}
@@ -199,9 +228,7 @@ function App() {
                   hours
                 </button>
               </div>
-            </section>
 
-            <section className={s.right}>
               {settings.interface?.planets == 'traditional' && (
                 <TraditionalPlanetsTable
                   lat={lat}

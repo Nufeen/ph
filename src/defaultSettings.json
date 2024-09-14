@@ -24,7 +24,9 @@
   },
   "interface": {
     "planets": "modern",
-    "elements": true
+    "elements": true,
+    "aspectOrb": 4,
+    "orbMultiplier": true
   },
   "chartType": "natal"
 }

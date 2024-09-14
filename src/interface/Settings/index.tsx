@@ -70,6 +70,18 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  function handleOrbMultiplierVisibility() {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        orbMultiplier: !settings.interface.orbMultiplier
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
   return (
     <div className={s.wrapper}>
       <table className={s.planetes}>
@@ -164,6 +176,27 @@ const PlanetCheckboxTable = () => {
                 type="checkbox"
                 checked={settings.interface?.elements}
                 onChange={handleElementsVisibility}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table className={s.orb}>
+        <thead className={s.thead}>
+          <tr>
+            <th>Orb multiplier</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Show</td>
+            <td>
+              <input
+                type="checkbox"
+                checked={settings.interface?.orbMultiplier}
+                onChange={handleOrbMultiplierVisibility}
               />
             </td>
           </tr>

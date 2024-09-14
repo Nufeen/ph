@@ -305,6 +305,10 @@ function Planets({calendarDay, zero, x0, y0}) {
 function TransitAspects({calendarDay, zero, x0, y0}) {
   const {horoscope, transitHoroscope} = useContext(CelestialContext)
 
+  const {settings} = useContext(SettingContext)
+
+  const threshold = settings.interface.aspectOrb ?? 4
+
   const A = horoscope.CelestialBodies.all.map(
     x => x.ChartPosition.Ecliptic.DecimalDegrees
   )
@@ -313,7 +317,6 @@ function TransitAspects({calendarDay, zero, x0, y0}) {
   )
 
   const AT = []
-  const threshold = 4
 
   A.forEach(a => {
     B.forEach(b => {
@@ -364,6 +367,8 @@ function TransitAspects({calendarDay, zero, x0, y0}) {
 function Aspects({calendarDay, zero, x0, y0}) {
   const {settings} = useContext(SettingContext)
 
+  const M = settings.interface.aspectOrb
+
   const l = (Object.keys(planets) as P[]).filter(
     key => settings.objects.planets[key]
   )
@@ -372,7 +377,7 @@ function Aspects({calendarDay, zero, x0, y0}) {
     a[i] = a[i] || []
 
     l.forEach((planet2, j) => {
-      if (i <= j) a[i][j] = checkAspect(planet1, planet2, calendarDay)
+      if (i <= j) a[i][j] = checkAspect(planet1, planet2, calendarDay, M)
     })
 
     return a
@@ -425,7 +430,7 @@ function pos(body: keyof typeof Body, date: Date) {
   return pos.elon
 }
 
-function checkAspect(planet1, planet2, calendarDay) {
+function checkAspect(planet1, planet2, calendarDay, M) {
   if (planet1 == planet2) {
     return 0
   }
@@ -462,7 +467,7 @@ function checkAspect(planet1, planet2, calendarDay) {
     return exact > 2 ? -2 : 2
   }
 
-  const inorb = aspects.findIndex(x => x < orb) + 1
+  const inorb = aspects.findIndex(x => x < (orb * M) / 4) + 1
 
   if (inorb) {
     return inorb > 2 ? -1 : 1
