@@ -1,6 +1,9 @@
-import {useEffect, useRef, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 import {countries, getCitiesByCountryCode} from 'country-city-location'
 import s from './index.module.css'
+import {SettingContext} from '../../SettingContext'
+
+import {CelestialContext} from '../../CelestialContext'
 
 function valid(dateString: string) {
   const date = new Date(dateString)
@@ -13,134 +16,183 @@ export default function ControlPane(props) {
   const inputRef = useRef(null)
   const cityRef = useRef(null)
 
-  const [country, setCountry] = useState(LS.getItem('country') ?? null)
+  const {settings, setSettings} = useContext(SettingContext)
+  const {natalData, transitData} = useContext(CelestialContext)
 
-  let cities = (country && getCitiesByCountryCode(country)) ?? []
+  function deriveCitiesFrom(country) {
+    let cities = (country && getCitiesByCountryCode(country)) ?? []
 
-  let uniqueNames = new Set()
-  cities = cities.reduce((acc, item) => {
-    if (!uniqueNames.has(item.name)) {
-      uniqueNames.add(item.name)
-      acc.push(item)
-    }
-    return acc
-  }, [])
-
-  const [city, setCity] = useState(LS.getItem('city') ?? null)
-
-  useEffect(() => {
-    country && city && updateLatLng()
-  })
-
-  function handleCurrentTimeSetterClick() {
-    history.pushState(
-      '',
-      document.title,
-      window.location.pathname + window.location.search
-    )
-
-    inputRef.current.value = new Date().toISOString().slice(0, -5)
-
-    props.setDate(new Date())
+    let uniqueNames = new Set()
+    cities = cities.reduce((acc, item) => {
+      if (!uniqueNames.has(item.name)) {
+        uniqueNames.add(item.name)
+        acc.push(item)
+      }
+      return acc
+    }, [])
+    return cities
   }
 
-  function handleDateInput(e) {
+  const data = {
+    transit: transitData,
+    natal: natalData
+  }
+
+  const cities = {
+    transit: deriveCitiesFrom(transitData.country),
+    natal: deriveCitiesFrom(natalData.country)
+  }
+
+  const setter = {
+    transit: props.setTransitData,
+    natal: props.setNatalData
+  }
+
+  function handleCurrentTimeSetterClick(chartType) {
+    inputRef.current.value = new Date().toISOString().slice(0, -5)
+
+    setter[chartType]({
+      ...data[chartType],
+      date: new Date()
+    })
+  }
+
+  function handleDateInput(e, chartType) {
     if (!valid(e.target.value as string)) {
       return
     }
 
-    const x = new Date(e.target.value)
-    window.location.hash = e.target.value.toString()
-    props.setDate(x)
+    const date = new Date(e.target.value)
+
+    setter[chartType]({
+      ...data[chartType],
+      date
+    })
   }
 
-  function handleCitySelect(e) {
-    const name = e.target.value
-    LS.setItem('city', name)
-    setCity(name)
-    updateLatLng()
+  function handleCitySelect(e, chartType) {
+    const city = e.target.value
+    setter[chartType]({
+      ...data[chartType],
+      city
+    })
   }
 
-  function updateLatLng() {
-    const cc = cities?.find(x => x.name === city)
-    if (!cc) return
-    const {lat, lng} = cc
-    props.setLat(+lat)
-    props.setLng(+lng)
-  }
-
-  function handleCountrySelection(e) {
+  function handleCountrySelection(e, chartType) {
     const country = e.target.value
-    LS.setItem('country', country)
     let cities = getCitiesByCountryCode(country)
-    setCountry(country)
-    setCity(cities[0].name)
-    updateLatLng()
+
+    setter[chartType]({
+      ...data[chartType],
+      country,
+      city: cities[0].name
+    })
+  }
+
+  function swap() {
+    props.setNatalData(transitData)
+    props.setTransitData(natalData)
   }
 
   return (
     <div className={s.wrapper}>
-      <section>
-        <button
-          title="set time to current"
-          className={s.reset}
-          onClick={handleCurrentTimeSetterClick}
-        >
-          ⌛
+      {settings.chartType == 'transit' && (
+        <button onClick={swap} className={s.swap}>
+          ⇄
         </button>
+      )}
 
-        <input
-          ref={inputRef}
-          className={s.input}
-          type="datetime-local"
-          onInput={handleDateInput}
-          defaultValue={
-            valid(props.dateString)
-              ? props.dateString
-              : props.today.toISOString().substring(0, 16)
-          }
-        />
-      </section>
-
-      <section>
-        <select
-          className={s.select}
-          onChange={handleCountrySelection}
-          value={country}
+      <div className={s.chartTypeSelector}>
+        <button
+          disabled={settings.chartType == 'natal'}
+          onClick={() => {
+            const s = {
+              ...settings,
+              chartType: 'natal'
+            }
+            setSettings(s)
+            LS.setItem('settings', JSON.stringify(s))
+          }}
         >
-          <option disabled value={null}>
-            Location
-          </option>
-          {countries.map((x, i) => (
-            <option key={i} value={x.Alpha2Code}>
-              {x.Name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          ref={cityRef}
-          disabled={country == null}
-          className={s.select}
-          onChange={handleCitySelect}
-          value={city}
+          Natal
+        </button>
+        <button
+          disabled={settings.chartType == 'transit'}
+          onClick={() => {
+            const s = {
+              ...settings,
+              chartType: 'transit'
+            }
+            setSettings(s)
+            LS.setItem('settings', JSON.stringify(s))
+          }}
         >
-          <option disabled value="aa">
-            Location
-          </option>
-          {cities.map(x => (
-            <option key={x.name} value={x.name}>
-              {x.name}
-            </option>
-          ))}
-        </select>
-      </section>
-      <section className={s.transitInfo}>
-        <span></span>
-        <span>
-          {props.lat.toFixed(2)}, {props.lng.toFixed(2)}
-        </span>
-      </section>
+          Transit
+        </button>
+      </div>
+
+      {(settings.chartType == 'natal' ? ['natal'] : ['natal', 'transit']).map(
+        chartType => (
+          <section key={chartType}>
+            <button
+              title="set time to current"
+              className={s.reset}
+              onClick={() => handleCurrentTimeSetterClick(chartType)}
+            >
+              ⌛
+            </button>
+
+            <input
+              key={data[chartType].date}
+              ref={inputRef}
+              className={s.input}
+              type="datetime-local"
+              onInput={e => handleDateInput(e, chartType)}
+              defaultValue={data[chartType].date.toISOString().substring(0, 16)}
+            />
+
+            <select
+              onChange={e => handleCountrySelection(e, chartType)}
+              value={data[chartType].country ?? ''}
+            >
+              <option disabled value={null}>
+                Location
+              </option>
+              {countries.map((x, i) => (
+                <option key={i} value={x.Alpha2Code}>
+                  {x.Name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              ref={cityRef}
+              disabled={data[chartType].country == null}
+              onChange={e => handleCitySelect(e, chartType)}
+              value={data[chartType].city ?? ''}
+            >
+              <option disabled value="aa">
+                Location
+              </option>
+              {cities[chartType].map(x => (
+                <option key={x.name} value={x.name}>
+                  {x.name}
+                </option>
+              ))}
+            </select>
+
+            {false && (
+              <div className={s.transitInfo}>
+                <span></span>
+                <span>
+                  {/* TODO */}
+                  {/* {props.lat.toFixed(2)}, {props.lng.toFixed(2)} */}
+                </span>
+              </div>
+            )}
+          </section>
+        )
+      )}
     </div>
   )
 }

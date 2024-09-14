@@ -1,14 +1,10 @@
-import React, {useContext} from 'react'
-import {getSunrise, getSunset} from 'sunrise-sunset-js'
-import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
+import {useContext} from 'react'
 
 import {CelestialContext} from '../../../CelestialContext.js'
 
 import {SettingContext} from '../../../SettingContext.js'
 
 import s from './index.module.css'
-
-type Props = {lat: number; lng: number; calendarDay: Date; today: Date}
 
 const icons = {
   Aries: '♈︎︎',
@@ -40,7 +36,7 @@ const romanNumbers = [
   'XII'
 ]
 
-export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
+export default function ModernPlanetsTable() {
   const {horoscope, stars} = useContext(CelestialContext)
 
   const {settings} = useContext(SettingContext)
@@ -49,6 +45,7 @@ export default function ModernPlanetsTable({lat, lng, calendarDay, today}) {
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
+          <th></th>
           <th></th>
           <th className={s.sign}></th>
           <th></th>

@@ -15,6 +15,9 @@ import planets from '../../assets/planets.json'
 import houses from '../../assets/houses.json'
 
 import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
+import {CelestialContext} from '../../CelestialContext.js'
+
+import TransitPlanets from './TransitPlanets/index.js'
 
 const {sin, cos, abs} = Math
 
@@ -26,37 +29,6 @@ type Props = {
   calendarDay: Date
   lat: number
   lng: number
-}
-
-function getHouse(calendarDay: Date, latitude: number, longitude: number) {
-  const year = calendarDay.getFullYear()
-  const month = calendarDay.getMonth()
-  const date = calendarDay.getDate()
-  const hour = calendarDay.getHours()
-  const minute = calendarDay.getMinutes()
-
-  const origin = new Origin({
-    year,
-    month, // 0 = January, 11 = December!
-    date,
-    hour,
-    minute,
-    latitude,
-    longitude
-  })
-
-  const horoscope = new Horoscope({
-    origin: origin,
-    houseSystem: 'placidus',
-    zodiac: 'tropical',
-    aspectPoints: ['bodies', 'points', 'angles'],
-    aspectWithPoints: ['bodies', 'points', 'angles'],
-    aspectTypes: ['major', 'minor'],
-    customOrbs: {},
-    language: 'en'
-  })
-
-  return horoscope.Houses
 }
 
 export default function Zodiac(props: Props) {
@@ -103,11 +75,21 @@ export default function Zodiac(props: Props) {
           </text>
         ))}
 
-        <Houses {...{calendarDay, zero, x0, y0, lat, lng}} />
+        <Houses {...{zero, x0, y0}} />
         <Planets {...{calendarDay, zero, x0, y0}} />
         <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
-        <Aspects {...{calendarDay, zero, x0, y0}} />
 
+        {settings.chartType == 'natal' && (
+          <Aspects {...{calendarDay, zero, x0, y0}} />
+        )}
+
+        {settings.chartType == 'transit' && (
+          <TransitAspects {...{calendarDay, zero, x0, y0}} />
+        )}
+
+        {settings.chartType == 'transit' && (
+          <TransitPlanets {...{zero, x0, y0}} />
+        )}
         {settings.objects.celestialPoints?.fixedStars?.chart && (
           <Stars {...{calendarDay, zero, x0, y0}} />
         )}
@@ -116,13 +98,16 @@ export default function Zodiac(props: Props) {
   )
 }
 
-function Houses({calendarDay, zero, x0, y0, lat, lng}) {
-  const H = getHouse(calendarDay, lat, lng)
+function Houses({zero, x0, y0}) {
+  const {horoscope, chart: latlng} = useContext(CelestialContext)
+
+  const {lat, lng} = latlng.natal
 
   if (!lat && !lng) return null
 
   function deg(i) {
-    const x = H[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
+    const x =
+      horoscope.Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
     return ((x + zero) * 3.14) / 180
   }
 
@@ -131,7 +116,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
 
   return (
     <>
-      {H.map((_, i) => (
+      {horoscope.Houses.map((_, i) => (
         <line
           key={i}
           stroke="violet"
@@ -143,7 +128,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
         />
       ))}
 
-      {H.map((_, i) => (
+      {horoscope.Houses.map((_, i) => (
         <text
           fill="violet"
           fontSize={5}
@@ -155,7 +140,7 @@ function Houses({calendarDay, zero, x0, y0, lat, lng}) {
         >
           {i % 3
             ? ''
-            : `${A[i]} ${~~(H[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
+            : `${A[i]} ${~~(horoscope.Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
         </text>
       ))}
     </>
@@ -279,29 +264,99 @@ function Planets({calendarDay, zero, x0, y0}) {
       {Object.entries(planets)
         .filter(([key]) => settings.objects.planets[key])
         .map(([key, value]: any) => (
-          <text
-            data-planet={key}
-            data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
-            data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
-            className={s.planet}
-            key={key}
-            fill="currentColor"
-            x={
-              x0 -
-              5 +
-              (88 + (key == 'Sun' ? -10 : 0) + (key == 'Moon' ? -7 : 0)) *
-                sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
-            }
-            y={
-              y0 +
-              5 +
-              +(85 + (key == 'Sun' ? -10 : 0)) *
-                cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
-            }
-          >
-            {value}
-          </text>
+          <>
+            <text
+              data-planet={key}
+              data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
+              data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
+              className={s.planet}
+              key={key}
+              fill="currentColor"
+              x={
+                x0 -
+                5 +
+                (88 + (key == 'Sun' ? -10 : 0) + (key == 'Moon' ? -7 : 0)) *
+                  sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+              }
+              y={
+                y0 +
+                5 +
+                +(85 + (key == 'Sun' ? -10 : 0)) *
+                  cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+              }
+            >
+              {value}
+            </text>
+            <circle
+              data-planet={key}
+              key={'c' + key}
+              fill="currentColor"
+              strokeWidth="3"
+              cx={x0 + 70 * sin(((pos(key, calendarDay) + zero) * 3.14) / 180)}
+              cy={y0 + 70 * cos(((pos(key, calendarDay) + zero) * 3.14) / 180)}
+              r="1"
+            />
+          </>
         ))}
+    </>
+  )
+}
+
+function TransitAspects({calendarDay, zero, x0, y0}) {
+  const {horoscope, transitHoroscope} = useContext(CelestialContext)
+
+  const A = horoscope.CelestialBodies.all.map(
+    x => x.ChartPosition.Ecliptic.DecimalDegrees
+  )
+  const B = transitHoroscope.CelestialBodies.all.map(
+    x => x.ChartPosition.Ecliptic.DecimalDegrees
+  )
+
+  const AT = []
+  const threshold = 4
+
+  A.forEach(a => {
+    B.forEach(b => {
+      const aspect = aspectBetween(a, b)
+      if (aspect) {
+        AT.push(aspect)
+      }
+    })
+  })
+
+  function aspectBetween(a, b) {
+    const d = abs(a - b)
+
+    if (d < 50 || d > 125) return null
+
+    if (d % 30 < threshold) {
+      return {
+        a,
+        b,
+        d: d % 30
+      }
+    }
+
+    return null
+  }
+
+  function deg(x) {
+    return ((x + zero) * 3.14) / 180
+  }
+
+  return (
+    <>
+      {AT.map(({a, b, d}) => (
+        <line
+          key={JSON.stringify([a, b])}
+          x1={x0 + 70 * sin(deg(a))}
+          y1={y0 + 70 * cos(deg(a))}
+          x2={x0 + 70 * sin(deg(b))}
+          y2={y0 + 70 * cos(deg(b))}
+          stroke={abs(a - b) % 45 < 3 ? 'red' : 'deepskyblue'}
+          strokeWidth={d < 1 ? 1 : 0.3}
+        />
+      ))}
     </>
   )
 }

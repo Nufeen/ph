@@ -11,19 +11,35 @@
   width: 100%;
 }
 
+.layout section.right,
+.layout section.left {
+  display: flex;
+  align-items: center;
+}
+
+.layout section.left {
+  width: 90%;
+  display: flex;
+  align-items: center;
+}
+
+.layout section.center {
+  width: 130%;
+}
+
 .layout section > svg {
   width: 100%;
   height: auto;
 }
 
-.tables {
+.center {
   position: relative;
 }
 
 .tablesSelector {
   position: absolute;
-  top: 0;
-  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 @media (max-width: 500px) {
@@ -46,24 +62,19 @@
 }
 
 .header {
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 10;
   display: flex;
   justify-content: center;
+  max-width: 100%;
 }
 
-.header section {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.8em;
-  padding: 0;
-}
-
-.header section + section {
-  margin-top: 5px;
+@media screen and (max-width: 800px) {
+  .hours {
+    display: flex;
+    flex-direction: column-reverse;
+  }
 }
 
 .select,

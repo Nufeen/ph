@@ -21,15 +21,16 @@ import {CelestialContext} from './CelestialContext.js'
 
 import defaultSettings from './defaultSettings.json'
 
-function valid(dateString: string) {
-  const date = new Date(dateString)
-  return date instanceof Date && !isNaN(+date)
-}
+import {getCitiesByCountryCode} from 'country-city-location'
 
 const LS = window.localStorage
 
 /**
  * Layout and global state is set here
+ *
+ * -> time and place of both maps are kept in uri params in order to save bookmark
+ * -> all horoscope data is then shared via CelestialContext
+ * -> user ui settings are kept in local storage and shared via SettingContext
  */
 function App() {
   const localSavedSettings = JSON.parse(LS.getItem('settings'))
@@ -43,9 +44,6 @@ function App() {
 
   const settingsContextValue = {settings, setSettings}
 
-  const [lat, setLat] = useState(0)
-  const [lng, setLng] = useState(0)
-
   /**
    * Setting cenered scroll position on mobile phones
    */
@@ -55,31 +53,95 @@ function App() {
   }, [])
 
   /**
-   * Time management
+   * Time and location management
    */
-  const dateString = window.location.hash.replace('#', '')
-  const now = valid(dateString) ? new Date(dateString) : new Date()
+  const urlParams = new URLSearchParams(window.location.search)
 
-  const [date, setDate] = useState(now)
+  const LSNatalData = JSON.parse(LS.getItem('natalData'))
+  const LSTransitData = JSON.parse(LS.getItem('transitData'))
 
-  const calendarDay = date
-  const cDaySunrise = getSunrise(lat, lng, calendarDay)
-  const morning = calendarDay.getTime() < cDaySunrise.getTime() // for planet hours
-  const today = morning ? new Date(+new Date() - 86400000) : calendarDay
+  const [natalData, setNatalData] = useState({
+    city: urlParams.get('city') ?? LSNatalData.city ?? null,
+    country: urlParams.get('country') ?? LSNatalData.country ?? null,
+    date:
+      (urlParams.get('date') ? new Date(+urlParams.get('date')) : null) ??
+      new Date(LSNatalData.date) ??
+      new Date()
+  })
 
-  const horoscope = getHoroscope(date, lat, lng)
+  const [transitData, setTransitData] = useState({
+    city: urlParams.get('city2') ?? LSTransitData.city ?? null,
+    country: urlParams.get('country2') ?? LSTransitData.country ?? null,
+    date:
+      (urlParams.get('date2') ? new Date(+urlParams.get('date')) : null) ??
+      new Date(LSTransitData.date) ??
+      new Date()
+  })
 
-  /**
-   * TODO move to separate component: Planets/ModernitySelector
-   */
-  function modernPlanets() {
-    const s = {...settings, interface: {planets: 'modern'}}
-    setSettings(s)
-    LS.setItem('settings', JSON.stringify(s))
+  const url = new URL(window.location.toString())
+
+  Object.entries(natalData).forEach(
+    ([k, v]) => void url.searchParams.set(k, v.toString())
+  )
+
+  url.searchParams.set('date', (+natalData.date).toString())
+
+  window.history.pushState({}, '', url)
+
+  LS.setItem('natalData', JSON.stringify(natalData))
+  LS.setItem('transitData', JSON.stringify(transitData))
+
+  const {country, city} = natalData
+
+  let cities = (country && getCitiesByCountryCode(country)) ?? []
+
+  let uniqueNames = new Set()
+  cities = cities.reduce((acc, item) => {
+    if (!uniqueNames.has(item.name)) {
+      uniqueNames.add(item.name)
+      acc.push(item)
+    }
+    return acc
+  }, [])
+
+  const {lat, lng} = deriveLatLngFromLocation(city)
+
+  const latlng = {
+    natal: deriveLatLngFromLocation(natalData.city),
+    transit: deriveLatLngFromLocation(transitData.city)
   }
 
-  function traditionalPlanets() {
-    const s = {...settings, interface: {planets: 'traditional'}}
+  function deriveLatLngFromLocation(city) {
+    const cc = cities?.find(x => x.name === city)
+    if (!cc) return {lat: 0, lng: 0}
+    return {lat: +cc.lat, lng: +cc.lng}
+  }
+
+  const horoscope = getHoroscope(
+    natalData.date,
+    latlng.natal.lat,
+    latlng.natal.lng
+  )
+
+  const transitHoroscope = getHoroscope(
+    transitData.date,
+    latlng.transit.lat,
+    latlng.transit.lng
+  )
+
+  /**
+   * Planetary hours
+   */
+  const cDaySunrise = getSunrise(
+    latlng.natal.lat,
+    latlng.natal.lng,
+    natalData.date
+  )
+  const morning = natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
+  const today = morning ? new Date(+new Date() - 86400000) : natalData.date
+
+  function selectPlanetsTable(planets) {
+    const s = {...settings, interface: {planets}}
     setSettings(s)
     LS.setItem('settings', JSON.stringify(s))
   }
@@ -87,65 +149,78 @@ function App() {
   return (
     <SettingContext.Provider value={settingsContextValue}>
       <CelestialContext.Provider
-        value={{horoscope, stars: connectedStars(calendarDay)}}
+        value={{
+          horoscope,
+          transitHoroscope,
+          stars: connectedStars(natalData.date),
+          natalData,
+          transitData,
+          chart: latlng
+        }}
       >
-        <div className={s.Hours}>
+        <div className={s.hours}>
           <header className={s.header}>
             <ControlPane
-              {...{setLat, setLng, setDate, lat, lng, dateString, today}}
+              {...{
+                setNatalData,
+                setTransitData
+              }}
             />
           </header>
 
           <main className={s.layout} dir="ltr">
-            <section>
+            <section className={s.left}>
               <Settings />
             </section>
 
-            <section className={s.tables} ref={el => (center.current = el)}>
+            <section className={s.center} ref={el => (center.current = el)}>
               {settings.interface?.elements && (
                 <ElementsTable {...{horoscope}} />
               )}
-              <Zodiac {...{calendarDay, lat, lng}} />
+              <Zodiac {...{calendarDay: natalData.date, lat, lng}} />
 
               <div className={s.tablesSelector}>
                 <button
                   disabled={settings.interface?.planets == 'modern'}
-                  onClick={modernPlanets}
+                  onClick={() => selectPlanetsTable('modern')}
                 >
                   modern
                 </button>
                 <button
                   disabled={settings.interface?.planets == 'traditional'}
-                  onClick={traditionalPlanets}
+                  onClick={() => selectPlanetsTable('traditional')}
                 >
                   traditional
                 </button>
+                <button
+                  disabled={settings.interface?.planets == 'hours'}
+                  onClick={() => selectPlanetsTable('hours')}
+                >
+                  hours
+                </button>
               </div>
+            </section>
+
+            <section className={s.right}>
               {settings.interface?.planets == 'traditional' && (
                 <TraditionalPlanetsTable
                   lat={lat}
                   lng={lng}
-                  calendarDay={calendarDay}
+                  calendarDay={natalData.date}
                   today={today}
                 />
               )}
               {settings.interface?.planets == 'modern' && (
-                <ModernPlanetsTable
+                <ModernPlanetsTable />
+              )}
+              {settings.interface?.planets == 'hours' && (
+                <HourTable
                   lat={lat}
                   lng={lng}
-                  calendarDay={calendarDay}
+                  calendarDay={natalData.date}
                   today={today}
                 />
               )}
-            </section>
-
-            <section>
-              <HourTable
-                lat={lat}
-                lng={lng}
-                calendarDay={calendarDay}
-                today={today}
-              />
             </section>
           </main>
         </div>

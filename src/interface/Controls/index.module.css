@@ -1,45 +1,118 @@
 .wrapper {
   display: grid;
 
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 40px 1fr 1fr;
 
   grid-template-areas:
-    'bottom bottom'
-    'section1 section2';
+    'typeselector typeselector typeselector typeselector typeselector'
+    'section1 section1 swap section2 section2'
+    'info1 info1 swap info2  info2';
 
-  column-gap: 10px;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr 1fr 50px;
 
-  max-width: 900px;
+    grid-template-areas:
+      'typeselector typeselector swap'
+      'section1 section1 section1'
+      'info1 info1 info1'
+      'section2 section2 section2'
+      'info2 info2 info2';
+  }
+
+  gap: 10px;
+
+  max-width: min(900px, 100vw);
+  overflow: hidden;
   margin-bottom: 10px;
 
   font-size: 0.9em;
+
+  select,
+  input {
+    min-height: 25px;
+    background: transparent;
+    border: 1px solid gray;
+    border-radius: 6px;
+    padding: 6px 5px;
+    appearance: none;
+  }
+
+  input {
+    padding: 2px 5px;
+  }
 }
 
-.wrapper section {
+.wrapper > section {
   margin: 0;
   padding: 0;
+  display: grid;
+  gap: 10px;
+
+  grid-template-columns: 25px 1fr 1fr;
+
+  grid-template-areas:
+    'reset time time'
+    'nothing country city'
+    'nothing info info';
+
+  max-width: 100%;
+  overflow: hidden;
+
+  & > input {
+    grid-area: time;
+  }
+
+  select {
+    grid-area: country;
+    width: 100%;
+  }
+
+  select:nth-of-type(2) {
+    grid-area: city;
+  }
 }
 
-.wrapper section:first-child {
+.wrapper section:first-of-type {
   grid-area: section1;
 }
 
-.wrapper section:nth-child(2) {
+.wrapper section:nth-of-type(2) {
   grid-area: section2;
-  display: block;
 }
 
 .transitInfo {
-  grid-area: bottom;
+  grid-area: info;
+  line-height: 1em;
+  font-size: 0.7em;
+  opacity: 0.6;
+}
+
+.transitInfo2 {
+  grid-area: info1;
   line-height: 1em;
 }
 
 .reset {
   padding: 5px;
+  grid-area: reset;
 }
 
-.select,
-.input {
+.chartTypeSelector {
+  grid-area: typeselector;
   width: 100%;
-  max-width: 100%;
+  padding-left: 35px;
+  padding-top: 10px;
+  button + button {
+    margin-left: 10px;
+  }
+}
+
+.swap {
+  grid-area: swap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  padding: 10px;
+  max-width: 30px;
 }
