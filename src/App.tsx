@@ -61,20 +61,20 @@ function App() {
   const LSTransitData = JSON.parse(LS.getItem('transitData'))
 
   const [natalData, setNatalData] = useState({
-    city: urlParams.get('city') ?? LSNatalData.city ?? null,
-    country: urlParams.get('country') ?? LSNatalData.country ?? null,
+    city: urlParams.get('city') ?? LSNatalData?.city ?? null,
+    country: urlParams.get('country') ?? LSNatalData?.country ?? null,
     date:
       (urlParams.get('date') ? new Date(+urlParams.get('date')) : null) ??
-      new Date(LSNatalData.date) ??
+      new Date(LSNatalData?.date) ??
       new Date()
   })
 
   const [transitData, setTransitData] = useState({
-    city: urlParams.get('city2') ?? LSTransitData.city ?? null,
-    country: urlParams.get('country2') ?? LSTransitData.country ?? null,
+    city: urlParams.get('city2') ?? LSTransitData?.city ?? null,
+    country: urlParams.get('country2') ?? LSTransitData?.country ?? null,
     date:
       (urlParams.get('date2') ? new Date(+urlParams.get('date')) : null) ??
-      new Date(LSTransitData.date) ??
+      new Date(LSTransitData?.date) ??
       new Date()
   })
 
