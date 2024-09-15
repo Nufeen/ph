@@ -65,7 +65,7 @@ function App() {
     country: urlParams.get('country') ?? LSNatalData?.country ?? null,
     date:
       (urlParams.get('date') ? new Date(+urlParams.get('date')) : null) ??
-      new Date(LSNatalData?.date) ??
+      (LSNatalData?.date && new Date(LSNatalData?.date)) ??
       new Date()
   })
 
@@ -74,7 +74,7 @@ function App() {
     country: urlParams.get('country2') ?? LSTransitData?.country ?? null,
     date:
       (urlParams.get('date2') ? new Date(+urlParams.get('date')) : null) ??
-      new Date(LSTransitData?.date) ??
+      (LSTransitData?.date && new Date(LSTransitData?.date)) ??
       new Date()
   })
 

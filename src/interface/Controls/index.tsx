@@ -151,7 +151,6 @@ export default function ControlPane(props) {
             >
               ⌛
             </button>
-
             <div className={s.checkboxWrapper}>
               houses
               <input
@@ -178,23 +177,24 @@ export default function ControlPane(props) {
                 }}
               />
             </div>
-
             <input
               key={data[chartType]?.city + shifter}
               ref={inputRef}
               className={s.input}
               type="datetime-local"
               onInput={e => handleDateInput(e, chartType)}
-              defaultValue={moment(data[chartType].date)
-                .tz(
-                  // TODO check country in case of several cities
-                  cityTimezones.lookupViaCity(data[chartType].city)[0]
-                    ?.timezone ?? ''
-                )
-                ?.format()
-                ?.substring(0, 16)}
+              defaultValue={
+                moment(data[chartType].date)
+                  .tz(
+                    // TODO check country in case of several cities
+                    cityTimezones.lookupViaCity(
+                      data[chartType]?.city || ''
+                    )?.[0]?.timezone ?? ''
+                  )
+                  ?.format()
+                  ?.substring(0, 16) ?? new Date().toUTCString()
+              }
             />
-
             <select
               onChange={e => handleCountrySelection(e, chartType)}
               value={data[chartType].country ?? ''}
@@ -208,7 +208,6 @@ export default function ControlPane(props) {
                 </option>
               ))}
             </select>
-
             <select
               ref={cityRef}
               disabled={data[chartType].country == null}
@@ -225,18 +224,17 @@ export default function ControlPane(props) {
               ))}
             </select>
 
-            {true && (
-              <div className={s.transitInfo}>
-                <span>
-                  {moment(data[chartType].date)
-                    .tz(
-                      cityTimezones.lookupViaCity(data[chartType].city)[0]
-                        ?.timezone ?? ''
-                    )
-                    ?.format('LLLL Z')}
-                </span>
-              </div>
-            )}
+            <div className={s.transitInfo}>
+              <span>
+                {moment(data[chartType]?.date)
+                  ?.tz(
+                    cityTimezones.lookupViaCity(
+                      data[chartType]?.city || ''
+                    )?.[0]?.timezone ?? ''
+                  )
+                  ?.format('LLLL Z')}
+              </span>
+            </div>
           </section>
         )
       )}

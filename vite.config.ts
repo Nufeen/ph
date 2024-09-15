@@ -5,7 +5,7 @@ import dsv from '@rollup/plugin-dsv'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "https://nufeen.github.io/ph/",
+  base: 'https://nufeen.github.io/ph/',
   build: {
     commonjsOptions: {
       transformMixedEsModules: true
@@ -14,7 +14,7 @@ export default defineConfig({
 
   plugins: [
     react(),
-    dsv(), 
+    dsv(),
     VitePWA({
       devOptions: {
         enabled: true,
@@ -23,7 +23,7 @@ export default defineConfig({
       },
 
       workbox: {
-        maximumFileSizeToCacheInBytes: 3000000
+        maximumFileSizeToCacheInBytes: 5000000
       },
 
       manifest: {
