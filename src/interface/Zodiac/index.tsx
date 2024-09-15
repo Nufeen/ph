@@ -79,7 +79,14 @@ export default function Zodiac(props: Props) {
           </text>
         ))}
 
-        <Houses {...{zero, x0, y0}} />
+        {settings.objects?.houses?.visibility?.natal && (
+          <Houses {...{zero, x0, y0}} chartType="natal" />
+        )}
+
+        {settings.objects?.houses?.visibility?.transit && (
+          <Houses {...{zero, x0, y0}} chartType="transit" />
+        )}
+
         <Planets {...{calendarDay, zero, x0, y0}} />
         <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
 
@@ -102,16 +109,25 @@ export default function Zodiac(props: Props) {
   )
 }
 
-function Houses({zero, x0, y0}) {
-  const {horoscope, chart: latlng} = useContext(CelestialContext)
+function Houses({zero, x0, y0, chartType}) {
+  const {
+    horoscope,
+    transitHoroscope,
+    chart: latlng
+  } = useContext(CelestialContext)
 
-  const {lat, lng} = latlng.natal
+  const {lat, lng} = latlng[chartType]
 
   if (!lat && !lng) return null
 
+  const H = {
+    natal: horoscope,
+    transit: transitHoroscope
+  }
+
   function deg(i) {
     const x =
-      horoscope.Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
+      H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
     return ((x + zero) * 3.14) / 180
   }
 
@@ -120,10 +136,10 @@ function Houses({zero, x0, y0}) {
 
   return (
     <>
-      {horoscope.Houses.map((_, i) => (
+      {H[chartType].Houses.map((_, i) => (
         <line
           key={i}
-          stroke="violet"
+          stroke={chartType == 'natal' ? 'violet' : 'gray'}
           strokeOpacity={i % 3 == 0 ? 0.6 : 0.3}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
@@ -132,9 +148,9 @@ function Houses({zero, x0, y0}) {
         />
       ))}
 
-      {horoscope.Houses.map((_, i) => (
+      {H[chartType].Houses.map((_, i) => (
         <text
-          fill="violet"
+          fill={chartType == 'natal' ? 'violet' : 'gray'}
           fontSize={5}
           opacity={0.6}
           fontWeight={'bold'}
@@ -144,7 +160,7 @@ function Houses({zero, x0, y0}) {
         >
           {i % 3
             ? ''
-            : `${A[i]} ${~~(horoscope.Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
+            : `${A[i]} ${~~(H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
         </text>
       ))}
     </>

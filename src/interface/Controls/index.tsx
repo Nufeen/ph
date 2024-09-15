@@ -97,9 +97,10 @@ export default function ControlPane(props) {
   return (
     <div className={s.wrapper}>
       {settings.chartType == 'transit' && (
-        <button onClick={swap} className={s.swap}>
-          ⇄
-        </button>
+        <div className={s.swap}>
+          <button onClick={swap}>⇄</button>
+          swap
+        </div>
       )}
 
       <div className={s.chartTypeSelector}>
@@ -141,6 +142,33 @@ export default function ControlPane(props) {
             >
               ⌛
             </button>
+
+            <div className={s.checkboxWrapper}>
+              houses
+              <input
+                type="checkbox"
+                className={s.cosmogram}
+                checked={settings.objects?.houses?.visibility[chartType]}
+                onChange={() => {
+                  const s = {
+                    ...settings,
+                    objects: {
+                      ...settings.objects,
+                      houses: {
+                        ...(settings.houses ?? {}),
+                        visibility: {
+                          ...(settings.objects?.houses?.visibility ?? {}),
+                          [chartType]:
+                            !settings.objects?.houses?.visibility[chartType]
+                        }
+                      }
+                    }
+                  }
+                  setSettings(s)
+                  LS.setItem('settings', JSON.stringify(s))
+                }}
+              />
+            </div>
 
             <input
               // key={data[chartType].date} // TODO shift

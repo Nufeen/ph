@@ -20,6 +20,12 @@
     "fixedStars": {
       "chart": true,
       "table": true
+    },
+    "houses": {
+      "visibility": {
+        "natal": true,
+        "transit": false
+      }
     }
   },
   "interface": {
