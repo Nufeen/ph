@@ -81,10 +81,11 @@ function App() {
   const url = new URL(window.location.toString())
 
   Object.entries(natalData).forEach(
-    ([k, v]) => void v && url.searchParams.set(k, v?.toString())
+    ([k, v]) => !!v && url.searchParams.set(k, v?.toString())
   )
 
-  url.searchParams.set('date', (+natalData?.date).toString())
+  !!natalData?.date &&
+    url.searchParams.set('date', (+natalData?.date).toString())
 
   window.history.pushState({}, '', url)
 

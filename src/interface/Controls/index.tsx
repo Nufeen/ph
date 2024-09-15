@@ -1,9 +1,17 @@
-import {useContext, useEffect, useRef, useState} from 'react'
-import {countries, getCitiesByCountryCode} from 'country-city-location'
-import s from './index.module.css'
-import {SettingContext} from '../../SettingContext'
+import {useContext, useRef} from 'react'
 
+import cityTimezones from 'city-timezones'
+import moment from 'moment-timezone'
+
+import {countries, getCitiesByCountryCode} from 'country-city-location'
+
+import {SettingContext} from '../../SettingContext'
 import {CelestialContext} from '../../CelestialContext'
+
+import s from './index.module.css'
+
+// for rerender of uncontrolled inputs
+let shifter = 0
 
 function valid(dateString: string) {
   const date = new Date(dateString)
@@ -92,6 +100,7 @@ export default function ControlPane(props) {
   function swap() {
     props.setNatalData(transitData)
     props.setTransitData(natalData)
+    shifter += 1
   }
 
   return (
@@ -171,12 +180,19 @@ export default function ControlPane(props) {
             </div>
 
             <input
-              // key={data[chartType].date} // TODO shift
+              key={data[chartType]?.city + shifter}
               ref={inputRef}
               className={s.input}
               type="datetime-local"
               onInput={e => handleDateInput(e, chartType)}
-              defaultValue={data[chartType].date.toISOString().substring(0, 16)}
+              defaultValue={moment(data[chartType].date)
+                .tz(
+                  // TODO check country in case of several cities
+                  cityTimezones.lookupViaCity(data[chartType].city)[0]
+                    ?.timezone ?? ''
+                )
+                ?.format()
+                ?.substring(0, 16)}
             />
 
             <select
@@ -209,12 +225,15 @@ export default function ControlPane(props) {
               ))}
             </select>
 
-            {false && (
+            {true && (
               <div className={s.transitInfo}>
-                <span></span>
                 <span>
-                  {/* TODO */}
-                  {/* {props.lat.toFixed(2)}, {props.lng.toFixed(2)} */}
+                  {moment(data[chartType].date)
+                    .tz(
+                      cityTimezones.lookupViaCity(data[chartType].city)[0]
+                        ?.timezone ?? ''
+                    )
+                    ?.format('LLLL Z')}
                 </span>
               </div>
             )}

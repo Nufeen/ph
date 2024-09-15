@@ -13,8 +13,8 @@ const {sin, cos, abs} = Math
 
 export default function Planets({calendarDay, zero, x0, y0}) {
   const sunPos = pos('Sun', calendarDay)
-  const {settings} = useContext(SettingContext)
 
+  const {settings} = useContext(SettingContext)
   const {horoscope} = useContext(CelestialContext)
 
   return (
@@ -22,13 +22,13 @@ export default function Planets({calendarDay, zero, x0, y0}) {
       {Object.entries(planets)
         .filter(([key]) => settings.objects.planets[key])
         .map(([key, value]: any) => (
-          <>
+          <g key={key + 'G'}>
             <text
               data-planet={key}
               data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
               data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
               className={s.planet}
-              key={key}
+              key={key + 'T'}
               fill="currentColor"
               x={
                 x0 -
@@ -50,14 +50,14 @@ export default function Planets({calendarDay, zero, x0, y0}) {
             </text>
             <circle
               data-planet={key}
-              key={'c' + key}
+              key={'ccv' + key}
               fill="currentColor"
               strokeWidth="3"
               cx={x0 + 70 * sin(((pos(key, calendarDay) + zero) * 3.14) / 180)}
               cy={y0 + 70 * cos(((pos(key, calendarDay) + zero) * 3.14) / 180)}
               r="1"
             />
-          </>
+          </g>
         ))}
     </>
   )
