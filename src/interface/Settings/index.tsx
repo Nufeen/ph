@@ -82,6 +82,18 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  function handleHouseSystemSelect(e) {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        houseSystem: e.target.value
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
   return (
     <div className={s.wrapper}>
       <table className={s.planetes}>
@@ -202,6 +214,21 @@ const PlanetCheckboxTable = () => {
           </tr>
         </tbody>
       </table>
+
+      <div className={s.houseSelector}>
+        <select
+          value={settings?.interface?.houseSystem ?? 'Placidus'}
+          onChange={handleHouseSystemSelect}
+        >
+          <option value="placidus">Placidus</option>
+          <option value="koch">Koch</option>
+          <option value="campanus">Campanus</option>
+          <option value="whole-sign">Whole-sign</option>
+          <option value="equal-house">Equal-house</option>
+          <option value="regiomontanus">Regiomontanus</option>
+          <option value="topocentric">Topocentric</option>
+        </select>
+      </div>
     </div>
   )
 }

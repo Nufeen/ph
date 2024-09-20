@@ -66,9 +66,11 @@ export default function ModernPlanetsTable() {
               <td className={s.house}>{romanNumbers[body.House?.id - 1]}</td>
               {settings.objects.celestialPoints?.fixedStars?.table && (
                 <td className={s.star}>
-                  {stars[body.label]
-                    .map(x => `${x.name} (${x.size})`)
-                    .join(', ')}
+                  <pre>
+                    {stars[body.label]
+                      .map(x => `${x.name} (${x.size})`)
+                      .join('\n')}
+                  </pre>
                 </td>
               )}
             </tr>

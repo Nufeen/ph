@@ -4,7 +4,8 @@
   grid-template-areas:
     'planetes fictive'
     'planetes other'
-    'planetes elements';
+    'planetes elements'
+    'orb house';
   column-gap: 10px;
   font-size: 0.9em;
   margin: 0 auto;
@@ -26,11 +27,20 @@
   grid-area: planetes;
 }
 
+.orb {
+  grid-area: orb;
+}
+
 .fictive {
   grid-area: fictive;
 }
 .other {
   grid-area: other;
+}
+
+.housseSelector {
+  grid-area: house;
+  display: block;
 }
 
 .wrapper hr {
@@ -49,4 +59,16 @@
 .wrapper input[type='checkbox'] {
   margin-top: 1px;
   display: block;
+}
+
+.houseSelector {
+  grid-area: house;
+
+  select {
+    min-height: 25px;
+    background: transparent;
+    border-radius: 6px;
+    padding: 6px 5px;
+    appearance: none;
+  }
 }

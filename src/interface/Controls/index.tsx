@@ -21,7 +21,10 @@ function valid(dateString: string) {
 const LS = window.localStorage
 
 export default function ControlPane(props) {
-  const inputRef = useRef(null)
+  const inputRef = {
+    transit: useRef(null),
+    natal: useRef(null)
+  }
   const cityRef = useRef(null)
 
   const {settings, setSettings} = useContext(SettingContext)
@@ -57,7 +60,7 @@ export default function ControlPane(props) {
   }
 
   function handleCurrentTimeSetterClick(chartType) {
-    inputRef.current.value = new Date().toISOString().slice(0, -5)
+    inputRef[chartType].current.value = new Date().toISOString().slice(0, -5)
 
     setter[chartType]({
       ...data[chartType],
@@ -179,7 +182,7 @@ export default function ControlPane(props) {
             </div>
             <input
               key={data[chartType]?.city + shifter}
-              ref={inputRef}
+              ref={inputRef[chartType]}
               className={s.input}
               type="datetime-local"
               onInput={e => handleDateInput(e, chartType)}

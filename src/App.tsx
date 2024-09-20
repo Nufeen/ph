@@ -121,13 +121,15 @@ function App() {
   const horoscope = getHoroscope(
     natalData.date,
     latlng.natal.lat,
-    latlng.natal.lng
+    latlng.natal.lng,
+    settings?.interface?.houseSystem
   )
 
   const transitHoroscope = getHoroscope(
     transitData.date,
     latlng.transit.lat,
-    latlng.transit.lng
+    latlng.transit.lng,
+    settings?.interface?.houseSystem
   )
 
   /**

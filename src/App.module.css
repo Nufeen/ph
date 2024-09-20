@@ -49,6 +49,7 @@
 @media (max-width: 900px) {
   .layout {
     width: 100vw;
+    padding-bottom: 30px;
   }
 
   .layout section,
@@ -78,6 +79,7 @@
   .hours {
     display: flex;
     flex-direction: column-reverse;
+    gap: 22px;
   }
 }
 

@@ -32,7 +32,8 @@
     "planets": "modern",
     "elements": true,
     "aspectOrb": 4,
-    "orbMultiplier": true
+    "orbMultiplier": true,
+    "houseSystem": "placidus"
   },
   "chartType": "natal"
 }
