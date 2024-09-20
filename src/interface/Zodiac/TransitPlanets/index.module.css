@@ -1,10 +1,11 @@
 .transit.transit.transit {
-  stroke: rgb(175, 81, 46);
+  stroke: rgb(77, 223, 167);
 }
 
 .text {
   font-size: 8px;
   font-weight: normal;
+  font-family: monospace;
   stroke: unset;
-  fill: rgb(175, 81, 46);
+  fill: rgb(77, 223, 167);
 }

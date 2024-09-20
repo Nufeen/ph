@@ -42,6 +42,7 @@ export default function Zodiac(props: Props) {
 
         {l.map(i => (
           <line
+            opacity={0.5}
             key={i}
             x1={x0}
             y1={y0}
@@ -57,6 +58,7 @@ export default function Zodiac(props: Props) {
 
         {l.map(i => (
           <text
+            opacity={0.65}
             className={s.house}
             key={i}
             fill="currentColor"

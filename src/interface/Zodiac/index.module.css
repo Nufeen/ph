@@ -22,6 +22,7 @@
   stroke-width: 1px;
   stroke: currentColor;
   fill: none;
+  stroke: gray;
 }
 .figure circle.fictive {
   stroke-width: 1px;

@@ -26,7 +26,20 @@ export default function Houses({zero, x0, y0, chartType}) {
   }
 
   const l = 155
-  const A = ['ASC', 2, 3, 'IC', 5, 6, 'DSC', 8, 9, 'MC', 11, 12]
+  const A = [
+    'ASC',
+    'II',
+    'III',
+    'IC',
+    'V',
+    'VI',
+    'DSC',
+    'VIII',
+    'IX',
+    'MC',
+    'XI',
+    'XII'
+  ]
 
   return (
     <>
@@ -34,7 +47,7 @@ export default function Houses({zero, x0, y0, chartType}) {
         <line
           key={i}
           stroke={chartType == 'natal' ? 'violet' : 'gray'}
-          strokeOpacity={i % 3 == 0 ? 0.6 : 0.3}
+          strokeOpacity={i % 3 == 0 ? 0.7 : 0.5}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
           x2={x0 + l * sin(deg(i))}
@@ -46,15 +59,13 @@ export default function Houses({zero, x0, y0, chartType}) {
         <text
           fill={chartType == 'natal' ? 'violet' : 'gray'}
           fontSize={5}
-          opacity={0.6}
-          fontWeight={'bold'}
+          opacity={i % 3 == 0 ? 0.7 : 0.5}
+          fontWeight={i % 3 == 0 ? 'bold' : 'normal'}
           key={i}
           x={x0 + (l + 1) * sin(deg(i)) - 7}
           y={y0 + (l + 5) * cos(deg(i))}
         >
-          {i % 3
-            ? ''
-            : `${A[i]} ${~~(H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
+          {`${A[i]} ${~~(H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
         </text>
       ))}
     </>
