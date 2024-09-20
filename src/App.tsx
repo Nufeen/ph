@@ -102,7 +102,7 @@ function App() {
       uniqueNames.add(item.name)
       acc.push(item)
     }
-    return acc
+    return acc.sort((a, b) => a.name.localeCompare(b.name))
   }, [])
 
   const {lat, lng} = deriveLatLngFromLocation(city)

@@ -39,7 +39,7 @@ export default function ControlPane(props) {
         uniqueNames.add(item.name)
         acc.push(item)
       }
-      return acc
+      return acc.sort((a, b) => a.name.localeCompare(b.name))
     }, [])
     return cities
   }
