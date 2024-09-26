@@ -154,6 +154,7 @@ export default function ControlPane(props) {
             >
               ⌛
             </button>
+
             <div className={s.checkboxWrapper}>
               houses
               <input
@@ -200,9 +201,9 @@ export default function ControlPane(props) {
             />
             <select
               onChange={e => handleCountrySelection(e, chartType)}
-              value={data[chartType].country ?? ''}
+              value={data[chartType].country ?? null}
             >
-              <option disabled value={null}>
+              <option selected disabled value={null}>
                 Location
               </option>
               {countries.map((x, i) => (

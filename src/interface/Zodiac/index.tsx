@@ -46,8 +46,8 @@ export default function Zodiac(props: Props) {
             key={i}
             x1={x0}
             y1={y0}
-            x2={x0 + r * sin((i * 30 * 3.14 + zero) / 180)}
-            y2={y0 + r * cos((i * 30 * 3.14 + zero) / 180)}
+            x2={x0 + r * sin((i * 30 * 3.14 + zero - 3.14) / 180)}
+            y2={y0 + r * cos((i * 30 * 3.14 + zero - 3.14) / 180)}
             stroke="currentColor"
           />
         ))}

@@ -13,18 +13,18 @@ export default function TransitAspects({calendarDay, zero, x0, y0}) {
 
   const threshold = settings.interface.aspectOrb ?? 4
 
-  const A = horoscope.CelestialBodies.all
+  const N = horoscope.CelestialBodies.all
     .filter(planet => settings?.objects?.planets[planet?.label])
     .map(x => x.ChartPosition.Ecliptic.DecimalDegrees)
 
-  const B = transitHoroscope.CelestialBodies.all
+  const T = transitHoroscope.CelestialBodies.all
     .filter(planet => settings?.objects?.planets[planet?.label])
     .map(x => x.ChartPosition.Ecliptic.DecimalDegrees)
 
   const AT = []
 
-  A.forEach(a => {
-    B.forEach(b => {
+  N.forEach(a => {
+    T.forEach(b => {
       const aspect = aspectBetween(a, b)
       if (aspect) {
         AT.push(aspect)
@@ -33,9 +33,13 @@ export default function TransitAspects({calendarDay, zero, x0, y0}) {
   })
 
   function aspectBetween(a, b) {
-    const d = abs(a - b)
+    let d = a - b
 
-    if (d < 50 || (d > 125 && d < 170)) return null
+    if (d > 180) {
+      d = 360 - a + b
+    }
+
+    if (d < 50 || (d > 133 && d < 170) || d > 190) return null
 
     if (d % 30 < threshold) {
       return {

@@ -65,7 +65,16 @@ export default function Houses({zero, x0, y0, chartType}) {
           x={x0 + (l + 1) * sin(deg(i)) - 7}
           y={y0 + (l + 5) * cos(deg(i))}
         >
-          {`${A[i]} ${~~(H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees % 30)}°`}
+          {A[i]}
+          <tspan fontSize={4} dy="-4">
+            {
+              ~~(
+                H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic
+                  .DecimalDegrees % 30
+              )
+            }
+            °
+          </tspan>
         </text>
       ))}
     </>

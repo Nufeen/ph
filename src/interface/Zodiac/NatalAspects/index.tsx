@@ -76,7 +76,7 @@ function pos(body: keyof typeof Body, date: Date) {
   return pos.elon
 }
 
-function checkAspect(planet1, planet2, calendarDay, M) {
+function checkAspect(planet1, planet2, calendarDay, M = 4) {
   if (planet1 == planet2) {
     return 0
   }

@@ -38,6 +38,13 @@ text.planet {
   font-size: 9px;
   font-weight: bold;
   font-family: monospace;
+
+  & > tspan {
+    font-size: 3px;
+    display: inline-block;
+    margin-bottom: -2px;
+    vertical-align: bottom;
+  }
 }
 
 .planet[data-burn='true'] {
@@ -49,11 +56,4 @@ text.planet {
 
 .planet[data-planet='Sun'] {
   fill: gold;
-}
-
-tspan {
-  font-size: 3px;
-  display: inline-block;
-  margin-bottom: -2px;
-  vertical-align: bottom;
 }

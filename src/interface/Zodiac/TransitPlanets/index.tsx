@@ -44,6 +44,14 @@ export default function TransitPlanets({zero, x0, y0}) {
               cy={y0 + (l - 56) * cos(deg(planet))}
               r="1"
             />
+
+            <circle
+              className={s.transit}
+              cx={x0 + (l + 4) * sin(deg(planet))}
+              cy={y0 + (l + 4) * cos(deg(planet))}
+              r="1"
+            />
+
             <text
               className={s.text}
               x={x0 + (l + 11) * sin(deg(planet)) - 3}
@@ -52,6 +60,23 @@ export default function TransitPlanets({zero, x0, y0}) {
             >
               {icons[planet.label]}
               {planet.isRetrograde && <tspan dy="2">R</tspan>}
+            </text>
+
+            <text
+              className={s.text}
+              x={x0 + (l + 11) * sin(deg(planet)) + 2}
+              y={y0 + (l + 12) * cos(deg(planet)) - 4}
+              fontWeight={400}
+            >
+              {
+                <tspan dy="0">
+                  {
+                    planet.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
+                      ' '
+                    )[0]
+                  }
+                </tspan>
+              }
             </text>
           </>
         ))}

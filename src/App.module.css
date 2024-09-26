@@ -64,6 +64,10 @@
   padding: 0.4em 0.6em;
   font-size: 0.7em;
   cursor: pointer;
+
+  & + button {
+    margin-left: 5px;
+  }
 }
 
 .header {

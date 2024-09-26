@@ -144,7 +144,7 @@ function App() {
   const today = morning ? new Date(+new Date() - 86400000) : natalData.date
 
   function selectPlanetsTable(planets) {
-    const s = {...settings, interface: {planets}}
+    const s = {...settings, interface: {...settings.interface, planets}}
     setSettings(s)
     LS.setItem('settings', JSON.stringify(s))
   }
