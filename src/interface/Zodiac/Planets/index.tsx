@@ -48,6 +48,36 @@ export default function Planets({calendarDay, zero, x0, y0}) {
                 <tspan dy="2">R</tspan>
               )}
             </text>
+
+            <text
+              data-planet={key}
+              data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
+              data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
+              className={s.planet}
+              key={key + 'T'}
+              fill="currentColor"
+              x={
+                x0 -
+                4 +
+                (88 + (key == 'Sun' ? -10 : 0) + (key == 'Moon' ? -7 : 0)) *
+                  sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+              }
+              y={
+                y0 -
+                5 +
+                +(85 + (key == 'Sun' ? -10 : 0)) *
+                  cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+              }
+            >
+              <tspan dy="0">
+                {
+                  horoscope.CelestialBodies[
+                    key.toLowerCase()
+                  ].ChartPosition.Ecliptic.ArcDegreesFormatted30.split(' ')[0]
+                }
+              </tspan>
+            </text>
+
             <circle
               data-planet={key}
               key={'ccv' + key}
@@ -55,6 +85,16 @@ export default function Planets({calendarDay, zero, x0, y0}) {
               strokeWidth="3"
               cx={x0 + 70 * sin(((pos(key, calendarDay) + zero) * 3.14) / 180)}
               cy={y0 + 70 * cos(((pos(key, calendarDay) + zero) * 3.14) / 180)}
+              r="1"
+            />
+
+            <circle
+              data-planet={key}
+              key={'ccv' + key}
+              fill="currentColor"
+              strokeWidth="3"
+              cx={x0 + 100 * sin(((pos(key, calendarDay) + zero) * 3.14) / 180)}
+              cy={y0 + 100 * cos(((pos(key, calendarDay) + zero) * 3.14) / 180)}
               r="1"
             />
           </g>

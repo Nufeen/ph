@@ -48,6 +48,7 @@ export default function Houses({zero, x0, y0, chartType}) {
           key={i}
           stroke={chartType == 'natal' ? 'violet' : 'gray'}
           strokeOpacity={i % 3 == 0 ? 0.7 : 0.5}
+          strokeWidth={i % 3 == 0 ? 1 : 0.3}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
           x2={x0 + l * sin(deg(i))}

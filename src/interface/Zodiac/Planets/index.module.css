@@ -40,10 +40,11 @@ text.planet {
   font-family: monospace;
 
   & > tspan {
-    font-size: 3px;
+    font-size: 4px;
     display: inline-block;
     margin-bottom: -2px;
     vertical-align: bottom;
+    opacity: 0.5;
   }
 }
 
