@@ -33,13 +33,13 @@ export default function TransitAspects({calendarDay, zero, x0, y0}) {
   })
 
   function aspectBetween(a, b) {
-    let d = a - b
+    let d = abs(a - b)
 
-    if (d > 180) {
+    if (d > 170) {
       d = 360 - a + b
     }
 
-    if (d < 50 || (d > 133 && d < 170) || d > 190) return null
+    if (d < 50 || (d > 133 && d < 170)) return null
 
     if (d % 30 < threshold) {
       return {
@@ -65,7 +65,11 @@ export default function TransitAspects({calendarDay, zero, x0, y0}) {
           y1={y0 + 70 * cos(deg(a))}
           x2={x0 + 70 * sin(deg(b))}
           y2={y0 + 70 * cos(deg(b))}
-          stroke={abs(a - b) % 45 < 12 ? 'red' : 'deepskyblue'}
+          stroke={
+            abs(360 - a + b) % 45 < 10 || abs(a - b) % 45 < 10
+              ? 'red'
+              : 'deepskyblue'
+          }
           strokeWidth={d < 1 ? 1 : 0.3}
         />
       ))}
