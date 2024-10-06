@@ -70,18 +70,6 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleOrbMultiplierVisibility() {
-    const s = {
-      ...settings,
-      interface: {
-        ...settings.interface,
-        orbMultiplier: !settings.interface.orbMultiplier
-      }
-    }
-    setSettings(s)
-    LS.setItem('settings', JSON.stringify(s))
-  }
-
   function handleHouseSystemSelect(e) {
     const s = {
       ...settings,
@@ -203,13 +191,28 @@ const PlanetCheckboxTable = () => {
         </thead>
         <tbody>
           <tr>
-            <td>Show</td>
-            <td>
+            <td className={s.aspectLine}>
               <input
-                type="checkbox"
-                checked={settings.interface?.orbMultiplier}
-                onChange={handleOrbMultiplierVisibility}
+                type="range"
+                id="aspectLine"
+                name="aspectLine"
+                min="1"
+                max="8"
+                value={settings.interface.aspectOrb ?? 4}
+                onChange={e => {
+                  const s = {
+                    ...settings,
+                    interface: {
+                      ...settings.interface,
+                      aspectOrb: +e.target.value
+                    }
+                  }
+                  setSettings(s)
+
+                  LS.setItem('settings', JSON.stringify(s))
+                }}
               />
+              {(100 * (settings.interface.aspectOrb ?? 4)) / 4}%
             </td>
           </tr>
         </tbody>

@@ -181,33 +181,6 @@ function App() {
                 <ElementsTable {...{horoscope}} />
               )}
               <Zodiac {...{calendarDay: natalData.date, lat, lng}} />
-
-              {settings.interface?.orbMultiplier && (
-                <div className={s.aspectLine}>
-                  Orb multiplier:
-                  <input
-                    type="range"
-                    id="aspectLine"
-                    name="aspectLine"
-                    min="1"
-                    max="8"
-                    value={settings.interface.aspectOrb ?? 4}
-                    onChange={e => {
-                      const s = {
-                        ...settings,
-                        interface: {
-                          ...settings.interface,
-                          aspectOrb: +e.target.value
-                        }
-                      }
-                      setSettings(s)
-
-                      LS.setItem('settings', JSON.stringify(s))
-                    }}
-                  />
-                  {(100 * (settings.interface.aspectOrb ?? 4)) / 4}%
-                </div>
-              )}
             </section>
 
             <section className={s.right}>

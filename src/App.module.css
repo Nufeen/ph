@@ -102,29 +102,3 @@
   color: gray;
   font-size: 7px;
 }
-
-.aspectLine {
-  font-size: 0.8em;
-  line-height: 10px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  input {
-    appearance: none;
-    background: transparent;
-    position: relative;
-  }
-}
-
-.aspectLine input::after {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 5%;
-  width: 90%;
-  height: 1px;
-  background-color: gray;
-  margin: 0 auto;
-  z-index: -1;
-}
