@@ -10,6 +10,8 @@
 .hour {
   display: flex;
   text-align: center;
+  line-height: 1.3em;
+  font-size: 0.8em;
 }
 
 .hour > div {
@@ -18,7 +20,7 @@
 
 .hour > div:first-child {
   color: #888;
-  font-size: 0.8em;
+  font-size: 0.7em;
   padding-top: 1px;
   box-sizing: border-box;
 }

@@ -21,7 +21,7 @@
 
   gap: 10px;
 
-  max-width: min(900px, 100vw);
+  max-width: min(900px, 95%);
   overflow: hidden;
   margin-bottom: 10px;
 
