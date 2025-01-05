@@ -11,6 +11,13 @@
   width: 100%;
 }
 
+@media (min-width: 900px) {
+  .layout section:first-of-type {
+    width: auto;
+    max-width: 300px;
+  }
+}
+
 .layout section.right,
 .layout section.left {
   display: flex;

@@ -142,9 +142,25 @@ export default function ControlPane(props) {
         >
           Transit
         </button>
+
+        {settings?.flags?.graphic && (
+          <button
+            disabled={settings.chartType == 'graphic'}
+            onClick={() => {
+              const s = {
+                ...settings,
+                chartType: 'graphic'
+              }
+              setSettings(s)
+              LS.setItem('settings', JSON.stringify(s))
+            }}
+          >
+            Graphic
+          </button>
+        )}
       </div>
 
-      {(settings.chartType == 'natal' ? ['natal'] : ['natal', 'transit']).map(
+      {(settings.chartType == 'transit' ? ['natal', 'transit'] : ['natal']).map(
         chartType => (
           <section key={chartType}>
             <button

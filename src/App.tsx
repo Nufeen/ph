@@ -23,6 +23,8 @@ import defaultSettings from './defaultSettings.json'
 
 import {getCitiesByCountryCode} from 'country-city-location'
 
+import GraphicChart from './interface/Graphic'
+
 const LS = window.localStorage
 
 /**
@@ -161,7 +163,7 @@ function App() {
           chart: latlng
         }}
       >
-        <div className={s.hours}>
+        <div>
           <header className={s.header}>
             <ControlPane
               {...{
@@ -176,55 +178,65 @@ function App() {
               <Settings />
             </section>
 
-            <section className={s.center} ref={el => (center.current = el)}>
-              {settings.interface?.elements && (
-                <ElementsTable {...{horoscope}} />
-              )}
-              <Zodiac {...{calendarDay: natalData.date, lat, lng}} />
-            </section>
+            {settings.chartType != 'graphic' && (
+              <section className={s.center} ref={el => (center.current = el)}>
+                {settings.interface?.elements && (
+                  <ElementsTable {...{horoscope}} />
+                )}
+                <Zodiac {...{calendarDay: natalData.date, lat, lng}} />
+              </section>
+            )}
 
-            <section className={s.right}>
-              <div className={s.tablesSelector}>
-                <button
-                  disabled={settings.interface?.planets == 'modern'}
-                  onClick={() => selectPlanetsTable('modern')}
-                >
-                  modern
-                </button>
-                <button
-                  disabled={settings.interface?.planets == 'traditional'}
-                  onClick={() => selectPlanetsTable('traditional')}
-                >
-                  traditional
-                </button>
-                <button
-                  disabled={settings.interface?.planets == 'hours'}
-                  onClick={() => selectPlanetsTable('hours')}
-                >
-                  hours
-                </button>
-              </div>
+            {settings.chartType == 'graphic' && (
+              <section className={s.center} ref={el => (center.current = el)}>
+                <GraphicChart />
+              </section>
+            )}
 
-              {settings.interface?.planets == 'traditional' && (
-                <TraditionalPlanetsTable
-                  lat={lat}
-                  lng={lng}
-                  calendarDay={natalData.date}
-                  today={today}
-                />
-              )}
-              {settings.interface?.planets == 'modern' && (
-                <ModernPlanetsTable />
-              )}
-              {settings.interface?.planets == 'hours' && (
-                <HourTable
-                  lat={lat}
-                  lng={lng}
-                  calendarDay={natalData.date}
-                  today={today}
-                />
-              )}
-            </section>
+            {settings.chartType != 'graphic' && (
+              <section className={s.right}>
+                <div className={s.tablesSelector}>
+                  <button
+                    disabled={settings.interface?.planets == 'modern'}
+                    onClick={() => selectPlanetsTable('modern')}
+                  >
+                    modern
+                  </button>
+                  <button
+                    disabled={settings.interface?.planets == 'traditional'}
+                    onClick={() => selectPlanetsTable('traditional')}
+                  >
+                    traditional
+                  </button>
+                  <button
+                    disabled={settings.interface?.planets == 'hours'}
+                    onClick={() => selectPlanetsTable('hours')}
+                  >
+                    hours
+                  </button>
+                </div>
+
+                {settings.interface?.planets == 'traditional' && (
+                  <TraditionalPlanetsTable
+                    lat={lat}
+                    lng={lng}
+                    calendarDay={natalData.date}
+                    today={today}
+                  />
+                )}
+                {settings.interface?.planets == 'modern' && (
+                  <ModernPlanetsTable />
+                )}
+                {settings.interface?.planets == 'hours' && (
+                  <HourTable
+                    lat={lat}
+                    lng={lng}
+                    calendarDay={natalData.date}
+                    today={today}
+                  />
+                )}
+              </section>
+            )}
           </main>
         </div>
       </CelestialContext.Provider>
