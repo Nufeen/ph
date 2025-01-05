@@ -54,7 +54,7 @@ export default function Planets({calendarDay, zero, x0, y0}) {
               data-burn={abs(sunPos - pos(key, calendarDay)) < 4}
               data-in-mid-of-sun={abs(sunPos - pos(key, calendarDay)) < 0.4}
               className={s.planet}
-              key={key + 'T'}
+              key={key + 'Tt'}
               fill="currentColor"
               x={
                 x0 -
@@ -90,7 +90,7 @@ export default function Planets({calendarDay, zero, x0, y0}) {
 
             <circle
               data-planet={key}
-              key={'ccv' + key}
+              key={'ccv1' + key}
               fill="currentColor"
               strokeWidth="3"
               cx={x0 + 100 * sin(((pos(key, calendarDay) + zero) * 3.14) / 180)}

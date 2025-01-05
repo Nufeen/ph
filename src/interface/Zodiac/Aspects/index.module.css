@@ -1,0 +1,9 @@
+.line + text {
+  /* display: none; */
+  fill: blue !important;
+  stroke: blue;
+}
+
+.line:hover + text {
+  display: block;
+}

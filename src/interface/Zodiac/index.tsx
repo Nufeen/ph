@@ -1,10 +1,9 @@
 import Stars from './Stars'
 import TransitPlanets from './TransitPlanets/index.js'
 import Planets from './Planets/index.js'
-import TransitAspects from './TransitAspects/index.js'
+import TransitAspects from './Aspects/index.js'
 import Fictive from './FictivePoints/index.js'
 import Houses from './Houses/index.js'
-import Aspects from './NatalAspects/index.js'
 
 import {useContext} from 'react'
 import {SettingContext} from '../../SettingContext.js'
@@ -81,11 +80,12 @@ export default function Zodiac(props: Props) {
         <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
 
         {settings.chartType == 'natal' && (
-          <Aspects {...{calendarDay, zero, x0, y0}} />
+          // <Aspects {...{calendarDay, zero, x0, y0}} />
+          <TransitAspects {...{calendarDay, zero, x0, y0}} type="natal" />
         )}
 
         {settings.chartType == 'transit' && (
-          <TransitAspects {...{calendarDay, zero, x0, y0}} />
+          <TransitAspects {...{calendarDay, zero, x0, y0}} type="transit" />
         )}
 
         {settings.chartType == 'transit' && (

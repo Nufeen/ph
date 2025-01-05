@@ -13,8 +13,6 @@ const elementMap = {
   pisces: 'water'
 }
 
-const elements = {water: '🜄', fire: '🜂', earth: '🜃', air: '🜁'}
-
 export default function reduceToElements(horoscope) {
   return Object.values(horoscope.CelestialBodies).reduce((acc, body: any) => {
     const sign = body?.Sign?.key

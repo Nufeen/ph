@@ -1,4 +1,4 @@
-import {useContext} from 'react'
+import React, {useContext} from 'react'
 
 import s from './index.module.css'
 
@@ -37,7 +37,7 @@ export default function TransitPlanets({zero, x0, y0}) {
       {transitHoroscope.CelestialBodies.all
         .filter(planet => settings?.objects?.planets[planet?.label])
         .map(planet => (
-          <>
+          <React.Fragment key={planet?.label}>
             <circle
               className={s.transit}
               cx={x0 + (l - 56) * sin(deg(planet))}
@@ -78,7 +78,7 @@ export default function TransitPlanets({zero, x0, y0}) {
                 </tspan>
               }
             </text>
-          </>
+          </React.Fragment>
         ))}
     </>
   )

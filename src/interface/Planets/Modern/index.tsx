@@ -4,6 +4,8 @@ import {CelestialContext} from '../../../CelestialContext.js'
 
 import {SettingContext} from '../../../SettingContext.js'
 
+import React from 'react'
+
 import s from './index.module.css'
 
 const icons = {
@@ -68,8 +70,16 @@ export default function ModernPlanetsTable() {
                 <td className={s.star}>
                   <pre>
                     {stars[body.label]
-                      .map(x => `${x.name} (${x.size})`)
-                      .join('\n')}
+                      .sort((a, b) => (a.size > b.size ? 1 : -1))
+                      .filter((x, i) => i < 1)
+                      .map(x => (
+                        <React.Fragment key={x.name}>
+                          {x.name} ({x.size})
+                          <span className={s.starDetail}>
+                            {details[x.name]}
+                          </span>
+                        </React.Fragment>
+                      ))}
                   </pre>
                 </td>
               )}
@@ -78,4 +88,20 @@ export default function ModernPlanetsTable() {
       </tbody>
     </table>
   )
+}
+
+/**
+ * TODO parse descriptions from classic books
+ */
+const details = {
+  Rigel:
+    'Rigel has particular meaning when found in charts of government officials, military people, politicians, leaders of political parties, barristers and priests. Rigel gives splendor, honor, riches, and happiness to those who are born under it.',
+
+  Regulus: 'The heart of the Lion',
+
+  'Deneb Adige':
+    'A white star in the tail of the Swan. The native is mentally quick, psychic, and idealist, has a keen intellect, a very likable person, intelligent',
+
+  Unukalhai:
+    'Cor Serpentis, the Serpent’s Heart. It gives immorality, accidents, violence and danger of poison'
 }
