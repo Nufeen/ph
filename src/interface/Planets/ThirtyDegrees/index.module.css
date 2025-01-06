@@ -1,0 +1,99 @@
+.layout {
+  width: 90%;
+  height: 100px;
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: 'Noto Emoji';
+  font-weight: bold;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 12px;
+  color: silver;
+}
+
+.body,
+.tbody {
+  position: absolute;
+  border-left: 1px #241 solid;
+  height: 57px;
+  box-sizing: border-box;
+}
+
+.tbody {
+  border-left: 1px #522 solid;
+}
+
+.tbody span {
+  bottom: 0;
+}
+
+.body span,
+.tbody span {
+  position: absolute;
+  left: -4px;
+  background: #242424;
+}
+
+.ruler {
+  margin: 0px 0px;
+  height: 12px;
+  width: 100%;
+  position: absolute;
+  top: 50px;
+
+  display: flex;
+  justify-content: center;
+  border-left: 1px solid grey;
+  z-index: 2;
+}
+
+.cell {
+  position: relative;
+  height: 100%;
+  width: calc(100% - 0px);
+  border-left: 0px solid grey;
+  border-right: 1px solid grey;
+  background-repeat: no-repeat;
+  background-size:
+    100% 1px,
+    1px 4px,
+    1px 4px,
+    1px 4px,
+    1px 4px,
+    1px 7px,
+    1px 4px,
+    1px 4px,
+    1px 4px,
+    1px 4px;
+  background-position:
+    0% center,
+    10% center,
+    20% center,
+    30% center,
+    40% center,
+    50% center,
+    60% center,
+    70% center,
+    80% center,
+    90% center;
+  background-image: linear-gradient(gray, gray), linear-gradient(gray, gray),
+    linear-gradient(gray, gray), linear-gradient(gray, gray),
+    linear-gradient(gray, gray), linear-gradient(gray, gray),
+    linear-gradient(gray, gray), linear-gradient(gray, gray),
+    linear-gradient(gray, gray), linear-gradient(gray, gray);
+}
+.cell span {
+  position: absolute;
+  top: -15px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.transit {
+  width: 100%;
+  position: absolute;
+  top: 62px;
+  height: 50px;
+}

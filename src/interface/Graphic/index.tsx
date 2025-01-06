@@ -93,7 +93,7 @@ const color = {
   Jupiter: '#007FFF',
   Saturn: 'grey',
   Uranus: 'crimson',
-  Neptune: '#333',
+  Neptune: '#4D4DFF',
   Pluto: 'purple'
 }
 

@@ -7,6 +7,8 @@ import ElementsTable from './interface/Elements'
 import HourTable from './interface/Hours'
 import TraditionalPlanetsTable from './interface/Planets/Traditional'
 import ModernPlanetsTable from './interface/Planets/Modern'
+import ThirtyDegrees from './interface/Planets/ThirtyDegrees'
+
 import Settings from './interface/Settings'
 import ControlPane from './interface/Controls'
 
@@ -224,6 +226,9 @@ function App() {
                     today={today}
                   />
                 )}
+                {settings.interface?.planets != 'hours' &&
+                  settings.interface?.thirty && <ThirtyDegrees />}
+
                 {settings.interface?.planets == 'modern' && (
                   <ModernPlanetsTable />
                 )}

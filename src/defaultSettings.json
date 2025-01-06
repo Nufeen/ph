@@ -31,6 +31,7 @@
   "interface": {
     "planets": "modern",
     "elements": true,
+    "thirty": true,
     "aspectOrb": 4,
     "orbMultiplier": true,
     "houseSystem": "placidus"

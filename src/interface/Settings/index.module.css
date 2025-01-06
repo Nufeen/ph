@@ -5,7 +5,8 @@
     'planetes fictive'
     'planetes other'
     'planetes elements'
-    'orb house';
+    'house thirty'
+    'orb orb';
   column-gap: 10px;
   font-size: 0.9em;
   margin: 0 auto;
@@ -26,9 +27,13 @@
   grid-area: planetes;
 }
 
+.thirty {
+  grid-area: thirty;
+}
+
 .orb {
   grid-area: orb;
-  align-items: flex-start;
+  width: 100%;
 }
 
 .fictive {
@@ -38,9 +43,12 @@
   grid-area: other;
 }
 
-.housseSelector {
+.houseSelector {
   grid-area: house;
-  display: block;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  align-items: end;
 }
 
 .wrapper hr {
@@ -73,13 +81,21 @@
   }
 }
 
+.orb {
+  h3 {
+    margin: 0;
+    padding: 0;
+  }
+  margin-top: 20px;
+}
+
 .aspectLine {
   font-size: 0.8em;
   line-height: 10px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   position: relative;
 
   input {
@@ -88,6 +104,7 @@
     position: relative;
     display: inline-block;
     margin-right: 0.5em;
+    width: 80%;
   }
 }
 

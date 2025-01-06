@@ -70,6 +70,18 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  function handleThirtyVisibility() {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        thirty: !settings.interface.thirty
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
   function handleHouseSystemSelect(e) {
     const s = {
       ...settings,
@@ -182,41 +194,56 @@ const PlanetCheckboxTable = () => {
         </tbody>
       </table>
 
-      <table className={s.orb}>
+      <table className={s.thirty}>
         <thead className={s.thead}>
           <tr>
-            <th>Orb multiplier</th>
+            <th>30°</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td className={s.aspectLine}>
+            <td>Show</td>
+            <td>
               <input
-                type="range"
-                id="aspectLine"
-                name="aspectLine"
-                min="1"
-                max="8"
-                value={settings.interface.aspectOrb ?? 4}
-                onChange={e => {
-                  const s = {
-                    ...settings,
-                    interface: {
-                      ...settings.interface,
-                      aspectOrb: +e.target.value
-                    }
-                  }
-                  setSettings(s)
-
-                  LS.setItem('settings', JSON.stringify(s))
-                }}
+                type="checkbox"
+                checked={settings.interface?.thirty}
+                onChange={handleThirtyVisibility}
               />
-              {(100 * (settings.interface.aspectOrb ?? 4)) / 4}%
             </td>
           </tr>
         </tbody>
       </table>
+
+      <div className={s.orb}>
+        <h3 className={s.thead}>
+          <th>Orb multiplier</th>
+        </h3>
+
+        <div className={s.aspectLine}>
+          <input
+            type="range"
+            id="aspectLine"
+            name="aspectLine"
+            min="1"
+            max="8"
+            value={settings.interface.aspectOrb ?? 4}
+            onChange={e => {
+              const s = {
+                ...settings,
+                interface: {
+                  ...settings.interface,
+                  aspectOrb: +e.target.value
+                }
+              }
+              setSettings(s)
+
+              LS.setItem('settings', JSON.stringify(s))
+            }}
+          />
+          {(100 * (settings.interface.aspectOrb ?? 4)) / 4}%
+        </div>
+      </div>
 
       <div className={s.houseSelector}>
         <select
