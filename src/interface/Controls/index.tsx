@@ -3,7 +3,10 @@ import {useContext, useRef} from 'react'
 import cityTimezones from 'city-timezones'
 import moment from 'moment-timezone'
 
-import {countries, getCitiesByCountryCode} from 'country-city-location'
+import {
+  countries,
+  getCitiesByCountryCode
+} from 'country-city-location'
 
 import {SettingContext} from '../../SettingContext'
 import {CelestialContext} from '../../CelestialContext'
@@ -60,7 +63,9 @@ export default function ControlPane(props) {
   }
 
   function handleCurrentTimeSetterClick(chartType) {
-    inputRef[chartType].current.value = new Date().toISOString().slice(0, -5)
+    inputRef[chartType].current.value = new Date()
+      .toISOString()
+      .slice(0, -5)
 
     setter[chartType]({
       ...data[chartType],
@@ -106,6 +111,33 @@ export default function ControlPane(props) {
     shifter += 1
   }
 
+  function setChartType(chartType) {
+    const s = {
+      ...settings,
+      chartType
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleHouseVisibility(e, chartType) {
+    const s = {
+      ...settings,
+      objects: {
+        ...settings.objects,
+        houses: {
+          ...(settings.objects?.houses ?? {}),
+          visibility: {
+            ...(settings.objects?.houses?.visibility ?? {}),
+            [chartType]: e.target.checked
+          }
+        }
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
   return (
     <div className={s.wrapper}>
       {settings.chartType == 'transit' && (
@@ -116,148 +148,101 @@ export default function ControlPane(props) {
       )}
 
       <div className={s.chartTypeSelector}>
-        <button
-          disabled={settings.chartType == 'natal'}
-          onClick={() => {
-            const s = {
-              ...settings,
-              chartType: 'natal'
-            }
-            setSettings(s)
-            LS.setItem('settings', JSON.stringify(s))
-          }}
-        >
-          Natal
-        </button>
-        <button
-          disabled={settings.chartType == 'transit'}
-          onClick={() => {
-            const s = {
-              ...settings,
-              chartType: 'transit'
-            }
-            setSettings(s)
-            LS.setItem('settings', JSON.stringify(s))
-          }}
-        >
-          Transit
-        </button>
-
-        {settings?.flags?.graphic && (
+        {['natal', 'transit', 'graphic'].map(type => (
           <button
-            disabled={settings.chartType == 'graphic'}
-            onClick={() => {
-              const s = {
-                ...settings,
-                chartType: 'graphic'
-              }
-              setSettings(s)
-              LS.setItem('settings', JSON.stringify(s))
-            }}
+            key={type}
+            disabled={settings.chartType === type}
+            onClick={() => setChartType(type)}
           >
-            Graphic
+            {type.charAt(0).toUpperCase() + type.slice(1)}
           </button>
-        )}
+        ))}
       </div>
 
-      {(settings.chartType == 'transit' ? ['natal', 'transit'] : ['natal']).map(
-        chartType => (
-          <section key={chartType}>
-            <button
-              title="set time to current"
-              className={s.reset}
-              onClick={() => handleCurrentTimeSetterClick(chartType)}
-            >
-              ⌛
-            </button>
+      {(settings.chartType == 'transit'
+        ? ['natal', 'transit']
+        : ['natal']
+      ).map(chartType => (
+        <section key={chartType}>
+          <button
+            title="set time to current"
+            className={s.reset}
+            onClick={() => handleCurrentTimeSetterClick(chartType)}
+          >
+            ⌛
+          </button>
 
-            <div className={s.checkboxWrapper}>
-              houses
-              <input
-                type="checkbox"
-                className={s.cosmogram}
-                checked={settings.objects?.houses?.visibility[chartType]}
-                onChange={() => {
-                  const s = {
-                    ...settings,
-                    objects: {
-                      ...settings.objects,
-                      houses: {
-                        ...(settings.houses ?? {}),
-                        visibility: {
-                          ...(settings.objects?.houses?.visibility ?? {}),
-                          [chartType]:
-                            !settings.objects?.houses?.visibility[chartType]
-                        }
-                      }
-                    }
-                  }
-                  setSettings(s)
-                  LS.setItem('settings', JSON.stringify(s))
-                }}
-              />
-            </div>
+          <div className={s.checkboxWrapper}>
+            houses
             <input
-              key={data[chartType]?.city + shifter}
-              ref={inputRef[chartType]}
-              className={s.input}
-              type="datetime-local"
-              onInput={e => handleDateInput(e, chartType)}
-              defaultValue={
-                moment(data[chartType].date)
-                  .tz(
-                    // TODO check country in case of several cities
-                    cityTimezones.lookupViaCity(
-                      data[chartType]?.city || ''
-                    )?.[0]?.timezone ?? ''
-                  )
-                  ?.format()
-                  ?.substring(0, 16) ?? new Date().toUTCString()
+              type="checkbox"
+              className={s.cosmogram}
+              checked={
+                settings.objects?.houses?.visibility[chartType]
               }
+              onChange={e => handleHouseVisibility(e, chartType)}
             />
-            <select
-              onChange={e => handleCountrySelection(e, chartType)}
-              value={data[chartType].country ?? null}
-            >
-              <option selected disabled value={null}>
-                Location
+          </div>
+          <input
+            key={data[chartType]?.city + shifter}
+            ref={inputRef[chartType]}
+            className={s.input}
+            type="datetime-local"
+            onInput={e => handleDateInput(e, chartType)}
+            defaultValue={
+              moment(data[chartType].date)
+                .tz(
+                  // TODO check country in case of several cities
+                  cityTimezones.lookupViaCity(
+                    data[chartType]?.city || ''
+                  )?.[0]?.timezone ?? ''
+                )
+                ?.format()
+                ?.substring(0, 16) ?? new Date().toUTCString()
+            }
+          />
+          <select
+            onChange={e => handleCountrySelection(e, chartType)}
+            value={data[chartType].country ?? null}
+          >
+            <option selected disabled value={null}>
+              Location
+            </option>
+            {countries.map((x, i) => (
+              <option key={i} value={x.Alpha2Code}>
+                {x.Name}
               </option>
-              {countries.map((x, i) => (
-                <option key={i} value={x.Alpha2Code}>
-                  {x.Name}
-                </option>
-              ))}
-            </select>
-            <select
-              ref={cityRef}
-              disabled={data[chartType].country == null}
-              onChange={e => handleCitySelect(e, chartType)}
-              value={data[chartType].city ?? ''}
-            >
-              <option disabled value="aa">
-                Location
+            ))}
+          </select>
+          <select
+            ref={cityRef}
+            disabled={data[chartType].country == null}
+            onChange={e => handleCitySelect(e, chartType)}
+            value={data[chartType].city ?? ''}
+          >
+            <option disabled value="aa">
+              Location
+            </option>
+            {cities[chartType].map(x => (
+              <option key={x.name} value={x.name}>
+                {x.name}
               </option>
-              {cities[chartType].map(x => (
-                <option key={x.name} value={x.name}>
-                  {x.name}
-                </option>
-              ))}
-            </select>
+            ))}
+          </select>
 
-            <div className={s.transitInfo}>
-              <span>
-                {moment(data[chartType]?.date)
-                  ?.tz(
-                    cityTimezones.lookupViaCity(
-                      data[chartType]?.city || ''
-                    )?.[0]?.timezone ?? ''
-                  )
-                  ?.format('LLLL Z')}
-              </span>
-            </div>
-          </section>
-        )
-      )}
+          <div className={s.transitInfo}>
+            <span>
+              {moment(data[chartType]?.date)
+                ?.tz(
+                  cityTimezones.lookupViaCity(
+                    data[chartType]?.city || ''
+                  )?.[0]?.timezone ?? ''
+                )
+                ?.format('LLLL Z')}
+            </span>
+          </div>
+        </section>
+      ))}
     </div>
   )
 }

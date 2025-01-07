@@ -78,11 +78,12 @@
     70% center,
     80% center,
     90% center;
-  background-image: linear-gradient(gray, gray), linear-gradient(gray, gray),
+  background-image: linear-gradient(gray, gray),
     linear-gradient(gray, gray), linear-gradient(gray, gray),
     linear-gradient(gray, gray), linear-gradient(gray, gray),
     linear-gradient(gray, gray), linear-gradient(gray, gray),
-    linear-gradient(gray, gray), linear-gradient(gray, gray);
+    linear-gradient(gray, gray), linear-gradient(gray, gray),
+    linear-gradient(gray, gray);
 }
 .cell span {
   position: absolute;
