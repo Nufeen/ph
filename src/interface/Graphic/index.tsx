@@ -2,9 +2,12 @@ import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 import {SettingContext} from '../../SettingContext'
+import {CelestialContext} from '../../CelestialContext'
+
 import {useContext} from 'react'
 
 import planets from '../../assets/planets.json'
+import zodiacSigns from '../../assets/zodiac.json'
 
 // SVG Canvas Height
 const H = 600
@@ -17,15 +20,6 @@ function pos(body: keyof typeof Body, date: Date) {
   const x = GeoVector(Body[body], date, false)
   const pos = Ecliptic(x)
   return ((pos.elon - 0) / 360) * W
-}
-
-// TODO get rid if not needed for 10 years or more
-function getMonthStartDates(year) {
-  const dates = []
-  for (let month = 0; month < 12; month++) {
-    dates.push(new Date(year, month, 1))
-  }
-  return dates
 }
 
 function getStartDatesOfEveryDayPerYear(year) {
@@ -53,23 +47,7 @@ function splitArray(arr) {
   return result
 }
 
-// TODO take from assets
-const zodiacSigns = [
-  '♈︎︎',
-  '♉︎︎',
-  '♊︎︎',
-  '♋︎︎',
-  '♌︎︎',
-  '♍︎︎',
-  '♎︎︎',
-  '♏︎︎',
-  '♐︎︎',
-  '♑︎︎',
-  '♒︎︎',
-  '♓︎︎'
-]
-
-let months = [
+const months = [
   'January',
   'February',
   'March',
@@ -97,10 +75,21 @@ const color = {
   Pluto: 'purple'
 }
 
+function dayNum(now: Date) {
+  let startOfYear = new Date(now.getFullYear(), 0, 0)
+  // @ts-ignore
+  let diff = now - startOfYear
+  let oneDay = 1000 * 60 * 60 * 24
+  return Math.floor(diff / oneDay)
+}
+
 export default function GraphicChart() {
   const {settings} = useContext(SettingContext)
+  const {transitData} = useContext(CelestialContext)
 
-  const dates = getStartDatesOfEveryDayPerYear(2025)
+  const year = transitData.date.getFullYear()
+
+  const dates = getStartDatesOfEveryDayPerYear(year)
 
   return (
     <div className={s.wrap}>
@@ -110,6 +99,7 @@ export default function GraphicChart() {
         viewBox={`0 0 ${W} ${H}`}
         xmlns="http://www.w3.org/2000/svg"
       >
+        {/* Lets draw some grid */}
         {zodiacSigns.map((sign, index) => (
           <>
             <line
@@ -121,7 +111,7 @@ export default function GraphicChart() {
               stroke="white"
               strokeWidth=".2"
             />
-            <text x={index * 100 + 45} y="20" opacity=".5">
+            <text x={index * 100 + 45} y="-10" opacity=".5">
               {sign}
             </text>
           </>
@@ -145,11 +135,29 @@ export default function GraphicChart() {
               y={index * (H / 12) + H / 24 + 5}
               opacity=".2"
             >
-              {mo}
+              {mo} {year}
             </text>
           </>
         ))}
 
+        {/* Current date line */}
+        <line
+          x1={0}
+          y1={(dayNum(transitData.date) / 365) * H}
+          x2={W}
+          y2={(dayNum(transitData.date) / 365) * H}
+          stroke="silver"
+          opacity={0.4}
+        />
+
+        {/* Natal planets */}
+        {Object.keys(settings.objects.planets)
+          .filter(x => settings.objects.planets[x])
+          .map((body, i) => (
+            <NatalLine body={body} i={i} />
+          ))}
+
+        {/* Transit planets */}
         {Object.keys(settings.objects.planets)
           .filter(x => settings.objects.planets[x])
           .map(body => (
@@ -157,6 +165,32 @@ export default function GraphicChart() {
           ))}
       </svg>
     </div>
+  )
+}
+
+function NatalLine({body, i}) {
+  const {natalData} = useContext(CelestialContext)
+  const x = pos(body, natalData.date)
+  return (
+    <>
+      <line
+        x1={x}
+        y1={10}
+        x2={x}
+        y2={H}
+        stroke="lime"
+        opacity={0.4}
+      />
+      <text
+        className={s.natalText}
+        x={x - 4}
+        y={8}
+        opacity={0.5}
+        fill="lime"
+      >
+        {planets[body]}
+      </text>
+    </>
   )
 }
 
@@ -189,7 +223,8 @@ function Path(props) {
   const [head, ...tail] = props.A
 
   const d =
-    `M ${head[0]} ${head[1]} ` + tail.map(x => `L ${x[0]}, ${x[1]}`).join(' ')
+    `M ${head[0]} ${head[1]} ` +
+    tail.map(x => `L ${x[0]}, ${x[1]}`).join(' ')
 
   return <path d={d} stroke={props.color} fill="transparent" />
 }

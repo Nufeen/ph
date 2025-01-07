@@ -8,7 +8,7 @@ import Houses from './Houses/index.js'
 import {useContext} from 'react'
 import {SettingContext} from '../../SettingContext.js'
 
-import houses from '../../assets/houses.json'
+import houses from '../../assets/zodiac.json'
 
 import s from './index.module.css'
 
@@ -36,7 +36,12 @@ export default function Zodiac(props: Props) {
 
   return (
     <div className={s.wrapper}>
-      <svg width="300" height="300" viewBox="0 0 300 300" className={s.figure}>
+      <svg
+        width="300"
+        height="300"
+        viewBox="0 0 300 300"
+        className={s.figure}
+      >
         <circle cx={x0} cy={y0} r={r} />
 
         {l.map(i => (
@@ -61,8 +66,16 @@ export default function Zodiac(props: Props) {
             className={s.house}
             key={i}
             fill="currentColor"
-            x={x0 - 5 + (r - 15) * sin(((i * 30 + zero + 15) * 3.14) / 180)}
-            y={y0 + 3 + (r - 15) * cos(((i * 30 + zero + 15) * 3.14) / 180)}
+            x={
+              x0 -
+              5 +
+              (r - 15) * sin(((i * 30 + zero + 15) * 3.14) / 180)
+            }
+            y={
+              y0 +
+              3 +
+              (r - 15) * cos(((i * 30 + zero + 15) * 3.14) / 180)
+            }
           >
             {houses[i]}
           </text>
@@ -80,12 +93,11 @@ export default function Zodiac(props: Props) {
         <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
 
         {settings.chartType == 'natal' && (
-          // <Aspects {...{calendarDay, zero, x0, y0}} />
-          <TransitAspects {...{calendarDay, zero, x0, y0}} type="natal" />
+          <TransitAspects {...{calendarDay, zero, x0, y0}} />
         )}
 
         {settings.chartType == 'transit' && (
-          <TransitAspects {...{calendarDay, zero, x0, y0}} type="transit" />
+          <TransitAspects {...{calendarDay, zero, x0, y0}} />
         )}
 
         {settings.chartType == 'transit' && (

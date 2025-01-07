@@ -15,7 +15,7 @@ import s from './index.module.css'
 // https://en.wikipedia.org/wiki/Planetary_hours
 import haldeanTable from '../../assets/circle.json'
 import planets from '../../assets/planets.json'
-import houses from '../../assets/houses.json'
+import houses from '../../assets/zodiac.json'
 
 // https://en.wikipedia.org/wiki/Astrological_sign#Dignity_and_detriment,_exaltation_and_fall
 import dignity from '../../assets/dignity.json'

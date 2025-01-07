@@ -140,7 +140,7 @@ export default function ControlPane(props) {
 
   return (
     <div className={s.wrapper}>
-      {settings.chartType == 'transit' && (
+      {['transit', 'graphic'].includes(settings.chartType) && (
         <div className={s.swap}>
           <button onClick={swap}>⇄</button>
           swap
@@ -151,6 +151,7 @@ export default function ControlPane(props) {
         {['natal', 'transit', 'graphic'].map(type => (
           <button
             key={type}
+            className={s[type]}
             disabled={settings.chartType === type}
             onClick={() => setChartType(type)}
           >
@@ -159,7 +160,7 @@ export default function ControlPane(props) {
         ))}
       </div>
 
-      {(settings.chartType == 'transit'
+      {(['transit', 'graphic'].includes(settings.chartType)
         ? ['natal', 'transit']
         : ['natal']
       ).map(chartType => (
