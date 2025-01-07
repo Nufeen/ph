@@ -66,18 +66,24 @@ function App() {
 
   const [natalData, setNatalData] = useState({
     city: urlParams.get('city') ?? LSNatalData?.city ?? null,
-    country: urlParams.get('country') ?? LSNatalData?.country ?? null,
+    country:
+      urlParams.get('country') ?? LSNatalData?.country ?? null,
     date:
-      (urlParams.get('date') ? new Date(+urlParams.get('date')) : null) ??
+      (urlParams.get('date')
+        ? new Date(+urlParams.get('date'))
+        : null) ??
       (LSNatalData?.date && new Date(LSNatalData?.date)) ??
       new Date()
   })
 
   const [transitData, setTransitData] = useState({
     city: urlParams.get('city2') ?? LSTransitData?.city ?? null,
-    country: urlParams.get('country2') ?? LSTransitData?.country ?? null,
+    country:
+      urlParams.get('country2') ?? LSTransitData?.country ?? null,
     date:
-      (urlParams.get('date2') ? new Date(+urlParams.get('date')) : null) ??
+      (urlParams.get('date2')
+        ? new Date(+urlParams.get('date'))
+        : null) ??
       (LSTransitData?.date && new Date(LSTransitData?.date)) ??
       new Date()
   })
@@ -145,10 +151,15 @@ function App() {
     natalData.date
   )
   const morning = natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
-  const today = morning ? new Date(+new Date() - 86400000) : natalData.date
+  const today = morning
+    ? new Date(+new Date() - 86400000)
+    : natalData.date
 
   function selectPlanetsTable(planets) {
-    const s = {...settings, interface: {...settings.interface, planets}}
+    const s = {
+      ...settings,
+      interface: {...settings.interface, planets}
+    }
     setSettings(s)
     LS.setItem('settings', JSON.stringify(s))
   }
@@ -181,16 +192,24 @@ function App() {
             </section>
 
             {settings.chartType != 'graphic' && (
-              <section className={s.center} ref={el => (center.current = el)}>
+              <section
+                className={s.center}
+                ref={el => (center.current = el)}
+              >
                 {settings.interface?.elements && (
                   <ElementsTable {...{horoscope}} />
                 )}
-                <Zodiac {...{calendarDay: natalData.date, lat, lng}} />
+                <Zodiac
+                  {...{calendarDay: natalData.date, lat, lng}}
+                />
               </section>
             )}
 
             {settings.chartType == 'graphic' && (
-              <section className={s.center} ref={el => (center.current = el)}>
+              <section
+                className={s.center}
+                ref={el => (center.current = el)}
+              >
                 <GraphicChart />
               </section>
             )}
@@ -199,13 +218,17 @@ function App() {
               <section className={s.right}>
                 <div className={s.tablesSelector}>
                   <button
-                    disabled={settings.interface?.planets == 'modern'}
+                    disabled={
+                      settings.interface?.planets == 'modern'
+                    }
                     onClick={() => selectPlanetsTable('modern')}
                   >
                     modern
                   </button>
                   <button
-                    disabled={settings.interface?.planets == 'traditional'}
+                    disabled={
+                      settings.interface?.planets == 'traditional'
+                    }
                     onClick={() => selectPlanetsTable('traditional')}
                   >
                     traditional

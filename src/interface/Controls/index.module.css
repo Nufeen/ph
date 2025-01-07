@@ -80,6 +80,10 @@
   grid-area: section2;
 }
 
+.wrapper section select {
+	width: 100%;
+}
+
 .transitInfo {
   grid-area: info;
   line-height: 1em;
@@ -102,6 +106,8 @@
   width: 100%;
   padding-left: 35px;
   padding-top: 10px;
+	display: flex;
+	gap: 8px;
   button + button {
     margin-left: 10px;
   }

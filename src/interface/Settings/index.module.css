@@ -62,6 +62,7 @@
 .thead th {
   font-size: 0.7em;
   opacity: 0.6;
+	display: flex;
 }
 
 .wrapper input[type='checkbox'] {
@@ -98,7 +99,9 @@
   justify-content: start;
   position: relative;
 
-  input {
+}
+
+.aspectLine  input {
     appearance: none;
     background: transparent;
     position: relative;
@@ -106,7 +109,6 @@
     margin-right: 0.5em;
     width: 80%;
   }
-}
 
 .aspectLine input::after {
   content: '';
