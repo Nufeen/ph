@@ -142,6 +142,20 @@ function App() {
     settings?.interface?.houseSystem
   )
 
+  function calculateProgressedDate(dateA, dateB) {
+    const timestamp =
+      dateA.getTime() + Math.abs((dateA - dateB) / 365.25)
+
+    return new Date(timestamp)
+  }
+
+  const progressedHoroscope = getHoroscope(
+    calculateProgressedDate(natalData.date, transitData.date),
+    latlng.transit.lat,
+    latlng.transit.lng,
+    settings?.interface?.houseSystem
+  )
+
   /**
    * Planetary hours
    */
@@ -170,6 +184,7 @@ function App() {
         value={{
           horoscope,
           transitHoroscope,
+          progressedHoroscope,
           stars: connectedStars(natalData.date),
           natalData,
           transitData,
@@ -206,6 +221,16 @@ function App() {
             )}
 
             {settings.chartType == 'graphic' && (
+              <section
+                className={s.center}
+                ref={el => (center.current = el)}
+              >
+                <GraphicChart />
+              </section>
+            )}
+
+            {/* TODO: Add index chart */}
+            {settings.chartType == 'index' && (
               <section
                 className={s.center}
                 ref={el => (center.current = el)}

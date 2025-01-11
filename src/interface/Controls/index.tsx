@@ -148,7 +148,7 @@ export default function ControlPane(props) {
       )}
 
       <div className={s.chartTypeSelector}>
-        {['natal', 'transit', 'graphic'].map(type => (
+        {['natal', 'transit', 'progressed', 'graphic'].map(type => (
           <button
             key={type}
             className={s[type]}
@@ -160,7 +160,9 @@ export default function ControlPane(props) {
         ))}
       </div>
 
-      {(['transit', 'graphic'].includes(settings.chartType)
+      {(['transit', 'progressed', 'graphic'].includes(
+        settings.chartType
+      )
         ? ['natal', 'transit']
         : ['natal']
       ).map(chartType => (

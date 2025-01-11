@@ -7,25 +7,40 @@ import React from 'react'
 
 const {sin, cos, abs} = Math
 
-export default function Aspects({calendarDay, zero, x0, y0}) {
-  const {horoscope, transitHoroscope} = useContext(CelestialContext)
+export default function Aspects({zero, x0, y0}) {
+  const {horoscope, progressedHoroscope, transitHoroscope} =
+    useContext(CelestialContext)
 
   const {settings} = useContext(SettingContext)
 
   const threshold = settings.interface.aspectOrb ?? 4
 
-  const N = horoscope.CelestialBodies.all
-    .filter(planet => settings?.objects?.planets[planet?.label])
-    .map(x => x.ChartPosition.Ecliptic.DecimalDegrees)
+  const [natal, transit, progressed] = [
+    horoscope,
+    transitHoroscope,
+    progressedHoroscope
+  ].map(x =>
+    x.CelestialBodies.all
+      .filter(
+        (planet: {label: string | number}) =>
+          settings?.objects?.planets[planet?.label]
+      )
+      .map(
+        (z: {ChartPosition: {Ecliptic: {DecimalDegrees: any}}}) =>
+          z.ChartPosition.Ecliptic.DecimalDegrees
+      )
+  )
 
-  const T = transitHoroscope.CelestialBodies.all
-    .filter(planet => settings?.objects?.planets[planet?.label])
-    .map(x => x.ChartPosition.Ecliptic.DecimalDegrees)
+  const M = {
+    transit,
+    progressed,
+    natal
+  }
 
   const AT = []
 
-  N.forEach(a => {
-    ;(settings.chartType == 'transit' ? T : N).forEach(b => {
+  M.natal.forEach((a: any) => {
+    M[settings.chartType].forEach((b: any) => {
       const aspect = aspectBetween(a, b)
       if (aspect) {
         AT.push(aspect)
@@ -33,7 +48,7 @@ export default function Aspects({calendarDay, zero, x0, y0}) {
     })
   })
 
-  function aspectBetween(a, b) {
+  function aspectBetween(a: number, b: number) {
     let d = abs(a - b)
 
     if (d > 170) {
@@ -54,7 +69,7 @@ export default function Aspects({calendarDay, zero, x0, y0}) {
     return null
   }
 
-  function deg(x) {
+  function deg(x: number) {
     return ((x + zero) * 3.14) / 180
   }
 

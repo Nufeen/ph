@@ -5,26 +5,16 @@ import s from './index.module.css'
 import {CelestialContext} from '../../../CelestialContext.js'
 import {SettingContext} from '../../../SettingContext'
 
+import icons from '../../../assets/planets.json'
+
 const {sin, cos} = Math
 
-const icons = {
-  Saturn: '♄',
-  Jupiter: '♃',
-  Mars: '♂',
-  Sun: '☉',
-  Venus: '♀',
-  Mercury: '☿',
-  Moon: '☽︎',
-  Pluto: '♇',
-  Neptune: '♆',
-  Uranus: '♅',
-  Chiron: '⚷'
-}
-
 export default function TransitPlanets({zero, x0, y0}) {
-  const {transitHoroscope} = useContext(CelestialContext)
+  const {progressedHoroscope, transitHoroscope} =
+    useContext(CelestialContext)
 
   const {settings} = useContext(SettingContext)
+
   let l = 126
 
   function deg(x) {
@@ -34,7 +24,10 @@ export default function TransitPlanets({zero, x0, y0}) {
 
   return (
     <>
-      {transitHoroscope.CelestialBodies.all
+      {(settings.chartType == 'progressed'
+        ? progressedHoroscope
+        : transitHoroscope
+      ).CelestialBodies.all
         .filter(planet => settings?.objects?.planets[planet?.label])
         .map(planet => (
           <React.Fragment key={planet?.label}>

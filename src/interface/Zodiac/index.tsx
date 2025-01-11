@@ -96,11 +96,13 @@ export default function Zodiac(props: Props) {
           <TransitAspects {...{calendarDay, zero, x0, y0}} />
         )}
 
-        {settings.chartType == 'transit' && (
+        {(settings.chartType == 'transit' ||
+          settings.chartType == 'progressed') && (
           <TransitAspects {...{calendarDay, zero, x0, y0}} />
         )}
 
-        {settings.chartType == 'transit' && (
+        {(settings.chartType == 'transit' ||
+          settings.chartType == 'progressed') && (
           <TransitPlanets {...{zero, x0, y0}} />
         )}
         {settings.objects.celestialPoints?.fixedStars?.chart && (

@@ -45,7 +45,6 @@ function elon(s, sign) {
 }
 
 export function connectedStars(calendarDay) {
-  type P = keyof typeof planets
 
   const out = Object.keys(planets).reduce((a, x: any, i) => {
     return {...a, [x]: findStar(pos(x, calendarDay))}
@@ -57,3 +56,4 @@ export function connectedStars(calendarDay) {
 function findStar(elon) {
   return stars.filter(x => Math.abs(x.elon - elon) < 1)
 }
+
