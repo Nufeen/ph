@@ -1,11 +1,22 @@
 import {useContext} from 'react'
 import {SettingContext} from '../../../SettingContext.js'
-import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
+import {
+  Origin,
+  Horoscope
+} from 'circular-natal-horoscope-js/dist/index.js'
+
 import s from './index.module.css'
 
 const {sin, cos} = Math
 
-export default function Fictive({calendarDay, zero, x0, y0, lat, lng}) {
+export default function Fictive({
+  calendarDay,
+  zero,
+  x0,
+  y0,
+  lat,
+  lng
+}) {
   const {settings} = useContext(SettingContext)
 
   const year = calendarDay.getFullYear()
@@ -36,17 +47,19 @@ export default function Fictive({calendarDay, zero, x0, y0, lat, lng}) {
   })
 
   const ldd =
-    horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic.DecimalDegrees
+    horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic
+      .DecimalDegrees
 
   const lilithDeg = ((ldd + zero) * 3.14) / 180
 
   const nndd =
-    horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic.DecimalDegrees
+    horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic
+      .DecimalDegrees
 
   const northnodeDeg = ((nndd + zero) * 3.14) / 180
 
   return (
-    <>
+    <g className={s.wrapper}>
       {settings.objects.celestialPoints.lilith && (
         <>
           <text
@@ -60,14 +73,13 @@ export default function Fictive({calendarDay, zero, x0, y0, lat, lng}) {
 
           <circle
             className={s.fictive}
-            stroke="violet"
-            strokeWidth="3"
             cx={x0 + 70 * sin(lilithDeg)}
             cy={y0 + 70 * cos(lilithDeg)}
             r="1"
           />
         </>
       )}
+
       {settings.objects.celestialPoints.northnode && (
         <>
           <text
@@ -81,14 +93,13 @@ export default function Fictive({calendarDay, zero, x0, y0, lat, lng}) {
 
           <circle
             className={s.fictive}
-            stroke="violet"
-            strokeWidth="3"
             cx={x0 + 70 * sin(northnodeDeg)}
             cy={y0 + 70 * cos(northnodeDeg)}
             r="1"
           />
         </>
       )}
+
       {settings.objects.celestialPoints.southnode && (
         <>
           <text
@@ -101,15 +112,12 @@ export default function Fictive({calendarDay, zero, x0, y0, lat, lng}) {
           </text>
           <circle
             className={s.fictive}
-            fill="violet"
-            stroke="violet"
-            strokeWidth="3"
             cx={x0 - 70 * sin(northnodeDeg)}
             cy={y0 - 70 * cos(northnodeDeg)}
             r="1"
           />
         </>
       )}
-    </>
+    </g>
   )
 }

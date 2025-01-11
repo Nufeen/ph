@@ -24,6 +24,7 @@
   fill: none;
   stroke: gray;
 }
+
 .figure circle.fictive {
   stroke-width: 1px;
   stroke: violet;
@@ -43,6 +44,7 @@ text.planet {
 .planet[data-burn='true'] {
   fill: red;
 }
+
 .planet[data-in-mid-of-sun='true'] {
   fill: gold;
 }
