@@ -34,7 +34,7 @@
     border: 1px solid gray;
     border-radius: 6px;
     padding: 6px 5px;
-    appearance: none;
+    appearance: auto;
   }
 
   input {
@@ -81,7 +81,7 @@
 }
 
 .wrapper section select {
-	width: 100%;
+  width: 100%;
 }
 
 .transitInfo {
@@ -106,11 +106,23 @@
   width: 100%;
   padding-left: 35px;
   padding-top: 10px;
-	display: flex;
-	gap: 8px;
+  display: flex;
+  gap: 8px;
   button + button {
     margin-left: 10px;
   }
+}
+
+.chartTypeSelector button {
+  border-radius: 8px;
+  padding: 0.4em 0.6em;
+  font-size: 0.7em;
+  cursor: pointer;
+}
+
+.chartTypeSelector > button + button {
+  margin-left: 1px;
+  margin-right: 0;
 }
 
 .swap {

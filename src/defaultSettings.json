@@ -36,8 +36,5 @@
     "orbMultiplier": true,
     "houseSystem": "placidus"
   },
-  "chartType": "natal",
-  "flags": {
-    "graphic": true
-  }
+  "chartType": "natal"
 }

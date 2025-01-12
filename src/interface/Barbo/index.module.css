@@ -1,0 +1,30 @@
+.wrap {
+  position: relative;
+  max-width: 90%;
+  height: 100%;
+  font-family: 'Noto Emoji';
+  font-weight: 700;
+  fill: azure;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.wrap svg {
+  height: auto;
+  overflow: visible;
+  font-family: 'Noto Emoji';
+  font-weight: bold;
+  font-family: monospace;
+  font-weight: 700;
+}
+.month {
+  font-weight: normal;
+  font-size: 8px;
+  opacity: 0.2;
+}
+
+.natalText {
+  background: black;
+  font-size: 10px;
+}

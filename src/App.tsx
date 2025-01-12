@@ -27,6 +27,8 @@ import {getCitiesByCountryCode} from 'country-city-location'
 
 import GraphicChart from './interface/Graphic'
 
+import Barbo from './interface/Barbo'
+
 const LS = window.localStorage
 
 /**
@@ -128,6 +130,9 @@ function App() {
     return {lat: +cc.lat, lng: +cc.lng}
   }
 
+  /**
+   * Prepare horoscopes context for all types
+   */
   const horoscope = getHoroscope(
     natalData.date,
     latlng.natal.lat,
@@ -206,20 +211,23 @@ function App() {
               <Settings />
             </section>
 
-            {settings.chartType != 'graphic' && (
-              <section
-                className={s.center}
-                ref={el => (center.current = el)}
-              >
-                {settings.interface?.elements && (
-                  <ElementsTable {...{horoscope}} />
-                )}
-                <Zodiac
-                  {...{calendarDay: natalData.date, lat, lng}}
-                />
-              </section>
-            )}
+            {/* Basic sky screen */}
+            {settings.chartType != 'graphic' &&
+              settings.chartType != 'barbo' && (
+                <section
+                  className={s.center}
+                  ref={el => (center.current = el)}
+                >
+                  {settings.interface?.elements && (
+                    <ElementsTable {...{horoscope}} />
+                  )}
+                  <Zodiac
+                    {...{calendarDay: natalData.date, lat, lng}}
+                  />
+                </section>
+              )}
 
+            {/* graphic ephemeris chart */}
             {settings.chartType == 'graphic' && (
               <section
                 className={s.center}
@@ -229,67 +237,61 @@ function App() {
               </section>
             )}
 
-            {/* TODO: Add index chart */}
-            {settings.chartType == 'index' && (
+            {/* Cycle indexes chart */}
+            {settings.chartType == 'barbo' && (
               <section
                 className={s.center}
                 ref={el => (center.current = el)}
               >
-                <GraphicChart />
+                <Barbo />
               </section>
             )}
 
-            {settings.chartType != 'graphic' && (
-              <section className={s.right}>
-                <div className={s.tablesSelector}>
-                  <button
-                    disabled={
-                      settings.interface?.planets == 'modern'
-                    }
-                    onClick={() => selectPlanetsTable('modern')}
-                  >
-                    modern
-                  </button>
-                  <button
-                    disabled={
-                      settings.interface?.planets == 'traditional'
-                    }
-                    onClick={() => selectPlanetsTable('traditional')}
-                  >
-                    traditional
-                  </button>
-                  <button
-                    disabled={settings.interface?.planets == 'hours'}
-                    onClick={() => selectPlanetsTable('hours')}
-                  >
-                    hours
-                  </button>
-                </div>
+            {settings.chartType != 'graphic' &&
+              settings.chartType != 'barbo' && (
+                <section className={s.right}>
+                  <div className={s.tablesSelector}>
+                    {['modern', 'traditional', 'hours'].map(
+                      planet => (
+                        <button
+                          disabled={
+                            settings.interface?.planets === planet
+                          }
+                          onClick={() => selectPlanetsTable(planet)}
+                          key={planet}
+                        >
+                          {planet}
+                        </button>
+                      )
+                    )}
+                  </div>
 
-                {settings.interface?.planets == 'traditional' && (
-                  <TraditionalPlanetsTable
-                    lat={lat}
-                    lng={lng}
-                    calendarDay={natalData.date}
-                    today={today}
-                  />
-                )}
-                {settings.interface?.planets != 'hours' &&
-                  settings.interface?.thirty && <ThirtyDegrees />}
+                  {settings.interface?.planets == 'traditional' && (
+                    <TraditionalPlanetsTable
+                      lat={lat}
+                      lng={lng}
+                      calendarDay={natalData.date}
+                      today={today}
+                    />
+                  )}
 
-                {settings.interface?.planets == 'modern' && (
-                  <ModernPlanetsTable />
-                )}
-                {settings.interface?.planets == 'hours' && (
-                  <HourTable
-                    lat={lat}
-                    lng={lng}
-                    calendarDay={natalData.date}
-                    today={today}
-                  />
-                )}
-              </section>
-            )}
+                  {settings.interface?.planets != 'hours' &&
+                    settings.interface?.thirty && <ThirtyDegrees />}
+
+                  {settings.interface?.planets == 'modern' && (
+                    <ModernPlanetsTable />
+                  )}
+
+                  {settings.interface?.planets == 'hours' && (
+                    <HourTable
+                      lat={lat}
+                      lng={lng}
+                      calendarDay={natalData.date}
+                      today={today}
+                    />
+                  )}
+                </section>
+              )}
           </main>
         </div>
       </CelestialContext.Provider>
