@@ -36,7 +36,7 @@ function getStartDatesOfMonths(startYear, endYear) {
   return startDates
 }
 
-function range(a, b) {
+function range(a: number, b: number) {
   const out = []
   for (let i = Math.min(a, b); i <= Math.max(a, b); i++) {
     out.push(i)
@@ -44,7 +44,7 @@ function range(a, b) {
   return out
 }
 
-function pairs(A) {
+function pairs(A: any[]) {
   const pairs = []
 
   for (let i = 0; i < A.length - 1; i++) {
@@ -208,7 +208,7 @@ export default function Barbo() {
 
 function Path({pair, dts, H}) {
   const deltas = dts.map(
-    date =>
+    (date: Date) =>
       angleDistance(pos(pair[0], date), pos(pair[1], date)) *
       (180 / Math.PI)
   )

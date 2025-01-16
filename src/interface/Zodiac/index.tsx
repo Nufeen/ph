@@ -7,6 +7,7 @@ import Houses from './Houses/index.js'
 
 import {useContext} from 'react'
 import {SettingContext} from '../../SettingContext.js'
+import {CelestialContext} from '../../CelestialContext.js'
 
 import houses from '../../assets/zodiac.json'
 
@@ -27,12 +28,20 @@ export default function Zodiac(props: Props) {
 
   const {settings} = useContext(SettingContext)
 
+  const {
+    horoscope: {_ascendant}
+  } = useContext(CelestialContext)
+
   const x0 = 150
   const y0 = 155
 
   const r = 130
 
-  const zero = -90
+  const zero =
+    settings.objects.houses.visibility.natal &&
+    settings.interface.startFrom == 'Asc'
+      ? -_ascendant.ChartPosition.Ecliptic.DecimalDegrees - 90
+      : -90
 
   return (
     <div className={s.wrapper}>
@@ -50,8 +59,8 @@ export default function Zodiac(props: Props) {
             key={i}
             x1={x0}
             y1={y0}
-            x2={x0 + r * sin((i * 30 * 3.14 + zero - 3.14) / 180)}
-            y2={y0 + r * cos((i * 30 * 3.14 + zero - 3.14) / 180)}
+            x2={x0 + r * sin(((i * 30 + zero) * 3.14 - 3.14) / 180)}
+            y2={y0 + r * cos(((i * 30 + zero) * 3.14 - 3.14) / 180)}
             stroke="currentColor"
           />
         ))}
@@ -73,7 +82,7 @@ export default function Zodiac(props: Props) {
             }
             y={
               y0 +
-              3 +
+              2 +
               (r - 15) * cos(((i * 30 + zero + 15) * 3.14) / 180)
             }
           >

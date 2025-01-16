@@ -32,7 +32,7 @@ function getStartDatesOfEveryDayPerYear(year) {
   return dates
 }
 
-function splitArray(arr) {
+function splitArray(arr: number[]) {
   let result = []
   let temp = []
   for (let i = 0; i < arr.length - 1; i++) {
@@ -224,7 +224,7 @@ function Path(props) {
 
   const d =
     `M ${head[0]} ${head[1]} ` +
-    tail.map(x => `L ${x[0]}, ${x[1]}`).join(' ')
+    tail.map((x: number[]) => `L ${x[0]}, ${x[1]}`).join(' ')
 
   return <path d={d} stroke={props.color} fill="transparent" />
 }

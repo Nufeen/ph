@@ -49,7 +49,8 @@ const PlanetCheckboxTable = () => {
           fixedStars: {
             ...(settings.objects?.celestialPoints?.fixedStars || {}),
             ...settings.objects.celestialPoints?.fixedStars,
-            [loc]: !settings.objects.celestialPoints?.fixedStars?.[loc]
+            [loc]:
+              !settings.objects.celestialPoints?.fixedStars?.[loc]
           }
         }
       }
@@ -88,6 +89,18 @@ const PlanetCheckboxTable = () => {
       interface: {
         ...settings.interface,
         houseSystem: e.target.value
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleCircleStartSelect(e) {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        startFrom: e.target.value
       }
     }
     setSettings(s)
@@ -155,7 +168,9 @@ const PlanetCheckboxTable = () => {
             <td>
               <input
                 type="checkbox"
-                checked={settings.objects.celestialPoints?.fixedStars?.chart}
+                checked={
+                  settings.objects.celestialPoints?.fixedStars?.chart
+                }
                 onChange={() => handleStarsVisibility('chart')}
               />
             </td>
@@ -165,7 +180,9 @@ const PlanetCheckboxTable = () => {
             <td>
               <input
                 type="checkbox"
-                checked={settings.objects.celestialPoints?.fixedStars?.table}
+                checked={
+                  settings.objects.celestialPoints?.fixedStars?.table
+                }
                 onChange={() => handleStarsVisibility('table')}
               />
             </td>
@@ -257,6 +274,14 @@ const PlanetCheckboxTable = () => {
           <option value="equal-house">Equal-house</option>
           <option value="regiomontanus">Regiomontanus</option>
           <option value="topocentric">Topocentric</option>
+        </select>
+
+        <select
+          value={settings?.interface?.startFrom ?? 'Aries'}
+          onChange={handleCircleStartSelect}
+        >
+          <option value="Aries">0: Aries</option>
+          <option value="Asc">0: Asc</option>
         </select>
       </div>
     </div>

@@ -46,9 +46,13 @@
 .houseSelector {
   grid-area: house;
   display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 0;
-  align-items: end;
+  align-items: start;
+}
+.houseSelector > * {
+  margin-top: 0.5em;
 }
 
 .wrapper hr {
@@ -62,7 +66,7 @@
 .thead th {
   font-size: 0.7em;
   opacity: 0.6;
-	display: flex;
+  display: flex;
 }
 
 .wrapper input[type='checkbox'] {
@@ -98,17 +102,16 @@
   align-items: center;
   justify-content: start;
   position: relative;
-
 }
 
-.aspectLine  input {
-    appearance: none;
-    background: transparent;
-    position: relative;
-    display: inline-block;
-    margin-right: 0.5em;
-    width: 80%;
-  }
+.aspectLine input {
+  appearance: none;
+  background: transparent;
+  position: relative;
+  display: inline-block;
+  margin-right: 0.5em;
+  width: 80%;
+}
 
 .aspectLine input::after {
   content: '';

@@ -34,7 +34,8 @@
     "thirty": true,
     "aspectOrb": 4,
     "orbMultiplier": true,
-    "houseSystem": "placidus"
+    "houseSystem": "placidus",
+    "startFrom": "Aries"
   },
   "chartType": "natal"
 }
