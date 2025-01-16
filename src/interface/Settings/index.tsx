@@ -107,6 +107,30 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  function handleAspectAnglesVisibility(e) {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        aspectAngles: e.target.checked
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handlePlanetAnglesVisibility(e) {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        planetAngles: e.target.checked
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
   return (
     <div className={s.wrapper}>
       <table className={s.planetes}>
@@ -214,18 +238,40 @@ const PlanetCheckboxTable = () => {
       <table className={s.thirty}>
         <thead className={s.thead}>
           <tr>
-            <th>30°</th>
+            <th>Other</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Show</td>
+            <td>Show 30°</td>
             <td>
               <input
                 type="checkbox"
                 checked={settings.interface?.thirty}
                 onChange={handleThirtyVisibility}
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <td>Aspect angles</td>
+            <td>
+              <input
+                type="checkbox"
+                checked={settings.interface?.aspectAngles}
+                onChange={handleAspectAnglesVisibility}
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <td>Planet angles</td>
+            <td>
+              <input
+                type="checkbox"
+                checked={settings.interface?.planetAngles}
+                onChange={handlePlanetAnglesVisibility}
               />
             </td>
           </tr>

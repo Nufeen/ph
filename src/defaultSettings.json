@@ -33,6 +33,8 @@
     "elements": true,
     "thirty": true,
     "aspectOrb": 4,
+    "aspectAngles": true,
+    "planetAngles": true,
     "orbMultiplier": true,
     "houseSystem": "placidus",
     "startFrom": "Aries"

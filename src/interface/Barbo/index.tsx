@@ -10,6 +10,13 @@ import {useMemo} from 'react'
 import planets from '../../assets/planets.json'
 import zodiacSigns from '../../assets/zodiac.json'
 
+function angleDistance(a, b) {
+  return Math.min(
+    360 - (Math.abs(a - b) % 360),
+    Math.abs(a - b) % 360
+  )
+}
+
 // SVG Canvas Width
 // 1200 is nice for 12 * i math
 const W = 1200
@@ -89,9 +96,7 @@ export default function Barbo() {
   const P = upperPlanets.filter(p => settings.objects.planets[p])
 
   const deltas = useMemo(() => {
-    return dts.map(
-      date => sumAngleDistances(P, date) * (180 / Math.PI)
-    )
+    return dts.map(date => sumAngleDistances(P, date))
   }, [dts, P])
 
   const max = Math.max(...deltas)
@@ -207,10 +212,8 @@ export default function Barbo() {
 }
 
 function Path({pair, dts, H}) {
-  const deltas = dts.map(
-    (date: Date) =>
-      angleDistance(pos(pair[0], date), pos(pair[1], date)) *
-      (180 / Math.PI)
+  const deltas = dts.map((date: Date) =>
+    angleDistance(pos(pair[0], date), pos(pair[1], date))
   )
 
   const [head, ...tail] = deltas
@@ -240,29 +243,6 @@ function TotalPath({H, deltas}) {
       .join(' ')
 
   return <path d={d} stroke={'white'} fill="transparent" />
-}
-
-// TODO check
-function angleDistance(a, b) {
-  // Convert angles from degrees to radians
-  const aRad = (a * Math.PI) / 180
-  const bRad = (b * Math.PI) / 180
-
-  // Calculate the sine of each angle
-  const sinA = Math.sin(aRad)
-  const sinB = Math.sin(bRad)
-
-  // Calculate the arcsine of each sine value
-  const arcsinA = Math.asin(sinA)
-  const arcsinB = Math.asin(sinB)
-
-  // Find the absolute difference between the arcsines
-  let distance = Math.abs(arcsinA - arcsinB)
-
-  // Use the modulus operation to ensure the result is in the range [0, π]
-  distance = Math.min(distance, 2 * Math.PI - distance)
-
-  return distance
 }
 
 function sumAngleDistances(upperPlanets, date) {

@@ -61,7 +61,7 @@ export default function TransitPlanets({zero, x0, y0}) {
               y={y0 + (l + 12) * cos(deg(planet)) - 4}
               fontWeight={400}
             >
-              {
+              {settings.interface.planetAngles && (
                 <tspan dy="0">
                   {
                     planet.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
@@ -69,7 +69,7 @@ export default function TransitPlanets({zero, x0, y0}) {
                     )[0]
                   }
                 </tspan>
-              }
+              )}
             </text>
           </React.Fragment>
         ))}

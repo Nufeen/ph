@@ -26,7 +26,7 @@ export default function Aspects({zero, x0, y0}) {
           settings?.objects?.planets[planet?.label]
       )
       .map(
-        (z: {ChartPosition: {Ecliptic: {DecimalDegrees: any}}}) =>
+        (z: {ChartPosition: {Ecliptic: {DecimalDegrees: number}}}) =>
           z.ChartPosition.Ecliptic.DecimalDegrees
       )
   )
@@ -48,16 +48,19 @@ export default function Aspects({zero, x0, y0}) {
     })
   })
 
-  function aspectBetween(a: number, b: number) {
-    let d = abs(a - b)
+  function angleDistance(a, b) {
+    return Math.min(
+      360 - (Math.abs(a - b) % 360),
+      Math.abs(a - b) % 360
+    )
+  }
 
-    if (d > 170) {
-      d = 360 - a + b
-    }
+  function aspectBetween(a: number, b: number) {
+    let d = angleDistance(a, b)
 
     if (d < 50 || (d > 133 && d < 170)) return null
 
-    if (d % 30 < threshold || d % 30 > 30 - threshold) {
+    if (d % 30 <= threshold || 30 - (d % 30) < threshold) {
       return {
         a,
         b,
@@ -100,13 +103,27 @@ export default function Aspects({zero, x0, y0}) {
             stroke={'transparent'}
             strokeWidth={5}
           />
-          {false && (
+          {settings.interface.aspectAngles && (
             <text
-              fill="white"
+              fill="silver"
               fontSize={4}
               textAnchor="middle"
-              x={1 * (1 * sin(deg(a)) - 1 * sin(deg(b))) + x0}
-              y={1 * (1 * cos(deg(a)) - 1 * cos(deg(b))) + y0}
+              x={
+                getMidpoint(
+                  x0 + 70 * sin(deg(a)),
+                  y0 + 70 * cos(deg(a)),
+                  x0 + 70 * sin(deg(b)),
+                  y0 + 70 * cos(deg(b))
+                ).centerX
+              }
+              y={
+                getMidpoint(
+                  x0 + 70 * sin(deg(a)),
+                  y0 + 70 * cos(deg(a)),
+                  x0 + 70 * sin(deg(b)),
+                  y0 + 70 * cos(deg(b))
+                ).centerY
+              }
             >
               {~~d0}°
             </text>
@@ -115,4 +132,10 @@ export default function Aspects({zero, x0, y0}) {
       ))}
     </>
   )
+}
+
+function getMidpoint(x1, y1, x2, y2) {
+  const centerX = (x1 + x2) / 2
+  const centerY = (y1 + y2) / 2
+  return {centerX, centerY}
 }
