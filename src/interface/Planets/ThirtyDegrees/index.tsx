@@ -8,6 +8,15 @@ import s from './index.module.css'
 
 import planets from '../../../assets/planets.json'
 
+interface CelestialBody {
+  label: string
+  ChartPosition: {
+    Ecliptic: {
+      DecimalDegrees: number
+    }
+  }
+}
+
 export default function ThirtyDegrees() {
   const {horoscope, transitHoroscope} = useContext(CelestialContext)
 
@@ -21,8 +30,11 @@ export default function ThirtyDegrees() {
         <div className={s.cell}></div>
       </div>
       {Object.values(horoscope.CelestialBodies)
-        .filter(body => settings.objects.planets[body.label])
-        .map((body: any, i) => (
+        .filter(
+          (body: CelestialBody) =>
+            settings.objects.planets[body.label]
+        )
+        .map((body: CelestialBody, i) => (
           <div
             key={i}
             className={s.body}
@@ -39,8 +51,11 @@ export default function ThirtyDegrees() {
       {settings.chartType == 'transit' && (
         <div className={s.transit}>
           {Object.values(transitHoroscope.CelestialBodies)
-            .filter(body => settings.objects.planets[body.label])
-            .map((body: any, i) => (
+            .filter(
+              (body: CelestialBody) =>
+                settings.objects.planets[body.label]
+            )
+            .map((body: CelestialBody, i) => (
               <div
                 key={i}
                 className={s.tbody}
