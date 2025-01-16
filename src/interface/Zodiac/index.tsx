@@ -14,6 +14,7 @@ import houses from '../../assets/zodiac.json'
 import s from './index.module.css'
 
 const {sin, cos} = Math
+const π = Math.PI
 
 const l = [...Array(12).keys()]
 
@@ -59,8 +60,8 @@ export default function Zodiac(props: Props) {
             key={i}
             x1={x0}
             y1={y0}
-            x2={x0 + r * sin(((i * 30 + zero) * 3.14 - 3.14) / 180)}
-            y2={y0 + r * cos(((i * 30 + zero) * 3.14 - 3.14) / 180)}
+            x2={x0 + r * sin(((i * 30 + zero) * π - π) / 180)}
+            y2={y0 + r * cos(((i * 30 + zero) * π - π) / 180)}
             stroke="currentColor"
           />
         ))}
@@ -78,12 +79,12 @@ export default function Zodiac(props: Props) {
             x={
               x0 -
               5 +
-              (r - 15) * sin(((i * 30 + zero + 15) * 3.14) / 180)
+              (r - 15) * sin(((i * 30 + zero + 15) * π) / 180)
             }
             y={
               y0 +
               2 +
-              (r - 15) * cos(((i * 30 + zero + 15) * 3.14) / 180)
+              (r - 15) * cos(((i * 30 + zero + 15) * π) / 180)
             }
           >
             {houses[i]}

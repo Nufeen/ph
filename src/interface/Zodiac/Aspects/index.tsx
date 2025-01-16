@@ -73,7 +73,7 @@ export default function Aspects({zero, x0, y0}) {
   }
 
   function deg(x: number) {
-    return ((x + zero) * 3.14) / 180
+    return ((x + zero) * Math.PI) / 180
   }
 
   return (

@@ -8,8 +8,9 @@ import s from './index.module.css'
 import {CelestialContext} from '../../../CelestialContext.js'
 
 const {sin, cos} = Math
+const π = Math.PI
 
-export default function Stars({calendarDay, zero, x0, y0}) {
+export default function Stars({zero, x0, y0}) {
   const {stars} = useContext(CelestialContext)
 
   const flatten = Object.values(stars)
@@ -27,8 +28,8 @@ export default function Stars({calendarDay, zero, x0, y0}) {
           <circle
             className={s.star}
             data-star={name}
-            cx={x0 + 144 * sin(((elon + zero) * 3.14) / 180)}
-            cy={y0 + 144 * cos(((elon + zero) * 3.14) / 180)}
+            cx={x0 + 144 * sin(((elon + zero) * π) / 180)}
+            cy={y0 + 144 * cos(((elon + zero) * π) / 180)}
             r="1"
           />
 
@@ -37,10 +38,10 @@ export default function Stars({calendarDay, zero, x0, y0}) {
               className={s.starline}
               stroke="lightgray"
               strokeWidth=".3"
-              x1={x0 + 144 * sin(((elon + zero) * 3.14) / 180)}
-              y1={y0 + 144 * cos(((elon + zero) * 3.14) / 180)}
-              x2={x0 + 70 * sin(((elon + zero) * 3.14) / 180)}
-              y2={y0 + 70 * cos(((elon + zero) * 3.14) / 180)}
+              x1={x0 + 144 * sin(((elon + zero) * π) / 180)}
+              y1={y0 + 144 * cos(((elon + zero) * π) / 180)}
+              x2={x0 + 70 * sin(((elon + zero) * π) / 180)}
+              y2={y0 + 70 * cos(((elon + zero) * π) / 180)}
             />
           )}
 
@@ -48,8 +49,8 @@ export default function Stars({calendarDay, zero, x0, y0}) {
             opacity={0.4}
             className={s.text}
             fill="currentColor"
-            x={x0 + 155 * sin(((elon + zero) * 3.14) / 180)}
-            y={y0 + 159 * cos(((elon + zero) * 3.14) / 180)}
+            x={x0 + 155 * sin(((elon + zero) * π) / 180)}
+            y={y0 + 159 * cos(((elon + zero) * π) / 180)}
           >
             {name}
           </text>

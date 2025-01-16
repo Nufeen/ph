@@ -19,7 +19,7 @@ export default function TransitPlanets({zero, x0, y0}) {
 
   function deg(x) {
     const y = x.ChartPosition.Ecliptic.DecimalDegrees
-    return ((y + zero) * 3.14) / 180
+    return ((y + zero) * Math.PI) / 180
   }
 
   return (

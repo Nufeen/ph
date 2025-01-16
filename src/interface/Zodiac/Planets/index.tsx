@@ -10,6 +10,7 @@ import planets from '../../../assets/planets.json'
 import {CelestialContext} from '../../../CelestialContext.js'
 
 const {sin, cos, abs} = Math
+const π = Math.PI
 
 export default function Planets({calendarDay, zero, x0, y0}) {
   const sunPos = pos('Sun', calendarDay)
@@ -38,13 +39,13 @@ export default function Planets({calendarDay, zero, x0, y0}) {
                 (88 +
                   (key == 'Sun' ? -10 : 0) +
                   (key == 'Moon' ? -7 : 0)) *
-                  sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                  sin(((pos(key, calendarDay) + zero) * π) / 180)
               }
               y={
                 y0 +
                 5 +
                 +(85 + (key == 'Sun' ? -10 : 0)) *
-                  cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                  cos(((pos(key, calendarDay) + zero) * π) / 180)
               }
             >
               {value}
@@ -67,13 +68,13 @@ export default function Planets({calendarDay, zero, x0, y0}) {
                 (88 +
                   (key == 'Sun' ? -10 : 0) +
                   (key == 'Moon' ? -7 : 0)) *
-                  sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                  sin(((pos(key, calendarDay) + zero) * π) / 180)
               }
               y={
                 y0 -
                 5 +
                 +(85 + (key == 'Sun' ? -10 : 0)) *
-                  cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                  cos(((pos(key, calendarDay) + zero) * π) / 180)
               }
             >
               {settings.interface.planetAngles && (
@@ -96,13 +97,11 @@ export default function Planets({calendarDay, zero, x0, y0}) {
               strokeWidth="3"
               cx={
                 x0 +
-                70 *
-                  sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                70 * sin(((pos(key, calendarDay) + zero) * π) / 180)
               }
               cy={
                 y0 +
-                70 *
-                  cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                70 * cos(((pos(key, calendarDay) + zero) * π) / 180)
               }
               r="1"
             />
@@ -114,13 +113,11 @@ export default function Planets({calendarDay, zero, x0, y0}) {
               strokeWidth="3"
               cx={
                 x0 +
-                100 *
-                  sin(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                100 * sin(((pos(key, calendarDay) + zero) * π) / 180)
               }
               cy={
                 y0 +
-                100 *
-                  cos(((pos(key, calendarDay) + zero) * 3.14) / 180)
+                100 * cos(((pos(key, calendarDay) + zero) * π) / 180)
               }
               r="1"
             />

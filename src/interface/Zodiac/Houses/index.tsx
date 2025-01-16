@@ -21,8 +21,9 @@ export default function Houses({zero, x0, y0, chartType}) {
 
   function deg(i) {
     const x =
-      H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
-    return ((x + zero) * 3.14) / 180
+      H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic
+        .DecimalDegrees
+    return ((x + zero) * Math.PI) / 180
   }
 
   const l = 155
@@ -70,8 +71,8 @@ export default function Houses({zero, x0, y0, chartType}) {
           <tspan fontSize={4} dy="-4">
             {
               ~~(
-                H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic
-                  .DecimalDegrees % 30
+                H[chartType].Houses[i].ChartPosition.StartPosition
+                  .Ecliptic.DecimalDegrees % 30
               )
             }
             °

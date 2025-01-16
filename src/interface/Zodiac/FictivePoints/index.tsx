@@ -50,13 +50,13 @@ export default function Fictive({
     horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic
       .DecimalDegrees
 
-  const lilithDeg = ((ldd + zero) * 3.14) / 180
+  const lilithDeg = ((ldd + zero) * Math.PI) / 180
 
   const nndd =
     horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic
       .DecimalDegrees
 
-  const northnodeDeg = ((nndd + zero) * 3.14) / 180
+  const northnodeDeg = ((nndd + zero) * Math.PI) / 180
 
   return (
     <g className={s.wrapper}>
