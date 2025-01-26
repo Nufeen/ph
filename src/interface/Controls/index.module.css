@@ -107,6 +107,7 @@
   padding-left: 35px;
   padding-top: 10px;
   display: flex;
+  align-items: center;
   gap: 8px;
   button + button {
     margin-left: 10px;
@@ -130,17 +131,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row-reverse;
   font-size: 0.6em;
   color: gray;
 
   button {
     height: 30px;
     padding: 10px;
+    margin-left: 5px;
     max-width: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .swap {
+    flex-direction: column;
   }
 }
 

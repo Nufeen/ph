@@ -5,6 +5,7 @@
   scroll-snap-type: y mandatory;
   overflow: auto;
   scroll-snap-align: center;
+  height: 350px;
 }
 
 .layout section {
@@ -12,16 +13,26 @@
 }
 
 @media (min-width: 900px) {
+  .layout {
+    display: flex;
+    scroll-snap-type: mandatory;
+    scroll-snap-points-y: repeat(300px);
+    scroll-snap-type: y mandatory;
+    overflow: auto;
+    scroll-snap-align: center;
+    height: 100%;
+  }
+
   .layout section:first-of-type {
     width: auto;
-    max-width: 300px;
+    max-width: 350px;
+    height: auto;
   }
 }
 
 .layout section.right,
 .layout section.left {
   display: flex;
-  align-items: center;
 }
 
 .layout section.right {

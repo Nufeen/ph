@@ -143,7 +143,7 @@ const PlanetCheckboxTable = () => {
         <tbody>
           {Object.keys(planets).map(planet => (
             <tr key={planet}>
-              <td>{planet}</td>
+              <td>{planets[planet]}</td>
               <td>
                 <input
                   type="checkbox"

@@ -1,20 +1,17 @@
 .wrapper {
+  height: 100%;
+  height: auto;
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 60px 1fr 1fr;
   grid-template-areas:
-    'planetes fictive'
-    'planetes other'
-    'planetes elements'
-    'house thirty'
-    'orb orb';
+    'planetes fictive thirty'
+    'planetes other  house'
+    'planetes elements house'
+    'orb orb orb';
   column-gap: 10px;
   font-size: 0.9em;
   margin: 0 auto;
-}
-
-.wrapper td:first-child,
-.wrapper th:first-child {
-  min-width: 65px;
 }
 
 .wrapper > * {
@@ -39,6 +36,7 @@
 .fictive {
   grid-area: fictive;
 }
+
 .other {
   grid-area: other;
 }

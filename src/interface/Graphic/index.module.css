@@ -1,5 +1,6 @@
 .wrap {
   position: relative;
+  height: 350px;
   max-width: 90%;
   height: 100%;
   font-family: 'Noto Emoji';
@@ -8,16 +9,25 @@
   padding-top: 20px;
   padding-bottom: 20px;
   box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+}
+
+@media screen and (min-width: 768px) {
+  .wrap {
+    height: auto;
+  }
 }
 
 .wrap svg {
-  height: auto;
+  height: 100%;
   overflow: visible;
   font-family: 'Noto Emoji';
   font-weight: bold;
   font-family: monospace;
   font-weight: 700;
 }
+
 .month {
   font-weight: normal;
   font-size: 8px;

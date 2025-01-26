@@ -196,7 +196,7 @@ function App() {
           chart: latlng
         }}
       >
-        <div>
+        <div className={s.main}>
           <header className={s.header}>
             <ControlPane
               {...{
