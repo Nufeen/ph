@@ -214,7 +214,7 @@ export default function ControlPane(props) {
             onChange={e => handleCountrySelection(e, chartType)}
             value={data[chartType].country ?? null}
           >
-            <option selected disabled value={null}>
+            <option disabled value={null}>
               Location
             </option>
             {countries.map((x, i) => (

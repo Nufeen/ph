@@ -279,9 +279,7 @@ const PlanetCheckboxTable = () => {
       </table>
 
       <div className={s.orb}>
-        <h3 className={s.thead}>
-          <th>Orb multiplier</th>
-        </h3>
+        <h3 className={s.thead}>Orb multiplier</h3>
 
         <div className={s.aspectLine}>
           <input

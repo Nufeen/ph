@@ -61,7 +61,7 @@
   opacity: 0.6;
 }
 
-.thead th {
+.thead {
   font-size: 0.7em;
   opacity: 0.6;
   display: flex;
@@ -89,6 +89,7 @@
     margin: 0;
     padding: 0;
   }
+
   margin-top: 20px;
 }
 

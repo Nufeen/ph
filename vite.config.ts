@@ -7,6 +7,7 @@ import dsv from '@rollup/plugin-dsv'
 export default defineConfig({
   base: 'https://nufeen.github.io/ph/',
   build: {
+    sourcemap: true,
     commonjsOptions: {
       transformMixedEsModules: true
     }
