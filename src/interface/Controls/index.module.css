@@ -33,12 +33,13 @@
     background: transparent;
     border: 1px solid gray;
     border-radius: 6px;
-    padding: 6px 5px;
+    padding: 2px 4px;
     background-color: #242424;
+    color: silver;
   }
 
   input {
-    padding: 2px 5px;
+    padding: 2px 4px;
   }
 }
 
