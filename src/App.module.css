@@ -5,7 +5,7 @@
   scroll-snap-type: y mandatory;
   overflow: auto;
   scroll-snap-align: center;
-  height: 365px;
+  height: max(365px, 100vh - 300px);
 }
 
 .layout section {
@@ -49,6 +49,9 @@
 
 .layout section.center {
   width: 120%;
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 
 .layout section > svg {
