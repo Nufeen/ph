@@ -50,6 +50,10 @@ export default function Fictive({
     horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic
       .DecimalDegrees
 
+  const ldd30 =
+    horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic
+      .ArcDegreesFormatted30
+
   const lilithDeg = ((ldd + zero) * Math.PI) / 180
 
   const nndd =
@@ -71,10 +75,28 @@ export default function Fictive({
             ⚸
           </text>
 
+          {settings.interface.planetAngles && (
+            <text
+              fill="violet"
+              fontSize={4}
+              x={x0 + 93 * sin(lilithDeg)}
+              y={y0 + 95 * cos(lilithDeg) - 8}
+            >
+              {ldd30.split(' ')[0]}
+            </text>
+          )}
+
           <circle
             className={s.fictive}
             cx={x0 + 70 * sin(lilithDeg)}
             cy={y0 + 70 * cos(lilithDeg)}
+            r="1"
+          />
+
+          <circle
+            className={s.fictive}
+            cx={x0 + 100 * sin(lilithDeg)}
+            cy={y0 + 100 * cos(lilithDeg)}
             r="1"
           />
         </>
@@ -91,12 +113,39 @@ export default function Fictive({
             ☊
           </text>
 
-          <circle
-            className={s.fictive}
-            cx={x0 + 70 * sin(northnodeDeg)}
-            cy={y0 + 70 * cos(northnodeDeg)}
-            r="1"
-          />
+          {settings.interface.planetAngles && (
+            <text
+              fill="violet"
+              fontSize={4}
+              x={x0 + 90 * sin(northnodeDeg) - 7}
+              y={y0 + 90 * cos(northnodeDeg) - 8}
+            >
+              {
+                horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
+                  ' '
+                )[0]
+              }
+            </text>
+          )}
+
+          {[
+            {
+              cx: x0 + 70 * sin(northnodeDeg),
+              cy: y0 + 70 * cos(northnodeDeg)
+            },
+            {
+              cx: x0 + 100 * sin(northnodeDeg),
+              cy: y0 + 100 * cos(northnodeDeg)
+            }
+          ].map((circle, index) => (
+            <circle
+              key={index}
+              className={s.fictive}
+              cx={circle.cx}
+              cy={circle.cy}
+              r="1"
+            />
+          ))}
         </>
       )}
 
@@ -110,12 +159,40 @@ export default function Fictive({
           >
             ☋
           </text>
-          <circle
-            className={s.fictive}
-            cx={x0 - 70 * sin(northnodeDeg)}
-            cy={y0 - 70 * cos(northnodeDeg)}
-            r="1"
-          />
+
+          {settings.interface.planetAngles && (
+            <text
+              fill="violet"
+              fontSize={4}
+              x={x0 - 90 * sin(northnodeDeg) - 7}
+              y={y0 - 90 * cos(northnodeDeg) - 8}
+            >
+              {
+                horoscope.CelestialPoints.southnode.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
+                  ' '
+                )[0]
+              }
+            </text>
+          )}
+
+          {[
+            {
+              cx: x0 - 70 * sin(northnodeDeg),
+              cy: y0 - 70 * cos(northnodeDeg)
+            },
+            {
+              cx: x0 - 100 * sin(northnodeDeg),
+              cy: y0 - 100 * cos(northnodeDeg)
+            }
+          ].map((circle, index) => (
+            <circle
+              key={index}
+              className={s.fictive}
+              cx={circle.cx}
+              cy={circle.cy}
+              r="1"
+            />
+          ))}
         </>
       )}
     </g>
