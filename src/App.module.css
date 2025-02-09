@@ -119,6 +119,10 @@
   color: aliceblue;
 }
 
+.transitButtons button:disabled {
+  color: gray;
+}
+
 .transitInfo {
   color: gray;
   font-size: 7px;

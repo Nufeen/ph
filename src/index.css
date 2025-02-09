@@ -67,3 +67,8 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+button:disabled {
+  opacity: 0.4;
+  outline: none;
+}
