@@ -2,11 +2,15 @@ import {useContext} from 'react'
 import {SettingContext} from '../../../SettingContext.js'
 import {CelestialContext} from '../../../CelestialContext.js'
 
+import planets from '../../../assets/planets.json'
+
 import React from 'react'
 
-const {sin, cos, abs} = Math
+import s from './index.module.css'
 
-export default function Aspects({zero, x0, y0}) {
+const {sin, cos, abs, min} = Math
+
+export default function Aspects() {
   const {horoscope, progressedHoroscope, transitHoroscope} =
     useContext(CelestialContext)
 
@@ -38,7 +42,9 @@ export default function Aspects({zero, x0, y0}) {
     natal
   }
 
-  const AT = []
+  const positive = []
+  const negative = []
+
   const uniqueAspects = new Set<number>()
 
   M.natal.forEach((a: [any, any]) => {
@@ -47,13 +53,21 @@ export default function Aspects({zero, x0, y0}) {
       if (aspect && !uniqueAspects.has(aspect.d0)) {
         uniqueAspects.add(aspect.d0)
 
-        AT.push(aspect)
+        if (
+          abs(aspect.d0) % 45 < 6 ||
+          abs(aspect.d0) % 45 > 45 - 6
+        ) {
+          negative.push(aspect)
+        } else {
+          positive.push(aspect)
+        }
       }
     })
   })
 
-  // sort for collision detect
-  AT.sort((a, b) => a.y - b.y)
+  // sort for order in table: exact go up
+  negative.sort((a, b) => a.d - b.d)
+  positive.sort((a, b) => a.d - b.d)
 
   function angleDistance(a: number, b: number) {
     return Math.min(
@@ -71,72 +85,47 @@ export default function Aspects({zero, x0, y0}) {
       return {
         a,
         b,
-        d: Math.min(d % 30, 30 - (d % 30)),
+        d: min(d % 30, 30 - (d % 30)),
         d0: d,
-        x: getMidpoint(
-          x0 + 70 * sin(deg(a)),
-          y0 + 70 * cos(deg(a)),
-          x0 + 70 * sin(deg(b)),
-          y0 + 70 * cos(deg(b))
-        ).centerX,
-        y: getMidpoint(
-          x0 + 70 * sin(deg(a)),
-          y0 + 70 * cos(deg(a)),
-          x0 + 70 * sin(deg(b)),
-          y0 + 70 * cos(deg(b))
-        ).centerY
+        label1,
+        label2,
+        caption: `${planets[label1]} ${~~d}° ${planets[label2]} `
       }
     }
 
     return null
   }
 
-  // kind of naive collision detection
-  for (let i = 0; i < AT.length - 1; i++) {
-    if (
-      abs(AT[i + 1].y - AT[i].y) < 10 &&
-      AT[i + 1].x - AT[i].x < 5
-    ) {
-      AT[i + 1].y = AT[i].y + 4
-    }
-  }
-
-  function deg(x: number) {
-    return ((x + zero) * Math.PI) / 180
-  }
-
   return (
-    <>
-      {AT.map(({a, b, d, d0, x, y, caption}) => (
-        <React.Fragment key={JSON.stringify([a, b])}>
-          <line
-            data-d={~~d0}
-            x1={x0 + 70 * sin(deg(a))}
-            y1={y0 + 70 * cos(deg(a))}
-            x2={x0 + 70 * sin(deg(b))}
-            y2={y0 + 70 * cos(deg(b))}
-            stroke={
-              abs(d0) % 45 < 6 || abs(d0) % 45 > 45 - 6
-                ? 'red'
-                : 'deepskyblue'
-            }
-            strokeWidth={d <= 1 ? 1 : 0.3}
-          />
+    <div className={s.wrap} data-type={settings.chartType}>
+      <div>
+        {negative.map(
+          ({a, b, d, d0, x, y, label1, label2}, index) => (
+            <ul key={index} className={s.list}>
+              <li className={s.neg} data-exact={d <= 1}>
+                <span>{planets[label1]}</span>
+                <span>{~~d0}</span>
+                <span>{planets[label2]}</span>
+              </li>
+            </ul>
+          )
+        )}
+      </div>
 
-          {settings.interface.aspectAngles && (
-            <text
-              fill="silver"
-              fontSize={4}
-              textAnchor="middle"
-              x={x}
-              y={y}
-            >
-              {~~d0}°
-            </text>
-          )}
-        </React.Fragment>
-      ))}
-    </>
+      <div>
+        {positive.map(
+          ({a, b, d, d0, x, y, label1, label2}, index) => (
+            <ul key={index} className={s.list}>
+              <li className={s.pos} data-exact={d <= 1}>
+                <span>{planets[label1]}</span>
+                <span>{~~d0}</span>
+                <span>{planets[label2]}</span>
+              </li>
+            </ul>
+          )
+        )}
+      </div>
+    </div>
   )
 }
 

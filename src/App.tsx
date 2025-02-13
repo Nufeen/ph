@@ -8,6 +8,7 @@ import HourTable from './interface/Hours'
 import TraditionalPlanetsTable from './interface/Planets/Traditional'
 import ModernPlanetsTable from './interface/Planets/Modern'
 import ThirtyDegrees from './interface/Planets/ThirtyDegrees'
+import AspectTable from './interface/Planets/Aspects'
 
 import Settings from './interface/Settings'
 import ControlPane from './interface/Controls'
@@ -251,19 +252,22 @@ function App() {
               settings.chartType != 'barbo' && (
                 <section className={s.right}>
                   <div className={s.tablesSelector}>
-                    {['modern', 'traditional', 'hours'].map(
-                      planet => (
-                        <button
-                          disabled={
-                            settings.interface?.planets === planet
-                          }
-                          onClick={() => selectPlanetsTable(planet)}
-                          key={planet}
-                        >
-                          {planet}
-                        </button>
-                      )
-                    )}
+                    {[
+                      'modern',
+                      'traditional',
+                      'hours',
+                      'aspects'
+                    ].map(planet => (
+                      <button
+                        disabled={
+                          settings.interface?.planets === planet
+                        }
+                        onClick={() => selectPlanetsTable(planet)}
+                        key={planet}
+                      >
+                        {planet}
+                      </button>
+                    ))}
                   </div>
 
                   {settings.interface?.planets == 'traditional' && (
@@ -289,6 +293,10 @@ function App() {
                       calendarDay={natalData.date}
                       today={today}
                     />
+                  )}
+
+                  {settings.interface?.planets == 'aspects' && (
+                    <AspectTable />
                   )}
                 </section>
               )}
