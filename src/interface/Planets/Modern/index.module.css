@@ -34,6 +34,10 @@
   line-height: 1.2em;
 }
 
+.star pre {
+  margin: 0;
+}
+
 .starDetail {
   display: none;
   position: absolute;
