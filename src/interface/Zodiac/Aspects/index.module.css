@@ -1,5 +1,4 @@
-.line + text {
-}
+/* TODO */
 
 .line:hover + text {
   display: block;

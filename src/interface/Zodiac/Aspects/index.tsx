@@ -1,7 +1,6 @@
 import {useContext} from 'react'
 import {SettingContext} from '../../../SettingContext.js'
 import {CelestialContext} from '../../../CelestialContext.js'
-import s from './index.module.css'
 
 import React from 'react'
 
@@ -26,8 +25,10 @@ export default function Aspects({zero, x0, y0}) {
           settings?.objects?.planets[planet?.label]
       )
       .map(
-        (z: {ChartPosition: {Ecliptic: {DecimalDegrees: number}}}) =>
-          z.ChartPosition.Ecliptic.DecimalDegrees
+        (z: {
+          label: string
+          ChartPosition: {Ecliptic: {DecimalDegrees: number}}
+        }) => [z.label, z.ChartPosition.Ecliptic.DecimalDegrees]
       )
   )
 
@@ -39,7 +40,7 @@ export default function Aspects({zero, x0, y0}) {
 
   const AT = []
 
-  M.natal.forEach((a: any) => {
+  M.natal.forEach((a: [any, any]) => {
     M[settings.chartType].forEach((b: any) => {
       const aspect = aspectBetween(a, b)
       if (aspect) {
@@ -48,14 +49,16 @@ export default function Aspects({zero, x0, y0}) {
     })
   })
 
-  function angleDistance(a, b) {
+  AT.sort((a, b) => a.y - b.y)
+
+  function angleDistance(a: number, b: number) {
     return Math.min(
       360 - (Math.abs(a - b) % 360),
       Math.abs(a - b) % 360
     )
   }
 
-  function aspectBetween(a: number, b: number) {
+  function aspectBetween([label1, a], [label2, b]) {
     let d = angleDistance(a, b)
 
     if (d < 50 || (d > 133 && d < 170)) return null
@@ -65,11 +68,33 @@ export default function Aspects({zero, x0, y0}) {
         a,
         b,
         d: d % 30,
-        d0: d
+        d0: d,
+        x: getMidpoint(
+          x0 + 70 * sin(deg(a)),
+          y0 + 70 * cos(deg(a)),
+          x0 + 70 * sin(deg(b)),
+          y0 + 70 * cos(deg(b))
+        ).centerX,
+        y: getMidpoint(
+          x0 + 70 * sin(deg(a)),
+          y0 + 70 * cos(deg(a)),
+          x0 + 70 * sin(deg(b)),
+          y0 + 70 * cos(deg(b))
+        ).centerY
       }
     }
 
     return null
+  }
+
+  // kind of naive collision detection
+  for (let i = 0; i < AT.length - 1; i++) {
+    if (
+      abs(AT[i + 1].y - AT[i].y) < 10 &&
+      AT[i + 1].x - AT[i].x < 5
+    ) {
+      AT[i + 1].y = AT[i].y + 4
+    }
   }
 
   function deg(x: number) {
@@ -78,7 +103,7 @@ export default function Aspects({zero, x0, y0}) {
 
   return (
     <>
-      {AT.map(({a, b, d, d0}) => (
+      {AT.map(({a, b, d, d0, x, y, caption}) => (
         <React.Fragment key={JSON.stringify([a, b])}>
           <line
             data-d={~~d0}
@@ -87,43 +112,20 @@ export default function Aspects({zero, x0, y0}) {
             x2={x0 + 70 * sin(deg(b))}
             y2={y0 + 70 * cos(deg(b))}
             stroke={
-              abs(d0) % 45 < 10 || abs(d0) % 45 > 45 - 10
+              abs(d0) % 45 < 6 || abs(d0) % 45 > 45 - 6
                 ? 'red'
                 : 'deepskyblue'
             }
             strokeWidth={d < 1 ? 1 : 0.3}
           />
-          <line
-            className={s.line}
-            data-d={~~d0}
-            x1={x0 + 70 * sin(deg(a))}
-            y1={y0 + 70 * cos(deg(a))}
-            x2={x0 + 70 * sin(deg(b))}
-            y2={y0 + 70 * cos(deg(b))}
-            stroke={'transparent'}
-            strokeWidth={5}
-          />
+
           {settings.interface.aspectAngles && (
             <text
               fill="silver"
               fontSize={4}
               textAnchor="middle"
-              x={
-                getMidpoint(
-                  x0 + 70 * sin(deg(a)),
-                  y0 + 70 * cos(deg(a)),
-                  x0 + 70 * sin(deg(b)),
-                  y0 + 70 * cos(deg(b))
-                ).centerX
-              }
-              y={
-                getMidpoint(
-                  x0 + 70 * sin(deg(a)),
-                  y0 + 70 * cos(deg(a)),
-                  x0 + 70 * sin(deg(b)),
-                  y0 + 70 * cos(deg(b))
-                ).centerY
-              }
+              x={x}
+              y={y}
             >
               {~~d0}°
             </text>
