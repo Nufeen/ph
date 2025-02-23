@@ -2,8 +2,14 @@
   padding-top: 20px;
   padding-bottom: 30px;
   box-sizing: border-box;
-  width: 100%;
+  width: min(100%, 100vh - 300px);
   aspect-ratio: 1 / 1;
+}
+
+@media (min-width: 900px) {
+  .wrapper {
+    width: min(100%, 100vh - 100px);
+  }
 }
 
 .figure {

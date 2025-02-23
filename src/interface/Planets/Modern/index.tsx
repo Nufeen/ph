@@ -56,7 +56,9 @@ export default function ModernPlanetsTable() {
       </thead>
       <tbody>
         {Object.values(horoscope.CelestialBodies)
-          .filter((body: any) => settings.objects.planets[body.label])
+          .filter(
+            (body: any) => settings.objects.planets[body.label]
+          )
           .map((body: any, i) => (
             <tr key={i}>
               <td className={s.retro}>{body.isRetrograde && 'R'}</td>
@@ -65,8 +67,11 @@ export default function ModernPlanetsTable() {
               <td className={s.degrees}>
                 {body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30}
               </td>
-              <td className={s.house}>{romanNumbers[body.House?.id - 1]}</td>
-              {settings.objects.celestialPoints?.fixedStars?.table && (
+              <td className={s.house}>
+                {romanNumbers[body.House?.id - 1]}
+              </td>
+              {settings.objects.celestialPoints?.fixedStars
+                ?.table && (
                 <td className={s.star}>
                   <pre>
                     {stars[body.label]
@@ -74,7 +79,15 @@ export default function ModernPlanetsTable() {
                       .filter((x, i) => i < 1)
                       .map(x => (
                         <React.Fragment key={x.name}>
-                          {x.name} ({x.size})
+                          <span
+                            onClick={() => {
+                              window.open(
+                                `https://www.google.com/search?q=${x.name}+astrology`
+                              )
+                            }}
+                          >
+                            {x.name} ({x.size})
+                          </span>
                           <span className={s.starDetail}>
                             {details[x.name]}
                           </span>
@@ -103,5 +116,7 @@ const details = {
     'A white star in the tail of the Swan. The native is mentally quick, psychic, and idealist, has a keen intellect, a very likable person, intelligent',
 
   Unukalhai:
-    'Cor Serpentis, the Serpent’s Heart. It gives immorality, accidents, violence and danger of poison'
+    'Cor Serpentis, the Serpent’s Heart. It gives immorality, accidents, violence and danger of poison',
+
+  Sadachbia: 'The Lucky Star of Hidden Things'
 }
