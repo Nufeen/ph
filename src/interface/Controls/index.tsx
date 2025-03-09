@@ -1,4 +1,4 @@
-import {useContext, useRef} from 'react'
+import {useContext, useRef, useState} from 'react'
 
 import cityTimezones from 'city-timezones'
 import moment from 'moment-timezone'
@@ -12,6 +12,8 @@ import {SettingContext} from '../../SettingContext'
 import {CelestialContext} from '../../CelestialContext'
 
 import s from './index.module.css'
+
+import {openDB} from 'idb'
 
 // for rerender of uncontrolled inputs
 let shifter = 0
@@ -32,6 +34,8 @@ export default function ControlPane(props) {
 
   const {settings, setSettings} = useContext(SettingContext)
   const {natalData, transitData} = useContext(CelestialContext)
+
+  const [successfulSave, setSuccessfulSave] = useState(false)
 
   function deriveCitiesFrom(country) {
     let cities = (country && getCitiesByCountryCode(country)) ?? []
@@ -138,6 +142,42 @@ export default function ControlPane(props) {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  const save = async chartType => {
+    let name = prompt('Enter name')
+
+    const db = await openDB('astro-ph-db1', 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains('people')) {
+          db.createObjectStore('people', {
+            keyPath: 'name'
+          })
+        }
+      }
+    })
+
+    const value = await db.get('people', name)
+
+    if (!value) {
+      await db.add('people', {
+        name,
+        date: data[chartType].date,
+        city: data[chartType].city,
+        country: data[chartType].country
+      })
+    } else {
+      alert(
+        'Person already exists with the same name.\n' +
+          'Please use a different name.'
+      )
+    }
+    setSuccessfulSave(true)
+    props.setDbScreenVisible(false)
+
+    setTimeout(() => {
+      setSuccessfulSave(false)
+    }, 1000)
+  }
+
   return (
     <div className={s.wrapper}>
       {['transit', 'graphic'].includes(settings.chartType) && (
@@ -193,7 +233,9 @@ export default function ControlPane(props) {
             />
           </div>
           <input
-            key={data[chartType]?.city + shifter}
+            key={
+              data[chartType]?.city + data[chartType]?.date + shifter
+            }
             ref={inputRef[chartType]}
             className={s.input}
             type="datetime-local"
@@ -240,6 +282,20 @@ export default function ControlPane(props) {
           </select>
 
           <div className={s.transitInfo}>
+            <button onClick={() => save(chartType)}>
+              {successfulSave ? '✅' : '💾'}
+            </button>
+
+            {chartType == 'natal' && (
+              <button
+                onClick={() =>
+                  props.setDbScreenVisible(!props.dbScreenVisible)
+                }
+              >
+                {props.dbScreenVisible ? '←' : '👫'}
+              </button>
+            )}
+
             <span>
               {moment(data[chartType]?.date)
                 ?.tz(

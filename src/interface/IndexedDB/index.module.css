@@ -1,0 +1,43 @@
+.db {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: min(100vh - 350px, 600px);
+  overflow-y: auto;
+}
+
+.personContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.button {
+  width: unset;
+}
+
+.name,
+.date,
+.button {
+  flex: 1;
+  text-align: left;
+  margin-right: 16px;
+  line-height: 1.2;
+}
+
+.button {
+  flex: 0;
+  padding: 0.5em;
+}
+
+.name {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.date {
+  font-size: 0.7em;
+  color: gray;
+}

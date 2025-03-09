@@ -90,6 +90,9 @@
   line-height: 1em;
   font-size: 0.7em;
   opacity: 0.6;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .transitInfo2 {

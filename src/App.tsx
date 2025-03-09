@@ -12,8 +12,9 @@ import AspectTable from './interface/Planets/Aspects'
 
 import Settings from './interface/Settings'
 import ControlPane from './interface/Controls'
-
-import s from './App.module.css'
+import GraphicChart from './interface/Graphic'
+import Barbo from './interface/Barbo'
+import DbScreen from './interface/IndexedDB'
 
 import getHoroscope from './compute/horoscope'
 
@@ -22,13 +23,11 @@ import {connectedStars} from './compute/stars'
 import {SettingContext} from './SettingContext.js'
 import {CelestialContext} from './CelestialContext.js'
 
-import defaultSettings from './defaultSettings.json'
-
 import {getCitiesByCountryCode} from 'country-city-location'
 
-import GraphicChart from './interface/Graphic'
+import s from './App.module.css'
 
-import Barbo from './interface/Barbo'
+import defaultSettings from './defaultSettings.json'
 
 const LS = window.localStorage
 
@@ -50,6 +49,11 @@ function App() {
   )
 
   const settingsContextValue = {settings, setSettings}
+
+  /**
+   * Interface State
+   */
+  const [dbScreenVisible, setDbScreenVisible] = useState(false)
 
   /**
    * Setting cenered scroll position on mobile phones
@@ -204,6 +208,8 @@ function App() {
                 setNatalData,
                 setTransitData
               }}
+              setDbScreenVisible={setDbScreenVisible}
+              dbScreenVisible={dbScreenVisible}
             />
           </header>
 
@@ -219,12 +225,24 @@ function App() {
                   className={s.center}
                   ref={el => (center.current = el)}
                 >
-                  {settings.interface?.elements && (
-                    <ElementsTable {...{horoscope}} />
+                  {dbScreenVisible ? (
+                    <DbScreen
+                      setDbScreenVisible={setDbScreenVisible}
+                      {...{
+                        setNatalData,
+                        setTransitData
+                      }}
+                    />
+                  ) : (
+                    <>
+                      {settings.interface?.elements && (
+                        <ElementsTable {...{horoscope}} />
+                      )}
+                      <Zodiac
+                        {...{calendarDay: natalData.date, lat, lng}}
+                      />
+                    </>
                   )}
-                  <Zodiac
-                    {...{calendarDay: natalData.date, lat, lng}}
-                  />
                 </section>
               )}
 
