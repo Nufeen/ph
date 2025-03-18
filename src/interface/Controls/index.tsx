@@ -73,7 +73,9 @@ export default function ControlPane(props) {
 
     setter[chartType]({
       ...data[chartType],
-      date: new Date()
+      date: new Date(),
+      // hack to rerender input via key
+      name: new Date().toString()
     })
   }
 
@@ -234,7 +236,7 @@ export default function ControlPane(props) {
           </div>
           <input
             key={
-              data[chartType]?.city + data[chartType]?.date + shifter
+              data[chartType]?.city + data[chartType]?.name + shifter
             }
             ref={inputRef[chartType]}
             className={s.input}
