@@ -45,7 +45,6 @@ function elon(s, sign) {
 }
 
 export function connectedStars(calendarDay) {
-
   const out = Object.keys(planets).reduce((a, x: any, i) => {
     return {...a, [x]: findStar(pos(x, calendarDay))}
   }, {})
@@ -57,3 +56,19 @@ function findStar(elon) {
   return stars.filter(x => Math.abs(x.elon - elon) < 1)
 }
 
+export function starsOnFictivePoints(calendarDay, horoscope) {
+  const out = ['lilith', 'northnode', 'southnode'].reduce(
+    (a, x: any, i) => {
+      return {
+        ...a,
+        [x]: findStar(
+          horoscope.CelestialPoints[x].ChartPosition.Ecliptic
+            .DecimalDegrees
+        )
+      }
+    },
+    {}
+  )
+
+  return out
+}

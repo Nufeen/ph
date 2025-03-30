@@ -116,7 +116,10 @@ export default function Aspects({zero, x0, y0}) {
             x2={x0 + 70 * sin(deg(b))}
             y2={y0 + 70 * cos(deg(b))}
             stroke={
-              abs(d0) % 45 < 6 || abs(d0) % 45 > 45 - 6
+              abs(d0) % 45 < 6 ||
+              abs(d0) % 45 > 45 - 6 ||
+              abs(d0) % 90 < 10 ||
+              90 - (abs(d0) % 90) < 10
                 ? 'red'
                 : 'deepskyblue'
             }

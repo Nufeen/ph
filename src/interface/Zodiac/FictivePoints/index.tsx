@@ -1,200 +1,247 @@
 import {useContext} from 'react'
 import {SettingContext} from '../../../SettingContext.js'
-import {
-  Origin,
-  Horoscope
-} from 'circular-natal-horoscope-js/dist/index.js'
+import {CelestialContext} from '../../../CelestialContext.js'
 
 import s from './index.module.css'
 
 const {sin, cos} = Math
 
-export default function Fictive({
-  calendarDay,
-  zero,
-  x0,
-  y0,
-  lat,
-  lng
-}) {
-  const {settings} = useContext(SettingContext)
-
-  const year = calendarDay.getFullYear()
-  const month = calendarDay.getMonth()
-  const date = calendarDay.getDate()
-  const hour = calendarDay.getHours()
-  const minute = calendarDay.getMinutes()
-
-  const origin = new Origin({
-    year,
-    month, // 0 = January, 11 = December!
-    date,
-    hour,
-    minute,
-    latitude: lat,
-    longitude: lng
-  })
-
-  const horoscope = new Horoscope({
-    origin: origin,
-    houseSystem: 'placidus',
-    zodiac: 'tropical',
-    aspectPoints: ['bodies', 'points', 'angles'],
-    aspectWithPoints: ['bodies', 'points', 'angles'],
-    aspectTypes: ['major', 'minor'],
-    customOrbs: {},
-    language: 'en'
-  })
-
-  const ldd =
+function calculateDegrees(
+  horoscope: {
+    CelestialPoints: {
+      lilith: {ChartPosition: {Ecliptic: {DecimalDegrees: number}}}
+      northnode: {
+        ChartPosition: {Ecliptic: {DecimalDegrees: number}}
+      }
+    }
+  },
+  zero: number
+) {
+  const l =
     horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic
       .DecimalDegrees
 
-  const ldd30 =
-    horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic
-      .ArcDegreesFormatted30
+  const lilith = ((l + zero) * Math.PI) / 180
 
-  const lilithDeg = ((ldd + zero) * Math.PI) / 180
-
-  const nndd =
+  const n =
     horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic
       .DecimalDegrees
 
-  const northnodeDeg = ((nndd + zero) * Math.PI) / 180
+  const northnode = ((n + zero) * Math.PI) / 180
+
+  return {lilith, northnode}
+}
+
+export default function Fictive({zero, x0, y0}) {
+  const {settings} = useContext(SettingContext)
+
+  const {horoscope, transitHoroscope, progressedHoroscope} =
+    useContext(CelestialContext)
+
+  const degrees = calculateDegrees(horoscope, zero)
 
   return (
     <g className={s.wrapper}>
       {settings.objects.celestialPoints.lilith && (
         <>
-          <text
-            fill="violet"
-            fontSize={8}
-            x={x0 + 93 * sin(lilithDeg)}
-            y={y0 + 95 * cos(lilithDeg)}
-          >
-            ⚸
-          </text>
+          <Lilith
+            zero={zero}
+            x0={x0}
+            y0={y0}
+            horoscope={horoscope}
+            type="inner"
+          />
 
-          {settings.interface.planetAngles && (
-            <text
-              fill="violet"
-              fontSize={4}
-              x={x0 + 93 * sin(lilithDeg)}
-              y={y0 + 95 * cos(lilithDeg) - 8}
-            >
-              {ldd30.split(' ')[0]}
-            </text>
+          {['transit', 'progressed'].includes(
+            settings.chartType
+          ) && (
+            <Lilith
+              zero={zero}
+              x0={x0}
+              y0={y0}
+              horoscope={
+                settings.chartType == 'transit'
+                  ? transitHoroscope
+                  : progressedHoroscope
+              }
+              type="outer"
+            />
           )}
-
-          <circle
-            className={s.fictive}
-            cx={x0 + 70 * sin(lilithDeg)}
-            cy={y0 + 70 * cos(lilithDeg)}
-            r="1"
-          />
-
-          <circle
-            className={s.fictive}
-            cx={x0 + 100 * sin(lilithDeg)}
-            cy={y0 + 100 * cos(lilithDeg)}
-            r="1"
-          />
         </>
       )}
 
       {settings.objects.celestialPoints.northnode && (
         <>
-          <text
-            fill="violet"
-            fontSize={8}
-            x={x0 + 90 * sin(northnodeDeg) - 7}
-            y={y0 + 90 * cos(northnodeDeg)}
-          >
-            ☊
-          </text>
+          <Node
+            node="northnode"
+            zero={zero}
+            x0={x0}
+            y0={y0}
+            horoscope={horoscope}
+            type="inner"
+          />
 
-          {settings.interface.planetAngles && (
-            <text
-              fill="violet"
-              fontSize={4}
-              x={x0 + 90 * sin(northnodeDeg) - 7}
-              y={y0 + 90 * cos(northnodeDeg) - 8}
-            >
-              {
-                horoscope.CelestialPoints.northnode.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
-                  ' '
-                )[0]
+          {['transit', 'progressed'].includes(
+            settings.chartType
+          ) && (
+            <Node
+              node="northnode"
+              zero={zero}
+              x0={x0}
+              y0={y0}
+              horoscope={
+                settings.chartType == 'transit'
+                  ? transitHoroscope
+                  : progressedHoroscope
               }
-            </text>
-          )}
-
-          {[
-            {
-              cx: x0 + 70 * sin(northnodeDeg),
-              cy: y0 + 70 * cos(northnodeDeg)
-            },
-            {
-              cx: x0 + 100 * sin(northnodeDeg),
-              cy: y0 + 100 * cos(northnodeDeg)
-            }
-          ].map((circle, index) => (
-            <circle
-              key={index}
-              className={s.fictive}
-              cx={circle.cx}
-              cy={circle.cy}
-              r="1"
+              type="outer"
             />
-          ))}
+          )}
         </>
       )}
 
       {settings.objects.celestialPoints.southnode && (
         <>
-          <text
-            fill="violet"
-            fontSize={8}
-            x={x0 - 90 * sin(northnodeDeg) - 7}
-            y={y0 - 90 * cos(northnodeDeg)}
-          >
-            ☋
-          </text>
+          <Node
+            node="southnode"
+            zero={zero}
+            x0={x0}
+            y0={y0}
+            horoscope={horoscope}
+            type="inner"
+          />
 
-          {settings.interface.planetAngles && (
-            <text
-              fill="violet"
-              fontSize={4}
-              x={x0 - 90 * sin(northnodeDeg) - 7}
-              y={y0 - 90 * cos(northnodeDeg) - 8}
-            >
-              {
-                horoscope.CelestialPoints.southnode.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
-                  ' '
-                )[0]
+          {['transit', 'progressed'].includes(
+            settings.chartType
+          ) && (
+            <Node
+              node="southnode"
+              zero={zero}
+              x0={x0}
+              y0={y0}
+              horoscope={
+                settings.chartType == 'transit'
+                  ? transitHoroscope
+                  : progressedHoroscope
               }
-            </text>
-          )}
-
-          {[
-            {
-              cx: x0 - 70 * sin(northnodeDeg),
-              cy: y0 - 70 * cos(northnodeDeg)
-            },
-            {
-              cx: x0 - 100 * sin(northnodeDeg),
-              cy: y0 - 100 * cos(northnodeDeg)
-            }
-          ].map((circle, index) => (
-            <circle
-              key={index}
-              className={s.fictive}
-              cx={circle.cx}
-              cy={circle.cy}
-              r="1"
+              type="outer"
             />
-          ))}
+          )}
         </>
       )}
     </g>
+  )
+}
+
+function Lilith({x0, y0, zero, horoscope, type}) {
+  const {settings} = useContext(SettingContext)
+
+  const degrees = calculateDegrees(horoscope, zero)
+
+  const degree30 =
+    horoscope.CelestialPoints.lilith.ChartPosition.Ecliptic.ArcDegreesFormatted30.split(
+      ' '
+    )[0]
+
+  const tx = type == 'inner' ? 108 : 150
+  const cx1 = type == 'inner' ? 70 : 130
+  const cx2 = type == 'inner' ? 100 : 144
+
+  return (
+    <>
+      <text
+        fill="violet"
+        fontSize={8}
+        x={x0 + tx * sin(degrees.lilith)}
+        y={y0 + (tx + 2) * cos(degrees.lilith)}
+      >
+        ⚸
+      </text>
+
+      {settings.interface.planetAngles && (
+        <text
+          fill="violet"
+          fontSize={4}
+          x={x0 + tx * sin(degrees.lilith)}
+          y={y0 + (tx + 2) * cos(degrees.lilith) - 8}
+        >
+          {degree30}
+        </text>
+      )}
+
+      <circle
+        className={s.fictive}
+        cx={x0 + cx1 * sin(degrees.lilith)}
+        cy={y0 + cx1 * cos(degrees.lilith)}
+        r="1"
+      />
+
+      <circle
+        className={s.fictive}
+        cx={x0 + cx2 * sin(degrees.lilith)}
+        cy={y0 + cx2 * cos(degrees.lilith)}
+        r="1"
+      />
+    </>
+  )
+}
+
+function Node({x0, y0, zero, horoscope, type, node}) {
+  const {settings} = useContext(SettingContext)
+
+  const degrees = calculateDegrees(horoscope, zero)
+
+  const degree30 =
+    horoscope.CelestialPoints[
+      node
+    ].ChartPosition.Ecliptic.ArcDegreesFormatted30.split(' ')[0]
+
+  const tx = type == 'inner' ? 108 : 150
+  const cx1 = type == 'inner' ? 70 : 130
+  const cx2 = type == 'inner' ? 100 : 144
+
+  const M = node == 'northnode' ? 1 : -1
+
+  return (
+    <>
+      <text
+        fill="violet"
+        fontSize={8}
+        x={x0 + M * tx * sin(degrees.northnode)}
+        y={y0 + M * tx * cos(degrees.northnode)}
+      >
+        ☊
+      </text>
+
+      {settings.interface.planetAngles && (
+        <text
+          fill="violet"
+          fontSize={4}
+          x={x0 + M * tx * sin(degrees.northnode)}
+          y={y0 + M * tx * cos(degrees.northnode) - 8}
+        >
+          {degree30}
+        </text>
+      )}
+
+      {[
+        {
+          cx: x0 + M * cx1 * sin(degrees.northnode),
+          cy: y0 + M * cx1 * cos(degrees.northnode)
+        },
+        {
+          cx: x0 + M * cx2 * sin(degrees.northnode),
+          cy: y0 + M * cx2 * cos(degrees.northnode)
+        }
+      ].map((circle, index) => (
+        <circle
+          key={index}
+          className={s.fictive}
+          cx={circle.cx}
+          cy={circle.cy}
+          r="1"
+        />
+      ))}
+    </>
   )
 }

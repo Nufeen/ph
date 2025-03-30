@@ -11,9 +11,12 @@ const {sin, cos} = Math
 const π = Math.PI
 
 export default function Stars({zero, x0, y0}) {
-  const {stars} = useContext(CelestialContext)
+  const {stars, fictivePointsStars} = useContext(CelestialContext)
 
-  const flatten = Object.values(stars)
+  const flatten = [
+    ...Object.values(stars),
+    ...Object.values(fictivePointsStars)
+  ]
     .map(x => x && [x[0]])
     .flat()
     .filter(x => !!x)

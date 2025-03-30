@@ -18,7 +18,7 @@ import DbScreen from './interface/IndexedDB'
 
 import getHoroscope from './compute/horoscope'
 
-import {connectedStars} from './compute/stars'
+import {connectedStars, starsOnFictivePoints} from './compute/stars'
 
 import {SettingContext} from './SettingContext.js'
 import {CelestialContext} from './CelestialContext.js'
@@ -196,6 +196,10 @@ function App() {
           transitHoroscope,
           progressedHoroscope,
           stars: connectedStars(natalData.date),
+          fictivePointsStars: starsOnFictivePoints(
+            natalData.date,
+            horoscope
+          ),
           natalData,
           transitData,
           chart: latlng

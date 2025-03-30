@@ -21,8 +21,34 @@
   padding-right: 14px;
 }
 
-.degrees {
+.retro[data-type='natal'],
+.degrees[data-type='natal'] {
+  display: none;
+}
+
+.retro[data-type='transit'] {
+  color: rgb(77, 223, 167);
+  opacity: 0.8;
+}
+
+.degrees[data-type='transit'] {
+  color: rgb(77, 223, 167);
+  margin-right: 15px;
+  display: inline-block;
+  opacity: 0.8;
+}
+
+.degrees > span:first-child {
+  display: inline-block;
+  text-align: right;
+  width: 20px;
+  margin-right: 4px;
+}
+.degrees > span:nth-child(2) {
+  display: inline-block;
   text-align: center;
+  width: 10px;
+  margin-right: 2px;
 }
 
 .thead th {
@@ -68,4 +94,13 @@
   display: inline-block;
   margin-bottom: -2px;
   padding-right: 3px;
+}
+
+.CelestialPoints {
+  color: violet;
+}
+
+.CelestialPoints .degrees[data-type='transit'] {
+  color: violet;
+  opacity: 0.5;
 }

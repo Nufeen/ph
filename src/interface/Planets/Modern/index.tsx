@@ -8,6 +8,8 @@ import React from 'react'
 
 import s from './index.module.css'
 
+import planets from '../../../assets/planets.json'
+
 const icons = {
   Aries: '♈︎︎',
   Taurus: '♉︎︎',
@@ -38,8 +40,20 @@ const romanNumbers = [
   'XII'
 ]
 
+const fictivePointsIcons = {
+  lilith: '⚸',
+  northnode: '☊',
+  southnode: '☋'
+}
+
 export default function ModernPlanetsTable() {
-  const {horoscope, stars} = useContext(CelestialContext)
+  const {
+    horoscope,
+    transitHoroscope,
+    progressedHoroscope,
+    stars,
+    fictivePointsStars
+  } = useContext(CelestialContext)
 
   const {settings} = useContext(SettingContext)
 
@@ -47,13 +61,21 @@ export default function ModernPlanetsTable() {
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
+          {settings.chartType == 'transit' && (
+            <>
+              <th data-type={settings.chartType}>T</th>
+            </>
+          )}
           <th></th>
           <th></th>
-          <th className={s.sign}></th>
-          <th></th>
+          <th>N</th>
           <th className={s.house}>house</th>
+          {settings.objects.celestialPoints?.fixedStars?.table && (
+            <th>N</th>
+          )}
         </tr>
       </thead>
+
       <tbody>
         {Object.values(horoscope.CelestialBodies)
           .filter(
@@ -61,11 +83,71 @@ export default function ModernPlanetsTable() {
           )
           .map((body: any, i) => (
             <tr key={i}>
+              {settings.chartType == 'transit' && (
+                <td
+                  className={s.degrees}
+                  data-type={settings.chartType}
+                >
+                  <span>
+                    {
+                      transitHoroscope.CelestialBodies[
+                        body.key
+                      ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                        '°'
+                      )[0]
+                    }
+                  </span>
+                  <span>
+                    {
+                      icons[
+                        transitHoroscope.CelestialBodies[body.key]
+                          ?.Sign?.label
+                      ]
+                    }
+                  </span>
+                  {
+                    <span>
+                      {
+                        horoscope.CelestialBodies[
+                          body.key
+                        ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                          '°'
+                        )[1]
+                      }
+                    </span>
+                  }
+                </td>
+              )}
+
+              {settings.chartType == 'transit' && (
+                <td
+                  className={s.retro}
+                  data-type={settings.chartType}
+                >
+                  {transitHoroscope.CelestialBodies[body.key]
+                    ?.isRetrograde && 'R'}
+                </td>
+              )}
+
+              <td>{planets[body.label]}</td>
               <td className={s.retro}>{body.isRetrograde && 'R'}</td>
-              <td>{body.label}</td>
-              <td className={s.sign}>{icons[body?.Sign?.label]}</td>
+
               <td className={s.degrees}>
-                {body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30}
+                <span>
+                  {
+                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                      '°'
+                    )[0]
+                  }
+                </span>
+                <span>{icons[body?.Sign?.label]}</span>
+                <span>
+                  {
+                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                      '°'
+                    )[1]
+                  }
+                </span>
               </td>
               <td className={s.house}>
                 {romanNumbers[body.House?.id - 1]}
@@ -75,6 +157,104 @@ export default function ModernPlanetsTable() {
                 <td className={s.star}>
                   <pre>
                     {stars[body.label]
+                      .sort((a, b) => (a.size > b.size ? 1 : -1))
+                      .filter((x, i) => i < 1)
+                      .map(x => (
+                        <React.Fragment key={x.name}>
+                          <span
+                            onClick={() => {
+                              window.open(
+                                `https://www.google.com/search?q=${x.name}+astrology`
+                              )
+                            }}
+                          >
+                            {x.name} ({x.size})
+                          </span>
+                          <span className={s.starDetail}>
+                            {details[x.name]}
+                          </span>
+                        </React.Fragment>
+                      ))}
+                  </pre>
+                </td>
+              )}
+            </tr>
+          ))}
+      </tbody>
+
+      <tbody className={s.CelestialPoints}>
+        {Object.values(horoscope.CelestialPoints)
+          .filter(
+            (body: any) => settings.objects.celestialPoints[body.key]
+          )
+          .map((body: any, i) => (
+            <tr key={i}>
+              {settings.chartType == 'transit' && (
+                <td
+                  className={s.degrees}
+                  data-type={settings.chartType}
+                >
+                  <span>
+                    {
+                      transitHoroscope.CelestialPoints[
+                        body.key
+                      ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                        '°'
+                      )[0]
+                    }
+                  </span>
+                  <span>
+                    {
+                      icons[
+                        transitHoroscope.CelestialPoints[body.key]
+                          ?.Sign?.label
+                      ]
+                    }
+                  </span>
+                  <span>
+                    {
+                      transitHoroscope.CelestialPoints[
+                        body.key
+                      ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                        '°'
+                      )[1]
+                    }
+                  </span>
+                </td>
+              )}
+
+              {settings.chartType == 'transit' && (
+                <td className={s.retro}></td>
+              )}
+              <td>{fictivePointsIcons[body.key]}</td>
+
+              <td className={s.retro}></td>
+
+              <td className={s.degrees}>
+                <span>
+                  {
+                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                      '°'
+                    )[0]
+                  }
+                </span>
+                <span>{icons[body?.Sign?.label]}</span>
+                <span>
+                  {
+                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
+                      '°'
+                    )[1]
+                  }
+                </span>
+              </td>
+              <td className={s.house}>
+                {romanNumbers[body.House?.id - 1]}
+              </td>
+              {settings.objects.celestialPoints?.fixedStars
+                ?.table && (
+                <td className={s.star}>
+                  <pre>
+                    {fictivePointsStars[body.key]
                       .sort((a, b) => (a.size > b.size ? 1 : -1))
                       .filter((x, i) => i < 1)
                       .map(x => (

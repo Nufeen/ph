@@ -5,7 +5,7 @@
   scroll-snap-type: y mandatory;
   overflow: auto;
   scroll-snap-align: center;
-  height: max(365px, 100vh - 300px);
+  height: max(365px, 100vh - 350px);
 }
 
 .layout section {
