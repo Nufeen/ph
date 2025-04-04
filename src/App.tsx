@@ -292,6 +292,9 @@ function App() {
                     ))}
                   </div>
 
+                  {settings.interface?.planets != 'hours' &&
+                    settings.interface?.thirty && <ThirtyDegrees />}
+
                   {settings.interface?.planets == 'traditional' && (
                     <TraditionalPlanetsTable
                       lat={lat}
@@ -300,9 +303,6 @@ function App() {
                       today={today}
                     />
                   )}
-
-                  {settings.interface?.planets != 'hours' &&
-                    settings.interface?.thirty && <ThirtyDegrees />}
 
                   {settings.interface?.planets == 'modern' && (
                     <ModernPlanetsTable />
