@@ -1,5 +1,7 @@
 import React, {useContext} from 'react'
 import {SettingContext} from '../../SettingContext.js'
+import {CelestialContext} from '../../CelestialContext.js'
+
 import s from './index.module.css'
 
 import planets from '../../assets/planets.json'
@@ -125,6 +127,37 @@ const PlanetCheckboxTable = () => {
       interface: {
         ...settings.interface,
         planetAngles: e.target.checked
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleFortuneLotVisibility(e) {
+    const s = {
+      ...settings,
+      objects: {
+        ...settings.objects,
+        lots: {
+          ...settings.objects.lots,
+          fortune: e.target.checked
+        }
+      }
+    }
+
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleSpiritLotVisibility(e) {
+    const s = {
+      ...settings,
+      objects: {
+        ...settings.objects,
+        lots: {
+          ...settings.objects.lots,
+          spirit: e.target.checked
+        }
       }
     }
     setSettings(s)
@@ -278,6 +311,45 @@ const PlanetCheckboxTable = () => {
         </tbody>
       </table>
 
+      <table className={s.lots}>
+        <thead className={s.thead}>
+          <tr>
+            <th>
+              Lots{' '}
+              <span style={{color: 'red', fontSize: '8px'}}>
+                (Experimental)
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className={s.daynightwrap}>
+            <DayOrNight />
+          </tr>
+          <tr>
+            <td>Fortune</td>
+            <td>
+              <input
+                type="checkbox"
+                checked={settings.objects?.lots?.fortune}
+                onChange={handleFortuneLotVisibility}
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <td>Spirit</td>
+            <td>
+              <input
+                type="checkbox"
+                checked={settings.objects?.lots?.spirit}
+                onChange={handleSpiritLotVisibility}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
       <div className={s.orb}>
         <h3 className={s.thead}>Orb multiplier</h3>
 
@@ -333,3 +405,19 @@ const PlanetCheckboxTable = () => {
 }
 
 export default PlanetCheckboxTable
+
+function DayOrNight() {
+  const {
+    horoscope: {_ascendant, CelestialBodies}
+  } = useContext(CelestialContext)
+
+  const dayBirth =
+    _ascendant.ChartPosition.Ecliptic.DecimalDegrees -
+    CelestialBodies.sun.ChartPosition.Ecliptic.DecimalDegrees
+
+  return (
+    <td className={s.daynight}>
+      {dayBirth < 180 ? 'DAY BIRTH' : 'NIGHT BIRTH'}
+    </td>
+  )
+}

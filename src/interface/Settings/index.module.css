@@ -6,8 +6,8 @@
   grid-template-columns: 60px 1fr 1fr;
   grid-template-areas:
     'planetes fictive thirty'
-    'planetes other  house'
-    'planetes elements house'
+    'planetes lots house'
+    'planetes other elements'
     'orb orb orb';
   column-gap: 10px;
   font-size: 0.9em;
@@ -22,6 +22,10 @@
 
 .planetes {
   grid-area: planetes;
+}
+
+.lots {
+  grid-area: lots;
 }
 
 .thirty {
@@ -122,4 +126,17 @@
   background-color: gray;
   margin: 0 auto;
   z-index: -1;
+}
+
+.daynight {
+  color: #a06f33;
+  font-size: 8px;
+  padding: 0;
+  margin: 0;
+}
+
+.daynightwrap {
+  padding: 0;
+  margin: 0;
+  line-height: 12px;
 }

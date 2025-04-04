@@ -30,9 +30,10 @@ export default function Zodiac(props: Props) {
   const {settings} = useContext(SettingContext)
 
   const {
-    horoscope: {_ascendant}
+    horoscope: {_ascendant, CelestialBodies}
   } = useContext(CelestialContext)
 
+  const ctx = useContext(CelestialContext)
   const x0 = 150
   const y0 = 155
 
@@ -43,6 +44,26 @@ export default function Zodiac(props: Props) {
     settings.interface.startFrom == 'Asc'
       ? -_ascendant.ChartPosition.Ecliptic.DecimalDegrees - 90
       : -90
+
+  const NF =
+    _ascendant.ChartPosition.Ecliptic.DecimalDegrees +
+    (CelestialBodies.sun.ChartPosition.Ecliptic.DecimalDegrees +
+      0 -
+      (CelestialBodies.moon.ChartPosition.Ecliptic.DecimalDegrees +
+        0))
+
+  const DF =
+    _ascendant.ChartPosition.Ecliptic.DecimalDegrees -
+    (CelestialBodies.sun.ChartPosition.Ecliptic.DecimalDegrees -
+      CelestialBodies.moon.ChartPosition.Ecliptic.DecimalDegrees)
+
+  const dayBirth =
+    _ascendant.ChartPosition.Ecliptic.DecimalDegrees -
+      CelestialBodies.sun.ChartPosition.Ecliptic.DecimalDegrees <
+    180
+
+  const PF = dayBirth ? DF : NF
+  const PS = dayBirth ? NF : DF
 
   return (
     <div className={s.wrapper}>
@@ -95,9 +116,10 @@ export default function Zodiac(props: Props) {
           <Houses {...{zero, x0, y0}} chartType="natal" />
         )}
 
-        {settings.objects?.houses?.visibility?.transit && (
-          <Houses {...{zero, x0, y0}} chartType="transit" />
-        )}
+        {settings.chartType != 'natal' &&
+          settings.objects?.houses?.visibility?.transit && (
+            <Houses {...{zero, x0, y0}} chartType="transit" />
+          )}
 
         <Planets {...{calendarDay, zero, x0, y0}} />
         <Fictive {...{calendarDay, zero, x0, y0, lat, lng}} />
@@ -118,6 +140,48 @@ export default function Zodiac(props: Props) {
         {settings.objects.celestialPoints?.fixedStars?.chart && (
           <Stars {...{calendarDay, zero, x0, y0}} />
         )}
+
+        <g className={s.lots}>
+          {settings.objects.lots?.fortune && (
+            <>
+              <circle
+                fill="#a06f33"
+                stroke="#a06f33"
+                cx={x0 + 100 * sin(((PF + zero) * π) / 180)}
+                cy={y0 + 100 * cos(((PF + zero) * π) / 180)}
+                r="1"
+              />
+
+              <text
+                fill="currentColor"
+                x={x0 + 109 * sin(((PF + zero) * π) / 180) - 3}
+                y={y0 + 109 * cos(((PF + zero) * π) / 180) + 2}
+              >
+                PF
+              </text>
+            </>
+          )}
+
+          {settings.objects.lots?.spirit && (
+            <>
+              <circle
+                fill="#a06f33"
+                stroke="#a06f33"
+                cx={x0 + 100 * sin(((PS + zero) * π) / 180)}
+                cy={y0 + 100 * cos(((PS + zero) * π) / 180)}
+                r="1"
+              />
+
+              <text
+                fill="currentColor"
+                x={x0 + 109 * sin(((PS + zero) * π) / 180) - 3}
+                y={y0 + 109 * cos(((PS + zero) * π) / 180) + 2}
+              >
+                PS
+              </text>
+            </>
+          )}
+        </g>
       </svg>
     </div>
   )

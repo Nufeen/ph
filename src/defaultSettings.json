@@ -21,6 +21,10 @@
       "chart": true,
       "table": true
     },
+    "lots": {
+      "fortune": false,
+      "spirit": false
+    },
     "houses": {
       "visibility": {
         "natal": true,
