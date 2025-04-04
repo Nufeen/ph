@@ -210,7 +210,7 @@ function Node({x0, y0, zero, horoscope, type, node}) {
         x={x0 + M * tx * sin(degrees.northnode)}
         y={y0 + M * tx * cos(degrees.northnode)}
       >
-        ☊
+        {node == 'northnode' ? '☊' : '☋'}
       </text>
 
       {settings.interface.planetAngles && (
