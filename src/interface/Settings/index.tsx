@@ -11,7 +11,7 @@ const LS = window.localStorage
 const PlanetCheckboxTable = () => {
   const {settings, setSettings} = useContext(SettingContext)
 
-  function handlePlanetVisibility(planet) {
+  function handlePlanetVisibility(planet: string) {
     const s = {
       ...settings,
       objects: {
@@ -26,7 +26,7 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handlePointVisibility(point) {
+  function handlePointVisibility(point: string) {
     const s = {
       ...settings,
       objects: {
@@ -41,7 +41,7 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleStarsVisibility(loc) {
+  function handleStarsVisibility(loc: string) {
     const s = {
       ...settings,
       objects: {
@@ -85,7 +85,7 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleHouseSystemSelect(e) {
+  function handleHouseSystemSelect(e: {target: {value: any}}) {
     const s = {
       ...settings,
       interface: {
@@ -97,7 +97,7 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleCircleStartSelect(e) {
+  function handleCircleStartSelect(e: {target: {value: any}}) {
     const s = {
       ...settings,
       interface: {
@@ -109,7 +109,9 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleAspectAnglesVisibility(e) {
+  function handleAspectAnglesVisibility(e: {
+    target: {checked: any}
+  }) {
     const s = {
       ...settings,
       interface: {
@@ -121,7 +123,9 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handlePlanetAnglesVisibility(e) {
+  function handlePlanetAnglesVisibility(e: {
+    target: {checked: any}
+  }) {
     const s = {
       ...settings,
       interface: {
@@ -133,7 +137,7 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleFortuneLotVisibility(e) {
+  function handleFortuneLotVisibility(e: {target: {checked: any}}) {
     const s = {
       ...settings,
       objects: {
@@ -149,7 +153,7 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  function handleSpiritLotVisibility(e) {
+  function handleSpiritLotVisibility(e: {target: {checked: any}}) {
     const s = {
       ...settings,
       objects: {
@@ -161,6 +165,19 @@ const PlanetCheckboxTable = () => {
       }
     }
     setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function setOrb(e: {target: {value: string | number}}) {
+    const s = {
+      ...settings,
+      interface: {
+        ...settings.interface,
+        aspectOrb: +e.target.value
+      }
+    }
+    setSettings(s)
+
     LS.setItem('settings', JSON.stringify(s))
   }
 
@@ -361,18 +378,7 @@ const PlanetCheckboxTable = () => {
             min="1"
             max="10"
             value={settings.interface.aspectOrb ?? 4}
-            onChange={e => {
-              const s = {
-                ...settings,
-                interface: {
-                  ...settings.interface,
-                  aspectOrb: +e.target.value
-                }
-              }
-              setSettings(s)
-
-              LS.setItem('settings', JSON.stringify(s))
-            }}
+            onChange={setOrb}
           />
           {settings.interface.aspectOrb}°
         </div>
