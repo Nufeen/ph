@@ -351,7 +351,7 @@ const PlanetCheckboxTable = () => {
       </table>
 
       <div className={s.orb}>
-        <h3 className={s.thead}>Orb multiplier</h3>
+        <h3 className={s.thead}>Orb for all planets</h3>
 
         <div className={s.aspectLine}>
           <input
@@ -359,7 +359,7 @@ const PlanetCheckboxTable = () => {
             id="aspectLine"
             name="aspectLine"
             min="1"
-            max="8"
+            max="10"
             value={settings.interface.aspectOrb ?? 4}
             onChange={e => {
               const s = {
@@ -374,7 +374,7 @@ const PlanetCheckboxTable = () => {
               LS.setItem('settings', JSON.stringify(s))
             }}
           />
-          {(100 * (settings.interface.aspectOrb ?? 4)) / 4}%
+          {settings.interface.aspectOrb}°
         </div>
       </div>
 
