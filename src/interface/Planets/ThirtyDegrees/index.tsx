@@ -1,7 +1,5 @@
 import {useContext} from 'react'
-
 import {CelestialContext} from '../../../CelestialContext.js'
-
 import {SettingContext} from '../../../SettingContext.js'
 
 import s from './index.module.css'
@@ -29,6 +27,14 @@ export default function ThirtyDegrees() {
         <div className={s.cell}></div>
         <div className={s.cell}></div>
       </div>
+
+      <div className={s.numbers}>
+        <span className={s.number}>0°</span>
+        <span className={s.number}>10°</span>
+        <span className={s.number}>20°</span>
+        <span className={s.number}>30°</span>
+      </div>
+
       {Object.values(horoscope.CelestialBodies)
         .filter(
           (body: CelestialBody) =>

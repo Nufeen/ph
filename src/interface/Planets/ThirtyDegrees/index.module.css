@@ -16,17 +16,18 @@
 .body,
 .tbody {
   position: absolute;
-  border-left: 1px #241 solid;
+  border-left: 1px rgba(255, 255, 125567, 0.5) solid;
   height: 57px;
   box-sizing: border-box;
 }
 
 .tbody {
-  border-left: 1px #522 solid;
+  border-left: 1px rgba(77, 223, 167, 0.5) solid;
 }
 
 .tbody span {
   bottom: 0;
+  color: rgba(77, 223, 167, 1);
 }
 
 .body span,
@@ -97,4 +98,20 @@
   position: absolute;
   top: 62px;
   height: 50px;
+}
+
+.numbers {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  width: calc(100% - 5px);
+  top: 65px;
+  left: 8px;
+}
+
+.number.number {
+  font-size: 7px;
+  color: silver;
+  opacity: 0.65;
+  margin-left: -5px;
 }
