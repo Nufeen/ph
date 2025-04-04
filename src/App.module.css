@@ -12,6 +12,19 @@
   width: 100%;
 }
 
+@media (max-width: 900px) {
+  .layout {
+    width: 100vw;
+    padding-bottom: 30px;
+  }
+
+  .layout section,
+  .layout section:first-of-type {
+    min-width: 100vw;
+    box-sizing: border-box;
+  }
+}
+
 @media (min-width: 900px) {
   .layout {
     display: flex;
@@ -20,13 +33,12 @@
     scroll-snap-type: y mandatory;
     overflow: auto;
     scroll-snap-align: center;
-    height: 100%;
+    height: calc(100vh - 200px);
   }
 
   .layout section:first-of-type {
     width: auto;
     max-width: 350px;
-    height: auto;
   }
 }
 
@@ -61,19 +73,6 @@
 
 .tablesSelector {
   margin: 10px;
-}
-
-@media (max-width: 900px) {
-  .layout {
-    width: 100vw;
-    padding-bottom: 30px;
-  }
-
-  .layout section,
-  .layout section:first-of-type {
-    min-width: 100vw;
-    box-sizing: border-box;
-  }
 }
 
 .tablesSelector button {
@@ -122,4 +121,8 @@
 .transitInfo {
   color: gray;
   font-size: 7px;
+}
+
+.right {
+  container-type: size;
 }
