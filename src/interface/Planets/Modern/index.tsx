@@ -88,34 +88,9 @@ export default function ModernPlanetsTable() {
                   className={s.degrees}
                   data-type={settings.chartType}
                 >
-                  <span>
-                    {
-                      transitHoroscope.CelestialBodies[
-                        body.key
-                      ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                        '°'
-                      )[0]
-                    }
-                  </span>
-                  <span>
-                    {
-                      icons[
-                        transitHoroscope.CelestialBodies[body.key]
-                          ?.Sign?.label
-                      ]
-                    }
-                  </span>
-                  {
-                    <span>
-                      {
-                        horoscope.CelestialBodies[
-                          body.key
-                        ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                          '°'
-                        )[1]
-                      }
-                    </span>
-                  }
+                  <CelestialPoint
+                    body={transitHoroscope.CelestialBodies[body.key]}
+                  />
                 </td>
               )}
 
@@ -133,21 +108,7 @@ export default function ModernPlanetsTable() {
               <td className={s.retro}>{body.isRetrograde && 'R'}</td>
 
               <td className={s.degrees}>
-                <span>
-                  {
-                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                      '°'
-                    )[0]
-                  }
-                </span>
-                <span>{icons[body?.Sign?.label]}</span>
-                <span>
-                  {
-                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                      '°'
-                    )[1]
-                  }
-                </span>
+                <CelestialPoint body={body} />
               </td>
               <td className={s.house}>
                 {romanNumbers[body.House?.id - 1]}
@@ -194,58 +155,22 @@ export default function ModernPlanetsTable() {
                   className={s.degrees}
                   data-type={settings.chartType}
                 >
-                  <span>
-                    {
-                      transitHoroscope.CelestialPoints[
-                        body.key
-                      ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                        '°'
-                      )[0]
-                    }
-                  </span>
-                  <span>
-                    {
-                      icons[
-                        transitHoroscope.CelestialPoints[body.key]
-                          ?.Sign?.label
-                      ]
-                    }
-                  </span>
-                  <span>
-                    {
-                      transitHoroscope.CelestialPoints[
-                        body.key
-                      ]?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                        '°'
-                      )[1]
-                    }
-                  </span>
+                  <CelestialPoint
+                    body={transitHoroscope.CelestialPoints[body.key]}
+                  />
                 </td>
               )}
 
               {settings.chartType == 'transit' && (
                 <td className={s.retro}></td>
               )}
+
               <td>{fictivePointsIcons[body.key]}</td>
 
               <td className={s.retro}></td>
 
               <td className={s.degrees}>
-                <span>
-                  {
-                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                      '°'
-                    )[0]
-                  }
-                </span>
-                <span>{icons[body?.Sign?.label]}</span>
-                <span>
-                  {
-                    body.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split(
-                      '°'
-                    )[1]
-                  }
-                </span>
+                <CelestialPoint body={body} />
               </td>
               <td className={s.house}>
                 {romanNumbers[body.House?.id - 1]}
@@ -281,6 +206,26 @@ export default function ModernPlanetsTable() {
       </tbody>
     </table>
   )
+}
+
+const CelestialPoint = ({body}) => {
+  const arcDegrees =
+    body?.ChartPosition?.Ecliptic?.ArcDegreesFormatted30.split('°')
+
+  return (
+    <>
+      <span>{arcDegrees[0]}</span>
+      <span>{icons[body?.Sign?.label]}</span>
+      <span> {addZeros(arcDegrees[1])}</span>
+    </>
+  )
+}
+
+function addZeros(input) {
+  const [minutes, seconds] = input.trim().split(' ')
+  const formattedMinutes = minutes.padStart(3, '0')
+  const formattedSeconds = seconds.padStart(4, '0')
+  return `${formattedMinutes} ${formattedSeconds}`
 }
 
 /**
