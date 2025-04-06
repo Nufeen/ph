@@ -7,9 +7,12 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
+    "build-electron": "tsc && vite build --config vite.electron.config.js && electron .",
     "deploy": "npx gh-pages -d dist",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron": "electron ."
   },
+  "main": "electron.js",
   "dependencies": {
     "astronomy-engine": "^2.1.19",
     "circular-natal-horoscope-js": "^1.1.0",
@@ -27,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^35.1.4",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
     "prettier": "3.4.2",

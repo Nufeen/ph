@@ -60,7 +60,7 @@ function App() {
    */
   const center = useRef(null)
   useEffect(() => {
-    center.current.scrollIntoView()
+    center?.current?.scrollIntoView()
   }, [])
 
   /**
@@ -227,7 +227,7 @@ function App() {
               settings.chartType != 'barbo' && (
                 <section
                   className={s.center}
-                  ref={el => (center.current = el)}
+                  // ref={el => (center.current = el)}
                 >
                   {dbScreenVisible ? (
                     <DbScreen
@@ -254,7 +254,7 @@ function App() {
             {settings.chartType == 'graphic' && (
               <section
                 className={s.center}
-                ref={el => (center.current = el)}
+                // ref={el => (center.current = el)} // TODO react 19
               >
                 <GraphicChart />
               </section>
@@ -264,7 +264,7 @@ function App() {
             {settings.chartType == 'barbo' && (
               <section
                 className={s.center}
-                ref={el => (center.current = el)}
+                // ref={el => (center.current = el)}
               >
                 <Barbo />
               </section>

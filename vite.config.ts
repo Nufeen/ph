@@ -30,7 +30,7 @@ export default defineConfig({
       manifest: {
         name: 'Planetary hours',
         short_name: 'Hours',
-        description: 'Checing current hours',
+        description: 'Checking current hours',
         theme_color: '#000',
         background_color: '#000',
         icons: [
