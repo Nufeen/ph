@@ -45,15 +45,22 @@ function elon(s, sign) {
 }
 
 export function connectedStars(calendarDay) {
-  const out = Object.keys(planets).reduce((a, x: any, i) => {
-    return {...a, [x]: findStar(pos(x, calendarDay))}
+  const out = Object.keys(planets).reduce((a, x: any) => {
+    return {...a, [x]: findStar(pos(x, calendarDay), calendarDay)}
   }, {})
 
   return out
 }
 
-function findStar(elon) {
-  return stars.filter(x => Math.abs(x.elon - elon) < 1)
+function findStar(elon, calendarDay) {
+  const year = calendarDay.getFullYear()
+
+  // TODO test precession logic
+  const delta = 2000 - year
+
+  return stars.filter(
+    x => Math.abs(x.elon - (1 / 72) * delta - elon) < 1
+  )
 }
 
 export function starsOnFictivePoints(calendarDay, horoscope) {
@@ -63,7 +70,8 @@ export function starsOnFictivePoints(calendarDay, horoscope) {
         ...a,
         [x]: findStar(
           horoscope.CelestialPoints[x].ChartPosition.Ecliptic
-            .DecimalDegrees
+            .DecimalDegrees,
+          calendarDay
         )
       }
     },

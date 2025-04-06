@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react/prop-types */
-
 import {useContext} from 'react'
 
 import s from './index.module.css'
@@ -10,8 +7,11 @@ import {CelestialContext} from '../../../CelestialContext.js'
 const {sin, cos} = Math
 const π = Math.PI
 
-export default function Stars({zero, x0, y0}) {
+export default function Stars({calendarDay, zero, x0, y0}) {
   const {stars, fictivePointsStars} = useContext(CelestialContext)
+
+  const year = calendarDay.getFullYear()
+  const delta = 2000 - year
 
   const flatten = [
     ...Object.values(stars),
@@ -20,8 +20,13 @@ export default function Stars({zero, x0, y0}) {
     .map(x => x && [x[0]])
     .flat()
     .filter(x => !!x)
+    .map(x => ({
+      ...x,
+      // TODO test precession logic
+      elon: x.elon - (1 / 72) * delta
+    }))
 
-  // case of planet conjunction
+  // in case of planet conjunction we get duplicates
   const uniq = Array.from(new Set(flatten))
 
   return (

@@ -33,12 +33,12 @@ export default function Zodiac(props: Props) {
     horoscope: {_ascendant, CelestialBodies}
   } = useContext(CelestialContext)
 
-  const ctx = useContext(CelestialContext)
   const x0 = 150
   const y0 = 155
 
   const r = 130
 
+  // TODO move lots to separate component
   const zero =
     settings.objects.houses.visibility.natal &&
     settings.interface.startFrom == 'Asc'

@@ -9,13 +9,7 @@
   ["Erakis", "μ-Cephei", "09°42", "Ari", "Saturn/ Jupiter"],
   ["Deneb Algenubi", "η-Ceti", "11°46", "Ari", "Saturn"],
   ["Alderamin", "α-Cephei", "12°46", "Ari", "Saturn/ Jupiter"],
-  [
-    "Phicares, Phicareus",
-    "ε-Cephei",
-    "13°03",
-    "Ari",
-    "Saturn/ Jupiter"
-  ],
+  ["Phicares", "ε-Cephei", "13°03", "Ari", "Saturn/ Jupiter"],
   ["Tsao Fu", "ζ-Cephei", "13°58", "Ari", "Saturn/ Jupiter"],
   ["Linteum", "δ-Piscium", "14°09", "Ari", "Saturn/ Mercury"],
   ["Alpheratz, Sirrah", "α-Andromedae", "14°18", "Ari", "Venus"],
@@ -56,7 +50,7 @@
   ["Azha", "η-Eridani", "08°45", "Tau", "Saturn"],
   ["Kaffaljidhma", "γ-Ceti", "09°26", "Tau", "Saturn"],
   ["Achird", "η-Cassiopeiae", "10°15", "Tau", "Saturn"],
-  ["Deltotum, Deltoton", "β-Trianguli", "12°21", "Tau", "Mercury"],
+  ["Deltotum", "β-Trianguli", "12°21", "Tau", "Mercury"],
   ["Zibal", "ζ-Eridani", "13°50", "Tau", "Saturn"],
   ["Cih", "γ-Cassiopeiae", "13°56", "Tau", "Saturn/ Venus"],
   ["Almaak Almach", "γ-Andromedae", "14°14", "Tau", "Venus"],
@@ -101,20 +95,8 @@
   ["Menkib", "ξ-Persei", "04°58", "Gem", "Jupiter/ Saturn"],
   ["Sceptrum", "53-Eridani", "05°15", "Gem", "Saturn"],
   ["Adid Australis", "ε-Persei", "05°41", "Gem", "Jupiter/ Saturn"],
-  [
-    "Prima Hyadum/ Ambrosia",
-    "γ-Tauri",
-    "05°48",
-    "Gem",
-    "Saturn/ Mercury"
-  ],
-  [
-    "Hyadum II/ Eudora",
-    "δ-Tauri",
-    "06°52",
-    "Gem",
-    "Saturn/ Mercury"
-  ],
+  ["Ambrosia", "γ-Tauri", "05°48", "Gem", "Saturn/ Mercury"],
+  ["Eudora", "δ-Tauri", "06°52", "Gem", "Saturn/ Mercury"],
   ["Phaeo", "θ1-Tauri", "07°57", "Gem", "Saturn/ Mercury"],
   ["Phaesula", "θ2-Tauri", "07°57", "Gem", "Saturn/ Mercury"],
   ["Ain", "ε-Tauri", "08°28", "Gem", "Saturn/ Mercury"],
@@ -193,13 +175,7 @@
   ["Wezen", "δ-Canis Majoris", "23°24", "Can", "Venus"],
   ["Procyon", "α-Canis Minoris", "25°48", "Can", "Mercury/ Mars"],
   ["Pharkadain", "ζ-Ursae-Minoris", "27°25", "Can", "Saturn/ Venus"],
-  [
-    "Rehla, Al Rihla, Anazitisi",
-    "τ-Puppis",
-    "27°44",
-    "Can",
-    "Saturn/ Jupiter"
-  ],
+  ["Rehla", "τ-Puppis", "27°44", "Can", "Saturn/ Jupiter"],
   ["Aludra", "η-Canis Majoris", "29°32", "Can", "Venus"],
   ["Ahadi", "π-Puppis", "00°18", "Leo", "Saturn/ Jupiter"],
   ["Alasco", "η-Ursae-Minoris", "00°20", "Leo", "Saturn/ Venus"],
@@ -212,13 +188,7 @@
   ],
   ["Al Tarf", "β-Cancri", "04°15", "Leo", "Mars/ Moon"],
   ["Starus Bateus", "η-Cancri", "05°25", "Leo", ""],
-  [
-    "Azmidiske, Asmidiske",
-    "ξ-Puppis",
-    "06°02",
-    "Leo",
-    "Saturn/ Jupiter"
-  ],
+  ["Asmidiske", "ξ-Puppis", "06°02", "Leo", "Saturn/ Jupiter"],
   ["Decapoda", "ι-Cancri", "06°21", "Leo", "Saturn/ Mercury"],
   ["Praesepe", "44 M-Cancri", "07°12", "Leo", "Mars/ Moon"],
   ["Asellus Borealis", "γ-Cancri", "07°32", "Leo", "Mars/ Sun"],
@@ -235,13 +205,7 @@
   ["Acubens", "α-Cancri", "13°39", "Leo", "Saturn/ Mercury"],
   ["Hydrobius", "ζ-Hydrae", "14°35", "Leo", "Saturn/ Venus"],
   ["Dubhe", "α-Ursae-Majoris", "15°12", "Leo", "Mercury/ Venus"],
-  [
-    "Alminhar, Al Minliar al Asad",
-    "κ-Leonis",
-    "15°18",
-    "Leo",
-    "Saturn/ Mars"
-  ],
+  ["Alminhar", "κ-Leonis", "15°18", "Leo", "Saturn/ Mars"],
   ["Ketu", "κ-Draconis", "16°16", "Leo", "Saturn/ Mars"],
   ["Alterf", "λ-Leonis", "17°52", "Leo", "Saturn/ Mars"],
   ["Naos", "ζ-Puppis", "18°33", "Leo", "Saturn/ Jupiter"],
@@ -272,13 +236,7 @@
   ["Subra", "ο-Leonis", "24°15", "Leo", "Venus/ Mercury"],
   ["Al Sumut", "α-Pyxidis", "26°30", "Leo", ""],
   ["Alphard", "α-Hydrae", "27°17", "Leo", "Saturn/ Venus"],
-  [
-    "Regor, Suhail al Muhlif",
-    "γ2-Velorum",
-    "27°21",
-    "Leo",
-    "Saturn/ Jupiter"
-  ],
+  ["Regor", "γ2-Velorum", "27°21", "Leo", "Saturn/ Jupiter"],
   ["Adhafera", "ζ-Leonis", "27°34", "Leo", "Saturn/ Mercury"],
   ["Al Jabhah", "η-Leonis", "27°54", "Leo", "Saturn/ Mercury"],
   ["Algieba", "γ-Leonis", "29°37", "Leo", "Saturn/ Mercury"],
@@ -287,13 +245,7 @@
   ["Drus, Drys", "χ-Carinae", "00°44", "Vir", "Saturn/ Jupiter"],
   ["Praecipua", "ο-Leonis Minoris", "00°53", "Vir", "??"],
   ["Megrez", "δ-Ursae Majoris", "01°04", "Vir", "Mars"],
-  [
-    "El Kophrah/ Al Kaphrah",
-    "χ-Ursae Majoris",
-    "03°40",
-    "Vir",
-    "Mars"
-  ],
+  ["Al Kaphrah", "χ-Ursae Majoris", "03°40", "Vir", "Mars"],
   ["Shir", "ρ-Leonis", "06°23", "Vir", "Venus/ Mercury"],
   [
     "Alula Boreale",
@@ -317,13 +269,7 @@
   ["Xestus", "o-Velorum", "14°44", "Vir", "Saturn/ Jupiter"],
   [" Mirak", "ζ-Ursae Majoris", "15°42", "Vir", "Saturn/ Venus"],
   ["Alcor", "80 Ursae Majoris", "15°52", "Vir", "Mars"],
-  [
-    "Tse Tseng, Tsze Tseang",
-    "ι-Leonis",
-    "17°34",
-    "Vir",
-    "Venus/ Mercury"
-  ],
+  ["Tse Tseng", "ι-Leonis", "17°34", "Vir", "Venus/ Mercury"],
   [
     "Asterion",
     "β-Canum Venaticorum",
@@ -567,13 +513,7 @@
   ["Apex", "", "02°08", "Cap", ""],
   ["Atia", "o-Herculis", "02°41", "Cap", "Mercury"],
   ["Polis", "μ-Sagittarii", "03°12", "Cap", "Jupiter/ Mars"],
-  [
-    "Sephdar, Ira Furoris",
-    "η-Sagittarii",
-    "03°37",
-    "Cap",
-    "Jupiter/ Mars"
-  ],
+  ["Sephdar", "η-Sagittarii", "03°37", "Cap", "Jupiter/ Mars"],
   ["Kaus Media", "δ-Sagittarii", "04°34", "Cap", "Jupiter/ Mars"],
   [
     "Kaus Australis",
@@ -648,13 +588,7 @@
     "Cap",
     "Mars/ Jupiter"
   ],
-  [
-    "Terebellum/ Terebellium",
-    "ω-Sagittarii",
-    "25°50",
-    "Cap",
-    "Venus/ Saturn"
-  ],
+  ["Terebellum", "ω-Sagittarii", "25°50", "Cap", "Venus/ Saturn"],
   ["Aladfar", "η-Lyrae", "00°03° Aqu", "Venus/ Mercury"],
   ["Bazak", "η-Aquilae", "00°25", "Aqu", "Mars/ Jupiter"],
   ["Tarazed", "γ-Aquilae", "00°56", "Aqu", "Mars/ Jupiter"],
@@ -675,24 +609,12 @@
   ["Armus", "η-Capricorni", "12°44", "Aqu", "Mars/ Mercury"],
   ["Dorsum", "θ-Capricorni", "13°50", "Aqu", "Mars/ Mercury"],
   ["Deneb Dulfim", "ε-Delphini", "14°03", "Aqu", "Saturn/ Mars"],
-  [
-    "Ruc, Rukh, Urakhga",
-    "δ-Cygni",
-    "16°14",
-    "Aqu",
-    "Venus/ Mercury"
-  ],
+  ["Rukh", "δ-Cygni", "16°14", "Aqu", "Venus/ Mercury"],
   ["Rotanev", "β-Delphini", "16°20", "Aqu", "Saturn/ Mars"],
   ["Albulaan", "ν-Aquarii", "16°23", "Aqu", "Saturn/ Mercury"],
   ["Marakk", "ζ-Capricorni", "16°56", "Aqu", "Mars/ Mercury"],
   ["Sualocin", "α-Delphini", "17°22", "Aqu", "Saturn/ Mars"],
-  [
-    "Castra, Kastra",
-    "ε-Capricorni",
-    "20°11",
-    "Aqu",
-    "Mars/ Mercury"
-  ],
+  ["Castra", "ε-Capricorni", "20°11", "Aqu", "Mars/ Mercury"],
   ["Nashira", "γ-Capricorni", "21°47", "Aqu", "Saturn/ Jupiter"],
   ["Sadalsuud", "β-Aquarii", "23°23 Aqu", "Saturn/ Mercury"],
   ["Scheddi", "δ-Capricorni", "23°33", "Aqu", "Saturn/ Jupiter"],

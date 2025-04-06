@@ -1,10 +1,6 @@
-import {useContext} from 'react'
-
+import React, {useContext} from 'react'
 import {CelestialContext} from '../../../CelestialContext.js'
-
 import {SettingContext} from '../../../SettingContext.js'
-
-import React from 'react'
 
 import s from './index.module.css'
 
