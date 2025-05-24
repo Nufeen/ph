@@ -1,10 +1,13 @@
-import {Origin, Horoscope} from 'circular-natal-horoscope-js/dist/index.js'
+import {
+  Origin,
+  Horoscope
+} from 'circular-natal-horoscope-js/dist/index.js'
 
 export default function getHoroscope(
   calendarDay: Date,
   latitude: number,
   longitude: number,
-  houseSystem
+  houseSystem = 'placidus'
 ) {
   const year = calendarDay.getFullYear()
   const month = calendarDay.getMonth()

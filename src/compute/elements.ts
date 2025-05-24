@@ -14,13 +14,18 @@ const elementMap = {
 }
 
 export default function reduceToElements(horoscope) {
-  return Object.values(horoscope.CelestialBodies).reduce((acc, body: any) => {
-    const sign = body?.Sign?.key
-    if (!sign) return acc
-    if (!acc[elementMap[sign]]) {
-      acc[elementMap[sign]] = 0
-    }
-    acc[elementMap[sign]] += 1
-    return acc
-  }, {})
+  if (!horoscope?.CelestialBodies) return {}
+
+  return Object.values(horoscope?.CelestialBodies).reduce(
+    (acc, body: any) => {
+      const sign = body?.Sign?.key
+      if (!sign) return acc
+      if (!acc[elementMap[sign]]) {
+        acc[elementMap[sign]] = 0
+      }
+      acc[elementMap[sign]] += 1
+      return acc
+    },
+    {}
+  )
 }

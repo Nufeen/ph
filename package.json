@@ -10,6 +10,8 @@
     "build-electron": "tsc && vite build --config vite.electron.config.js && electron .",
     "deploy": "npx gh-pages -d dist",
     "preview": "vite preview",
+    "test": "vitest",
+    "tests": "vitest  watch",
     "electron": "electron ."
   },
   "main": "electron.js",
@@ -36,6 +38,7 @@
     "prettier": "3.4.2",
     "typescript": "^5.7.3",
     "vite": "^6.0.11",
-    "vite-plugin-pwa": "^0.21.1"
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^3.1.4"
   }
 }
