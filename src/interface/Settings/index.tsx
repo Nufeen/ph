@@ -331,12 +331,7 @@ const PlanetCheckboxTable = () => {
       <table className={s.lots}>
         <thead className={s.thead}>
           <tr>
-            <th>
-              Lots{' '}
-              <span style={{color: 'red', fontSize: '8px'}}>
-                (Experimental)
-              </span>
-            </th>
+            <th>Lots </th>
           </tr>
         </thead>
         <tbody>
@@ -344,7 +339,7 @@ const PlanetCheckboxTable = () => {
             <DayOrNight />
           </tr>
           <tr>
-            <td>Fortune</td>
+            <td>Fortune (⊗)</td>
             <td>
               <input
                 type="checkbox"
@@ -355,7 +350,7 @@ const PlanetCheckboxTable = () => {
           </tr>
 
           <tr>
-            <td>Spirit</td>
+            <td>Spirit (PS)</td>
             <td>
               <input
                 type="checkbox"
