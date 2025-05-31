@@ -12,6 +12,12 @@
   }
 }
 
+@container (max-width: 350px) {
+  .table {
+    font-size: 0.6em;
+  }
+}
+
 .sign {
   font-family: 'Noto Emoji';
   font-weight: 700;

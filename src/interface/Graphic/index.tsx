@@ -103,13 +103,12 @@ export default function GraphicChart() {
         {zodiacSigns.map((sign, index) => (
           <>
             <line
+              className={s.signline}
               key={sign}
               x1={index * 100}
               y1="0"
               x2={index * 100}
               y2={H}
-              stroke="white"
-              strokeWidth=".2"
             />
             <text x={index * 100 + 45} y="-10" opacity=".5">
               {sign}
@@ -120,20 +119,17 @@ export default function GraphicChart() {
         {months.map((mo, index) => (
           <>
             <line
+              className={s.monthline}
               key={mo}
               x1={0}
               y1={index * (H / 12)}
               x2={W}
               y2={index * (H / 12)}
-              stroke="white"
-              strokeWidth=".2"
-              opacity={0.2}
             />
             <text
               className={s.month}
               x={10}
               y={index * (H / 12) + H / 24 + 5}
-              opacity=".2"
             >
               {mo} {year}
             </text>
@@ -142,12 +138,11 @@ export default function GraphicChart() {
 
         {/* Current date line */}
         <line
+          className={s.currentdateline}
           x1={0}
           y1={(dayNum(transitData.date) / 365) * H}
           x2={W}
           y2={(dayNum(transitData.date) / 365) * H}
-          stroke="silver"
-          opacity={0.4}
         />
 
         {/* Natal planets */}
@@ -173,21 +168,8 @@ function NatalLine({body, i}) {
   const x = pos(body, natalData.date)
   return (
     <>
-      <line
-        x1={x}
-        y1={10}
-        x2={x}
-        y2={H}
-        stroke="lime"
-        opacity={0.4}
-      />
-      <text
-        className={s.natalText}
-        x={x - 4}
-        y={8}
-        opacity={0.5}
-        fill="lime"
-      >
+      <line className={s.natalline} x1={x} y1={10} x2={x} y2={H} />
+      <text className={s.natalText} x={x - 4} y={8}>
         {planets[body]}
       </text>
     </>
@@ -202,7 +184,7 @@ function Lines({body, dates}) {
   return (
     <>
       {lines.map(line => (
-        <Path A={line} color={color[body]} />
+        <Path A={line} color={color[body]} body={body} />
       ))}
 
       {lines.map(line => (
@@ -226,5 +208,12 @@ function Path(props) {
     `M ${head[0]} ${head[1]} ` +
     tail.map((x: number[]) => `L ${x[0]}, ${x[1]}`).join(' ')
 
-  return <path d={d} stroke={props.color} fill="transparent" />
+  return (
+    <path
+      data-body={props.body}
+      d={d}
+      stroke={props.color}
+      fill="transparent"
+    />
+  )
 }

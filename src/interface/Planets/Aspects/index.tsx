@@ -98,7 +98,7 @@ export default function Aspects() {
 
   return (
     <div className={s.wrap} data-type={settings.chartType}>
-      <div>
+      <div data-alot={negative.length > 10}>
         {negative.map(
           ({a, b, d, d0, x, y, label1, label2}, index) => (
             <ul key={index} className={s.list}>
@@ -112,7 +112,7 @@ export default function Aspects() {
         )}
       </div>
 
-      <div>
+      <div className={s.positive} data-alot={positive.length > 10}>
         {positive.map(
           ({a, b, d, d0, x, y, label1, label2}, index) => (
             <ul key={index} className={s.list}>

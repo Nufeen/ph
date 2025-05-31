@@ -5,7 +5,7 @@
   height: 100%;
   font-family: 'Noto Emoji';
   font-weight: 700;
-  fill: azure;
+  fill: var(--text-color);
   padding-top: 20px;
   padding-bottom: 20px;
   box-sizing: border-box;
@@ -30,6 +30,42 @@
 }
 
 .natalText {
-  background: black;
   font-size: 10px;
+}
+
+.currentdateline {
+  stroke: pink;
+  stroke-dasharray: 4 4;
+}
+
+.monthline {
+  stroke: var(--text-color);
+  stroke-width: 0.2;
+  opacity: 0.2;
+}
+
+.signline {
+  stroke: var(--text-color);
+  stroke-width: 0.2;
+  stroke-dasharray: 1 4;
+}
+
+.natalline {
+  stroke: var(--text-color);
+  opacity: 0.6;
+  stroke-dasharray: 4 4;
+}
+
+.natalText {
+  fill: var(--text-color);
+  opacity: 0.7;
+}
+
+.natalText:hover {
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.wrap path[data-body='Sun'] {
+  stroke: var(--sun-color);
 }
