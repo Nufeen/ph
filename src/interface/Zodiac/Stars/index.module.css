@@ -5,8 +5,8 @@ circle:hover ~ .text {
 
 circle.star.star {
   stroke-width: 10;
-  stroke: rgba(0, 0, 0, 0.1);
-  fill: white;
+  stroke: transparent;
+  fill: var(--text-color);
 }
 
 circle.star.star[data-type='evil'] {
@@ -19,7 +19,6 @@ circle.star.star[data-type='royal'] {
 
 .text {
   font-size: 6px;
-  background: gold;
   pointer-events: none;
   display: block;
   transform: translateX(-50%);

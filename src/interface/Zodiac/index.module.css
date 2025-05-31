@@ -21,7 +21,7 @@
 }
 
 .figure circle:nth-of-type(2) {
-  fill: #242424;
+  fill: var(--background-color);
 }
 
 .figure circle {
@@ -40,6 +40,8 @@
 .house {
   font-family: 'Noto Emoji';
   font-weight: 700;
+  fill: var(--text-color);
+  opacity: 0.3;
 }
 
 text.planet {

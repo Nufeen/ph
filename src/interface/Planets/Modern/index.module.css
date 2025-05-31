@@ -33,15 +33,14 @@
 }
 
 .retro[data-type='transit'] {
-  color: rgb(77, 223, 167);
+  color: var(--transit-color);
   opacity: 0.8;
 }
 
 .degrees[data-type='transit'] {
-  color: rgb(77, 223, 167);
+  color: var(--transit-color);
   margin-right: 15px;
   display: inline-block;
-  opacity: 0.8;
 }
 
 .degrees > span:first-child {
@@ -93,20 +92,24 @@
   }
 }
 
+.label {
+  font-weight: bold;
+  font-family: monospace;
+}
+
 .retro {
   font-weight: bold;
   font-size: 0.7em;
-  color: #a06f33;
   display: inline-block;
   margin-bottom: -2px;
   padding-right: 3px;
 }
 
 .CelestialPoints {
-  color: violet;
+  color: var(--fictive-color);
 }
 
 .CelestialPoints .degrees[data-type='transit'] {
-  color: violet;
-  opacity: 0.5;
+  color: var(--fictive-color);
+  opacity: 0.7;
 }

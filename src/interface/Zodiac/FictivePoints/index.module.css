@@ -1,3 +1,7 @@
 .wrapper circle.fictive {
-  stroke: violet;
+  stroke: var(--fictive-color);
+}
+
+.wrapper text {
+  fill: var(--fictive-color);
 }

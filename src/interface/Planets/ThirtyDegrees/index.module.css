@@ -10,31 +10,31 @@
   font-weight: 700;
   font-size: 11px;
   line-height: 12px;
-  color: silver;
+  color: var(--text-color);
 }
 
 .body,
 .tbody {
   position: absolute;
-  border-left: 1px rgba(255, 255, 125567, 0.5) solid;
+  border-left: 1px var(--text-color) solid;
   height: 57px;
   box-sizing: border-box;
 }
 
 .tbody {
-  border-left: 1px rgba(77, 223, 167, 0.5) solid;
+  border-left: 1px var(--transit-color) solid;
 }
 
 .tbody span {
   bottom: 0;
-  color: rgba(77, 223, 167, 1);
+  color: var(--transit-color);
 }
 
 .body span,
 .tbody span {
   position: absolute;
   left: -4px;
-  background: #242424;
+  background: var(--background-color);
 }
 
 .ruler {
@@ -46,7 +46,7 @@
 
   display: flex;
   justify-content: center;
-  border-left: 1px solid grey;
+  border-left: 1px solid var(--text-color);
   z-index: 2;
 }
 

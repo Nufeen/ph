@@ -24,8 +24,8 @@
 }
 
 .planet > div:first-of-type {
-  font-family: sans-serif;
   font-weight: bold;
+  font-family: monospace;
 }
 
 .planet:first-of-type > div {
@@ -49,5 +49,5 @@
 }
 
 .planet div[data-divine='true'] {
-  color: gold;
+  color: var(--sun-color);
 }

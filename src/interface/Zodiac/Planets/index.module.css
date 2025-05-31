@@ -17,7 +17,7 @@
 }
 .figure circle.fictive {
   stroke-width: 1px;
-  stroke: violet;
+  stroke: var(--fictive-color);
   fill: none;
 }
 
@@ -44,9 +44,9 @@ text > tspan {
   fill: red;
 }
 .planet[data-in-mid-of-sun='true'] {
-  fill: gold;
+  fill: var(--sun-color);
 }
 
 .planet[data-planet='Sun'] {
-  fill: gold;
+  fill: var(--sun-color);
 }

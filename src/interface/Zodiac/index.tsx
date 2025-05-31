@@ -73,7 +73,6 @@ export default function Zodiac(props: Props) {
 
         {l.map(i => (
           <text
-            opacity={0.65}
             className={s.house}
             key={i}
             fill="currentColor"

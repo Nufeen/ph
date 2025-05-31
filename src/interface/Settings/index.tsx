@@ -331,13 +331,12 @@ const PlanetCheckboxTable = () => {
       <table className={s.lots}>
         <thead className={s.thead}>
           <tr>
-            <th>Lots </th>
+            <th>
+              Lots (<DayOrNight />)
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr className={s.daynightwrap}>
-            <DayOrNight />
-          </tr>
           <tr>
             <td>Fortune (⊗)</td>
             <td>
@@ -361,6 +360,25 @@ const PlanetCheckboxTable = () => {
           </tr>
         </tbody>
       </table>
+
+      {false && (
+        <div className={s.theme}>
+          <h3 className={s.thead}>Theme</h3>
+
+          <div className={s.switch}>
+            Light{' '}
+            <input
+              type="range"
+              id="cowbell"
+              name="cowbell"
+              min="0"
+              max="1"
+              step="1"
+            />{' '}
+            Dark
+          </div>
+        </div>
+      )}
 
       <div className={s.orb}>
         <h3 className={s.thead}>Orb for all planets</h3>
@@ -417,8 +435,8 @@ function DayOrNight() {
     CelestialBodies.sun.ChartPosition.Ecliptic.DecimalDegrees
 
   return (
-    <td className={s.daynight}>
+    <span className={s.daynight}>
       {dayBirth < 180 ? 'DAY BIRTH' : 'NIGHT BIRTH'}
-    </td>
+    </span>
   )
 }

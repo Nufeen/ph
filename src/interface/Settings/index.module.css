@@ -7,7 +7,8 @@
   grid-template-areas:
     'planetes fictive thirty'
     'planetes lots house'
-    'planetes other elements'
+    'planetes other theme'
+    'planetes elements theme'
     'orb orb orb';
   column-gap: 10px;
   font-size: 0.9em;
@@ -41,8 +42,17 @@
   grid-area: fictive;
 }
 
+.theme {
+  grid-area: theme;
+}
+
 .other {
   grid-area: other;
+}
+
+.planetes {
+  font-weight: bold;
+  font-family: monospace;
 }
 
 .houseSelector {
@@ -139,4 +149,15 @@
   padding: 0;
   margin: 0;
   line-height: 12px;
+}
+
+.theme input {
+  width: 30px;
+  position: relative;
+}
+
+.switch {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

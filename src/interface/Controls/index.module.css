@@ -34,8 +34,9 @@
     border: 1px solid gray;
     border-radius: 6px;
     padding: 2px 4px;
-    background-color: #242424;
-    color: silver;
+
+    color: var(--text-color);
+    background-color: var(--background-color);
   }
 
   input {
@@ -89,7 +90,6 @@
   grid-area: info;
   line-height: 1em;
   font-size: 0.7em;
-  opacity: 0.6;
   display: flex;
   gap: 5px;
   align-items: center;
@@ -113,6 +113,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
   button + button {
     margin-left: 10px;
   }
@@ -137,7 +138,6 @@
   align-items: center;
   flex-direction: row-reverse;
   font-size: 0.6em;
-  color: gray;
 
   button {
     height: 30px;
@@ -162,7 +162,6 @@
   font-size: 0.6em;
   justify-content: center;
   align-items: center;
-  color: gray;
   line-height: 1.2em;
 }
 

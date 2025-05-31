@@ -40,7 +40,7 @@
 
 .wrap[data-type='transit'] span:nth-child(3),
 .wrap[data-type='progressed'] span:nth-child(3) {
-  color: rgb(77, 223, 167);
+  color: var(--transit-color);
 }
 
 .pos {

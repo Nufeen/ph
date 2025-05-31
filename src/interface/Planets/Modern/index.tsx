@@ -100,7 +100,7 @@ export default function ModernPlanetsTable() {
                 </td>
               )}
 
-              <td>{planets[body.label]}</td>
+              <td className={s.label}>{planets[body.label]}</td>
               <td className={s.retro}>{body.isRetrograde && 'R'}</td>
 
               <td className={s.degrees}>

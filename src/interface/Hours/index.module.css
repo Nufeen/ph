@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  font-family: monospace;
 }
 
 .hour {
@@ -41,7 +42,6 @@
 }
 
 .sign {
-  font-family: sans-serif;
   font-weight: bold;
   text-align: center;
   position: relative;
@@ -49,7 +49,7 @@
 }
 
 .sign[data-divine='true'] {
-  color: gold;
+  color: var(--sun-color);
 }
 
 .house {
@@ -60,7 +60,7 @@
 
 .house[data-at-home='true'] {
   opacity: 1;
-  color: gold;
+  color: var(--sun-color);
 }
 
 .house[data-decline='true'] {

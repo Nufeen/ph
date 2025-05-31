@@ -111,7 +111,8 @@
 
 .transitButtons button {
   width: 100%;
-  color: aliceblue;
+  background-color: var(--button-background-color);
+  color: var(--text-color);
 }
 
 .transitButtons button:disabled {
