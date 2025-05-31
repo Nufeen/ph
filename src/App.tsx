@@ -193,6 +193,10 @@ function App() {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  const actualPlanets = Object.entries(settings.objects.planets)
+    .filter(([k, v]) => !!v)
+    .map(([k, v]) => k)
+
   return (
     <SettingContext.Provider value={settingsContextValue}>
       <CelestialContext.Provider
@@ -200,9 +204,15 @@ function App() {
           horoscope,
           transitHoroscope,
           progressedHoroscope,
-          stars: connectedStars(natalData.date),
-          transitStars: connectedStars(transitData.date),
-          progressedStars: connectedStars(progressedDate),
+          stars: connectedStars(natalData.date, actualPlanets),
+          transitStars: connectedStars(
+            transitData.date,
+            actualPlanets
+          ),
+          progressedStars: connectedStars(
+            progressedDate,
+            actualPlanets
+          ),
           fictivePointsStars: starsOnFictivePoints(
             natalData.date,
             horoscope

@@ -44,8 +44,11 @@ function elon(s, sign) {
   return n >= 0 ? n * 30 + +deg + +min / 60 : null
 }
 
-export function connectedStars(calendarDay) {
-  const out = Object.keys(planets).reduce((a, x: any) => {
+export function connectedStars(
+  calendarDay,
+  actualPlanets = Object.keys(planets)
+) {
+  const out = actualPlanets.reduce((a, x: any) => {
     return {...a, [x]: findStar(pos(x, calendarDay), calendarDay)}
   }, {})
 
