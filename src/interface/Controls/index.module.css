@@ -1,5 +1,6 @@
 .wrapper {
   display: grid;
+  gap: 10px;
 
   grid-template-columns: 1fr 1fr 40px 1fr 1fr;
 
@@ -17,12 +18,12 @@
       'info1 info1 info1'
       'section2 section2 section2'
       'info2 info2 info2';
+    /* compensate the gap */
+    padding-top: 50px;
   }
 
-  gap: 10px;
-
   max-width: min(900px, 95%);
-  overflow: hidden;
+
   margin-bottom: 10px;
 
   font-size: 0.9em;
