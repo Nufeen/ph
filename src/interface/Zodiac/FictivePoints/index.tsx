@@ -152,8 +152,8 @@ function Lilith({x0, y0, zero, horoscope, type}) {
       <text
         fill="violet"
         fontSize={8}
-        x={x0 + tx * sin(degrees.lilith)}
-        y={y0 + (tx + 2) * cos(degrees.lilith)}
+        x={x0 + tx * sin(degrees.lilith) - 2}
+        y={y0 + (tx + 0) * cos(degrees.lilith)}
       >
         ⚸
       </text>
@@ -162,8 +162,8 @@ function Lilith({x0, y0, zero, horoscope, type}) {
         <text
           fill="violet"
           fontSize={4}
-          x={x0 + tx * sin(degrees.lilith)}
-          y={y0 + (tx + 2) * cos(degrees.lilith) - 8}
+          x={x0 + tx * sin(degrees.lilith) - 2}
+          y={y0 + (tx + 0) * cos(degrees.lilith) - 8}
         >
           {degree30}
         </text>
@@ -207,8 +207,8 @@ function Node({x0, y0, zero, horoscope, type, node}) {
       <text
         fill="violet"
         fontSize={8}
-        x={x0 + M * tx * sin(degrees.northnode)}
-        y={y0 + M * tx * cos(degrees.northnode)}
+        x={x0 + M * tx * sin(degrees.northnode) - 2}
+        y={y0 + M * tx * cos(degrees.northnode) + 2}
       >
         {node == 'northnode' ? '☊' : '☋'}
       </text>
@@ -217,8 +217,8 @@ function Node({x0, y0, zero, horoscope, type, node}) {
         <text
           fill="violet"
           fontSize={4}
-          x={x0 + M * tx * sin(degrees.northnode)}
-          y={y0 + M * tx * cos(degrees.northnode) - 8}
+          x={x0 + M * tx * sin(degrees.northnode) - 2}
+          y={y0 + M * tx * cos(degrees.northnode) - 6}
         >
           {degree30}
         </text>

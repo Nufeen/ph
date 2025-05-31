@@ -47,8 +47,8 @@ export default function Houses({zero, x0, y0, chartType}) {
       {H[chartType].Houses.map((_, i) => (
         <line
           key={i}
-          stroke={chartType == 'natal' ? 'violet' : 'gray'}
-          strokeOpacity={i % 3 == 0 ? 0.7 : 0.5}
+          stroke={chartType == 'natal' ? 'violet' : 'green'}
+          strokeOpacity={chartType == 'natal' ? 1 : 0.2}
           strokeWidth={i % 3 == 0 ? 1 : 0.3}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
@@ -59,12 +59,12 @@ export default function Houses({zero, x0, y0, chartType}) {
 
       {H[chartType].Houses.map((_, i) => (
         <text
-          fill={chartType == 'natal' ? 'violet' : 'gray'}
+          fill={chartType == 'natal' ? 'violet' : 'green'}
           fontSize={5}
-          opacity={i % 3 == 0 ? 0.7 : 0.5}
+          opacity={chartType == 'natal' ? 1 : 0.4}
           fontWeight={i % 3 == 0 ? 'bold' : 'normal'}
           key={i}
-          x={x0 + (l + 1) * sin(deg(i)) - 7}
+          x={x0 + (l + 8) * sin(deg(i)) - 7}
           y={y0 + (l + 5) * cos(deg(i))}
         >
           {A[i]}
