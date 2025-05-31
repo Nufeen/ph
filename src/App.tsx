@@ -159,8 +159,13 @@ function App() {
     return new Date(timestamp)
   }
 
+  const progressedDate = calculateProgressedDate(
+    natalData.date,
+    transitData.date
+  )
+
   const progressedHoroscope = getHoroscope(
-    calculateProgressedDate(natalData.date, transitData.date),
+    progressedDate,
     latlng.transit.lat,
     latlng.transit.lng,
     settings?.interface?.houseSystem
@@ -196,6 +201,8 @@ function App() {
           transitHoroscope,
           progressedHoroscope,
           stars: connectedStars(natalData.date),
+          transitStars: connectedStars(transitData.date),
+          progressedStars: connectedStars(progressedDate),
           fictivePointsStars: starsOnFictivePoints(
             natalData.date,
             horoscope

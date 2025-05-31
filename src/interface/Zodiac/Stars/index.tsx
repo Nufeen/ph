@@ -3,19 +3,29 @@ import {useContext} from 'react'
 import s from './index.module.css'
 
 import {CelestialContext} from '../../../CelestialContext.js'
+import {SettingContext} from '../../../SettingContext.js'
 
 const {sin, cos} = Math
 const π = Math.PI
 
 export default function Stars({calendarDay, zero, x0, y0}) {
-  const {stars, fictivePointsStars} = useContext(CelestialContext)
+  const {stars, transitStars, progressedStars, fictivePointsStars} =
+    useContext(CelestialContext)
+
+  const {settings} = useContext(SettingContext)
 
   const year = calendarDay.getFullYear()
   const delta = 2000 - year
 
   const flatten = [
     ...Object.values(stars),
-    ...Object.values(fictivePointsStars)
+    ...Object.values(fictivePointsStars),
+    ...Object.values(
+      settings.chartType === 'transit' ? transitStars : {}
+    ),
+    ...Object.values(
+      settings.chartType === 'progressed' ? progressedStars : {}
+    )
   ]
     .map(x => x && [x[0]])
     .flat()
