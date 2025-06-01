@@ -1,12 +1,12 @@
 {
-  "Saturn": "♄",
-  "Jupiter": "♃",
-  "Mars": "♂",
-  "Sun": "☉",
-  "Venus": "♀",
-  "Mercury": "☿",
   "Moon": "☽︎",
-  "Pluto": "♇",
+  "Mercury": "☿",
+  "Venus": "♀",
+  "Sun": "☉",
+  "Mars": "♂",
+  "Jupiter": "♃",
+  "Saturn": "♄",
+  "Uranus": "♅",
   "Neptune": "♆",
-  "Uranus": "♅"
+  "Pluto": "♇"
 }
