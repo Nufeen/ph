@@ -4,17 +4,14 @@ import {CelestialContext} from '../../../CelestialContext.js'
 
 import planets from '../../../assets/planets.json'
 
-import React from 'react'
-
 import s from './index.module.css'
 
-const {sin, cos, abs, min} = Math
+const {abs, min} = Math
 
 export default function Aspects() {
+  const {settings} = useContext(SettingContext)
   const {horoscope, progressedHoroscope, transitHoroscope} =
     useContext(CelestialContext)
-
-  const {settings} = useContext(SettingContext)
 
   const threshold = settings.interface.aspectOrb ?? 4
 
@@ -25,7 +22,7 @@ export default function Aspects() {
   ].map(x =>
     x.CelestialBodies.all
       .filter(
-        (planet: {label: string | number}) =>
+        (planet: {label: string}) =>
           settings?.objects?.planets[planet?.label]
       )
       .map(
@@ -44,12 +41,13 @@ export default function Aspects() {
 
   const positive = []
   const negative = []
+  const conjunctions = []
 
   const uniqueAspects = new Set<number>()
 
-  M.natal.forEach((a: [any, any]) => {
-    M[settings.chartType].forEach((b: any) => {
-      const aspect = aspectBetween(a, b)
+  M.natal.forEach((a: [string, number]) => {
+    M[settings.chartType].forEach((b: [string, number]) => {
+      const aspect = aspectBetween(a, b, threshold)
       if (aspect && !uniqueAspects.has(aspect.d0)) {
         uniqueAspects.add(aspect.d0)
 
@@ -65,72 +63,109 @@ export default function Aspects() {
     })
   })
 
+  M.natal.forEach((a: [string, number]) => {
+    M[settings.chartType].forEach((b: [string, number]) => {
+      const aspect = conjunctionBetween(a, b, threshold)
+      if (aspect && !uniqueAspects.has(aspect.d0)) {
+        uniqueAspects.add(aspect.d0)
+        conjunctions.push(aspect)
+      }
+    })
+  })
+
   // sort for order in table: exact go up
   negative.sort((a, b) => a.d - b.d)
   positive.sort((a, b) => a.d - b.d)
-
-  function angleDistance(a: number, b: number) {
-    return Math.min(
-      360 - (Math.abs(a - b) % 360),
-      Math.abs(a - b) % 360
-    )
-  }
-
-  function aspectBetween([label1, a], [label2, b]) {
-    let d = angleDistance(a, b)
-
-    if (d < 50 || (d > 133 && d < 170)) return null
-
-    if (d % 30 <= threshold || 30 - (d % 30) < threshold) {
-      return {
-        a,
-        b,
-        d: min(d % 30, 30 - (d % 30)),
-        d0: d,
-        label1,
-        label2,
-        caption: `${planets[label1]} ${~~d}° ${planets[label2]} `
-      }
-    }
-
-    return null
-  }
+  conjunctions.sort((a, b) => a.d - b.d)
 
   return (
     <div className={s.wrap} data-type={settings.chartType}>
-      <div data-alot={negative.length > 10}>
-        {negative.map(
-          ({a, b, d, d0, x, y, label1, label2}, index) => (
-            <ul key={index} className={s.list}>
-              <li className={s.neg} data-exact={d <= 1}>
-                <span>{planets[label1]}</span>
-                <span>{~~d0}</span>
-                <span>{planets[label2]}</span>
-              </li>
-            </ul>
-          )
-        )}
+      <div data-alot={conjunctions.length > 12}>
+        {conjunctions.map(({d, d0, label1, label2}, index) => (
+          <ul key={index} className={s.list}>
+            <li className={s.conjunction} data-exact={d <= 1}>
+              <span>{planets[label1]}</span>
+              <span>{~~d0 || '☌'}</span>
+              <span>{planets[label2]}</span>
+            </li>
+          </ul>
+        ))}
       </div>
 
-      <div className={s.positive} data-alot={positive.length > 10}>
-        {positive.map(
-          ({a, b, d, d0, x, y, label1, label2}, index) => (
-            <ul key={index} className={s.list}>
-              <li className={s.pos} data-exact={d <= 1}>
-                <span>{planets[label1]}</span>
-                <span>{~~d0}</span>
-                <span>{planets[label2]}</span>
-              </li>
-            </ul>
-          )
-        )}
+      <div data-alot={negative.length > 12}>
+        {negative.map(({d, d0, label1, label2}, index) => (
+          <ul key={index} className={s.list}>
+            <li className={s.neg} data-exact={d <= 1}>
+              <span>{planets[label1]}</span>
+              <span>{~~d0}</span>
+              <span>{planets[label2]}</span>
+            </li>
+          </ul>
+        ))}
+      </div>
+
+      <div className={s.positive} data-alot={positive.length > 12}>
+        {positive.map(({d, d0, label1, label2}, index) => (
+          <ul key={index} className={s.list}>
+            <li className={s.pos} data-exact={d <= 1}>
+              <span>{planets[label1]}</span>
+              <span>{~~d0}</span>
+              <span>{planets[label2]}</span>
+            </li>
+          </ul>
+        ))}
       </div>
     </div>
   )
 }
 
-function getMidpoint(x1, y1, x2, y2) {
-  const centerX = (x1 + x2) / 2
-  const centerY = (y1 + y2) / 2
-  return {centerX, centerY}
+function aspectBetween(
+  [label1, a]: [string, number],
+  [label2, b]: [string, number],
+  threshold: number
+) {
+  let d = angleDistance(a, b)
+
+  if (d < 50 || (d > 133 && d < 170)) return null
+
+  if (d % 30 <= threshold || 30 - (d % 30) < threshold) {
+    return {
+      a,
+      b,
+      d: min(d % 30, 30 - (d % 30)),
+      d0: d,
+      label1,
+      label2
+    }
+  }
+
+  return null
+}
+
+function conjunctionBetween(
+  [label1, a]: [string, number],
+  [label2, b]: [string, number],
+  threshold: number
+) {
+  let d = angleDistance(a, b)
+
+  if (abs(d) <= threshold) {
+    return {
+      a,
+      b,
+      d: abs(d),
+      d0: d,
+      label1,
+      label2
+    }
+  }
+
+  return null
+}
+
+function angleDistance(a: number, b: number) {
+  return Math.min(
+    360 - (Math.abs(a - b) % 360),
+    Math.abs(a - b) % 360
+  )
 }
