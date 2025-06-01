@@ -1,13 +1,13 @@
 import {useContext} from 'react'
 
-import {SettingContext} from '../../../SettingContext.js'
-
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 
 import planets from '../../../assets/planets.json'
+
 import {CelestialContext} from '../../../CelestialContext.js'
+import {SettingContext} from '../../../SettingContext.js'
 
 const {sin, cos, abs} = Math
 const π = Math.PI

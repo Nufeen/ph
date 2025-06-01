@@ -58,6 +58,8 @@
   width: 90%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .layout section.center {
@@ -72,11 +74,13 @@
   position: relative;
 }
 
-.tablesSelector {
+.tablesSelector,
+.settingsSelector {
   margin: 10px;
 }
 
-.tablesSelector button {
+.tablesSelector button,
+.settingsSelector button {
   border-radius: 8px;
   padding: 0.4em 0.6em;
   font-size: 0.7em;

@@ -1,12 +1,14 @@
 :root {
-  --text-color: rgba(0, 0, 0, 0.8);
+  --text-color: #000000cc;
   --background-color: #f0f0f0;
-  --button-background-color: lightgray;
+  --button-background-color: #d3d3d3;
   --link-color: #646cff;
 
-  --transit-color: rgb(70, 160, 120);
-  --fictive-color: hsl(300, 76%, 50%);
-  --sun-color: hwb(25 0% 0%);
+  --transit-color: #46a078;
+  --fictive-color: #e01fe0;
+  --sun-color: #ff6a00;
+
+  --circle-color: gray;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,14 +17,16 @@
   }
 
   :root {
-    --text-color: rgba(255, 255, 255, 0.87);
+    --text-color: #ffffffdc;
     --background-color: #242424;
     --button-background-color: #1a1a1a;
     --link-color: #646cff;
-    --fictive-color: violet;
+    --fictive-color: #ee82ee;
 
-    --transit-color: rgba(77, 223, 167, 1);
-    --sun-color: gold;
+    --transit-color: #4ddfa7;
+    --sun-color: #ffd700;
+
+    --circle-color: gray;
   }
 }
 

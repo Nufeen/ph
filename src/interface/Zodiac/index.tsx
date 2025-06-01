@@ -31,7 +31,7 @@ export default function Zodiac(props: Props) {
   const {settings} = useContext(SettingContext)
 
   const {
-    horoscope: {_ascendant, CelestialBodies}
+    horoscope: {_ascendant}
   } = useContext(CelestialContext)
 
   const zero =

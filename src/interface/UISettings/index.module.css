@@ -1,0 +1,16 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper > div {
+  display: flex;
+  justify-content: space-between;
+}
+.wrapper label {
+  margin-right: 15px;
+}
+
+.wrapper button {
+  margin-top: 15px;
+}

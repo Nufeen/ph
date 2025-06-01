@@ -41,7 +41,18 @@
     "planetAngles": true,
     "orbMultiplier": true,
     "houseSystem": "placidus",
-    "startFrom": "Aries"
+    "startFrom": "Aries",
+    "settings": "sky"
+  },
+  "colors": {
+    "text-color": null,
+    "background-color": null,
+    "button-background-color": null,
+    "link-color": null,
+    "transit-color": null,
+    "fictive-color": null,
+    "sun-color": null,
+    "circle-color": null
   },
   "chartType": "natal"
 }

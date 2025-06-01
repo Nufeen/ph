@@ -11,6 +11,7 @@ import ThirtyDegrees from './interface/Planets/ThirtyDegrees'
 import AspectTable from './interface/Planets/Aspects'
 
 import Settings from './interface/Settings'
+import UISettings from './interface/UISettings'
 import ControlPane from './interface/Controls'
 import GraphicChart from './interface/Graphic'
 import Barbo from './interface/Barbo'
@@ -47,6 +48,15 @@ function App() {
   const [settings, setSettings] = useState(
     localSavedSettings ?? defaultSettings
   )
+
+  for (const [name, value] of Object.entries(
+    settings.colors || {}
+  )) {
+    document.documentElement.style.setProperty(
+      `--${name}`,
+      value as string
+    )
+  }
 
   const settingsContextValue = {settings, setSettings}
 
@@ -193,6 +203,16 @@ function App() {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  function selectSettingsScreen(chosen) {
+    const s = {
+      ...settings,
+      interface: {...settings.interface, settings: chosen}
+    }
+
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
   const actualPlanets = Object.entries(settings.objects.planets)
     .filter(([k, v]) => !!v)
     .map(([k, v]) => k)
@@ -236,7 +256,25 @@ function App() {
 
           <main className={s.layout} dir="ltr">
             <section className={s.left}>
-              <Settings />
+              <div className={s.settingsSelector}>
+                {['sky', 'ui'].map(chosen => (
+                  <button
+                    disabled={
+                      settings.interface?.settings === chosen
+                    }
+                    onClick={() => selectSettingsScreen(chosen)}
+                    key={chosen}
+                  >
+                    {chosen}
+                  </button>
+                ))}
+              </div>
+
+              {settings.interface.settings == 'sky' ? (
+                <Settings />
+              ) : (
+                <UISettings />
+              )}
             </section>
 
             {/* Basic sky screen */}

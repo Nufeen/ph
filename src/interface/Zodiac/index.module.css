@@ -28,7 +28,7 @@
   stroke-width: 1px;
   stroke: currentColor;
   fill: none;
-  stroke: gray;
+  stroke: var(--circle-color);
 }
 
 .figure circle.fictive {
