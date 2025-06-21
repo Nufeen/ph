@@ -149,6 +149,8 @@ function conjunctionBetween(
 ) {
   let d = angleDistance(a, b)
 
+  if (label1 === label2 && d == 0) return null
+
   if (abs(d) <= threshold) {
     return {
       a,
