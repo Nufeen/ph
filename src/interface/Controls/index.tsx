@@ -309,7 +309,7 @@ export default function ControlPane(props) {
               </button>
             )}
 
-            <ul>
+            <ul className={s.dates}>
               <FormattedDate data={data} chartType={chartType} />
               <li>
                 Local:{' '}
@@ -331,7 +331,7 @@ const FormattedDate = ({data, chartType}) => {
       ?.timezone ?? ''
   const formattedDate = moment(data[chartType]?.date)
     ?.tz(timezone)
-    ?.format('LLLL Z')
+    ?.format('lll Z')
 
   return (
     <li>
