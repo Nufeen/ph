@@ -84,7 +84,18 @@ export default function ControlPane(props) {
       return
     }
 
-    const date = new Date(e.target.value)
+    // Try to get city timezone, if fails, set local \o/
+    // calculate timezone delta between city timezone and local timezone
+    // set date to local date + timezone delta
+    const tz =
+      cityTimezones.lookupViaCity(data[chartType]?.city || '')?.[0]
+        ?.timezone ?? ''
+
+    let date = moment(e.target.value).tz(tz).toDate()
+    const tzUTCOffset = moment(date).tz(tz).utcOffset()
+    const localUTCOffset = moment(date).utcOffset()
+    const delta = localUTCOffset - tzUTCOffset
+    date = new Date(date.getTime() + delta * 60000)
 
     setter[chartType]({
       ...data[chartType],
@@ -298,18 +309,33 @@ export default function ControlPane(props) {
               </button>
             )}
 
-            <span>
-              {moment(data[chartType]?.date)
-                ?.tz(
-                  cityTimezones.lookupViaCity(
-                    data[chartType]?.city || ''
-                  )?.[0]?.timezone ?? ''
-                )
-                ?.format('LLLL Z')}
-            </span>
+            <ul>
+              <FormattedDate data={data} chartType={chartType} />
+              <li>
+                Local:{' '}
+                {moment(data[chartType]?.date).format('LLLL Z')}
+              </li>
+            </ul>
+
+            <span></span>
           </div>
         </section>
       ))}
     </div>
+  )
+}
+
+const FormattedDate = ({data, chartType}) => {
+  const timezone =
+    cityTimezones.lookupViaCity(data[chartType]?.city || '')?.[0]
+      ?.timezone ?? ''
+  const formattedDate = moment(data[chartType]?.date)
+    ?.tz(timezone)
+    ?.format('LLLL Z')
+
+  return (
+    <li>
+      {timezone}: {formattedDate}
+    </li>
   )
 }

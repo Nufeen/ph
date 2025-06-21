@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  padding: 6px;
   border-bottom: 1px solid #ccc;
 }
 
@@ -30,14 +30,32 @@
 .button {
   flex: 0;
   padding: 0.5em;
+  font-size: 0.6em;
 }
 
 .name {
   text-decoration: underline;
   cursor: pointer;
+  line-height: 13px;
 }
 
-.date {
+.name p {
+  margin: 0;
+  padding: 0;
+}
+
+.name p:nth-of-type(2) {
+  font-size: 0.7em;
+  text-decoration: unset;
+}
+
+.date,
+.dateZ {
   font-size: 0.7em;
   color: gray;
+}
+
+.dateZ {
+  max-width: 40px;
+  padding-right: 10px;
 }

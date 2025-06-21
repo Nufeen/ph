@@ -1,5 +1,8 @@
 import {useState, useEffect, useCallback, useContext} from 'react'
 
+import cityTimezones from 'city-timezones'
+import moment from 'moment-timezone'
+
 import s from './index.module.css'
 import {CelestialContext} from '../../CelestialContext'
 
@@ -36,10 +39,12 @@ export default function DbScreen(props) {
     f()
   }, [rnd])
 
-  const handleDelete = (person: Person) => {
-    deletePerson(person).then(() => {
-      forceUpdate()
-    })
+  const handleDelete = person => {
+    if (confirm('Are you sure?')) {
+      deletePerson(person).then(() => {
+        forceUpdate()
+      })
+    }
   }
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -76,15 +81,12 @@ export default function DbScreen(props) {
                 props.setDbScreenVisible(false)
               }}
             >
-              {person.name}
+              <p>{person.name}</p>
+              <p>
+                {person.city}, {person.country}
+              </p>
             </div>
-            <div className={s.date}>
-              {person.date.toLocaleString()}
-            </div>
-
-            <div className={s.date}>
-              {person.city}, {person.country}
-            </div>
+            <FormattedDate date={person.date} city={person.city} />
             <button
               className={s.button}
               onClick={() => handleDelete(person)}
@@ -109,4 +111,20 @@ const deletePerson = async (person: Person) => {
   const store = tx.objectStore('people')
   await store.delete(person.name)
   await tx.done
+}
+
+const FormattedDate = ({date, city}) => {
+  const timezone =
+    cityTimezones.lookupViaCity(city || '')?.[0]?.timezone ?? ''
+  const formattedDate = moment(date)?.tz(timezone)?.format('lll')
+  const formattedZ = moment(date)?.tz(timezone)?.format('Z')
+
+  return (
+    <>
+      <div className={s.date}>
+        {timezone}: {formattedDate}
+      </div>
+      <div className={s.dateZ}>{formattedZ}</div>
+    </>
+  )
 }
