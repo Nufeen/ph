@@ -68,9 +68,9 @@ function App() {
   /**
    * Setting cenered scroll position on mobile phones
    */
-  const center = useRef(null)
+  const centerSectionRef = useRef(null)
   useEffect(() => {
-    center?.current?.scrollIntoView()
+    centerSectionRef?.current?.scrollIntoView()
   }, [])
 
   /**
@@ -280,10 +280,7 @@ function App() {
             {/* Basic sky screen */}
             {settings.chartType != 'graphic' &&
               settings.chartType != 'barbo' && (
-                <section
-                  className={s.center}
-                  // ref={el => (center.current = el)}
-                >
+                <section className={s.center} ref={centerSectionRef}>
                   {dbScreenVisible ? (
                     <DbScreen
                       setDbScreenVisible={setDbScreenVisible}
@@ -307,20 +304,14 @@ function App() {
 
             {/* graphic ephemeris chart */}
             {settings.chartType == 'graphic' && (
-              <section
-                className={s.center}
-                // ref={el => (center.current = el)} // TODO react 19
-              >
+              <section className={s.center} ref={centerSectionRef}>
                 <GraphicChart />
               </section>
             )}
 
             {/* Cycle indexes chart */}
             {settings.chartType == 'barbo' && (
-              <section
-                className={s.center}
-                // ref={el => (center.current = el)}
-              >
+              <section className={s.center} ref={centerSectionRef}>
                 <Barbo />
               </section>
             )}
