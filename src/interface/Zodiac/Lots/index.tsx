@@ -58,8 +58,6 @@ export default function Lots({x0, y0}) {
       {settings.objects.lots?.fortune && (
         <>
           <circle
-            fill="#a06f33"
-            stroke="#a06f33"
             cx={x0 + 100 * sin(((PF + zero) * π) / 180)}
             cy={y0 + 100 * cos(((PF + zero) * π) / 180)}
             r="1"
@@ -69,18 +67,27 @@ export default function Lots({x0, y0}) {
             fill="currentColor"
             fontSize={10}
             x={x0 + 109 * sin(((PF + zero) * π) / 180) - 3}
-            y={y0 + 109 * cos(((PF + zero) * π) / 180) + 2}
+            y={y0 + 109 * cos(((PF + zero) * π) / 180) + 6}
           >
             ⊗
           </text>
+
+          {settings.interface.planetAngles && (
+            <text
+              fill="currentColor"
+              fontSize={4}
+              x={x0 + 109 * sin(((PF + zero) * π) / 180) - 2}
+              y={y0 + 109 * cos(((PF + zero) * π) / 180) - 2}
+            >
+              {~~PF % 30}°
+            </text>
+          )}
         </>
       )}
 
       {settings.objects.lots?.spirit && (
         <>
           <circle
-            fill="#a06f33"
-            stroke="#a06f33"
             cx={x0 + 100 * sin(((PS + zero) * π) / 180)}
             cy={y0 + 100 * cos(((PS + zero) * π) / 180)}
             r="1"
@@ -93,6 +100,16 @@ export default function Lots({x0, y0}) {
           >
             PS
           </text>
+          {settings.interface.planetAngles && (
+            <text
+              fill="currentColor"
+              fontSize={4}
+              x={x0 + 109 * sin(((PS + zero) * π) / 180) - 2}
+              y={y0 + 109 * cos(((PS + zero) * π) / 180) - 4}
+            >
+              {~~PS % 30}°
+            </text>
+          )}
         </>
       )}
     </g>
