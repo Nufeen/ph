@@ -116,7 +116,7 @@ const deletePerson = async (person: Person) => {
 const FormattedDate = ({date, city}) => {
   const timezone =
     cityTimezones.lookupViaCity(city || '')?.[0]?.timezone ?? ''
-  const formattedDate = moment(date)?.tz(timezone)?.format('lll')
+  const formattedDate = moment(date)?.format('lll')
   const formattedZ = moment(date)?.tz(timezone)?.format('Z')
 
   return (

@@ -15,7 +15,7 @@ import s from './index.module.css'
 
 import {openDB} from 'idb'
 
-// for rerender of uncontrolled inputs
+// for forced rerender of uncontrolled inputs
 let shifter = 0
 
 function valid(dateString: string) {
@@ -24,6 +24,26 @@ function valid(dateString: string) {
 }
 
 const LS = window.localStorage
+
+function deriveCitiesFrom(country) {
+  let cities = (country && getCitiesByCountryCode(country)) ?? []
+
+  let uniqueNames = new Set()
+  cities = cities.reduce((acc, item) => {
+    if (!uniqueNames.has(item.name)) {
+      uniqueNames.add(item.name)
+      acc.push(item)
+    }
+    return acc.sort((a, b) => a.name.localeCompare(b.name))
+  }, [])
+  return cities
+}
+
+// Try to get city timezone, if fails, set local \o/
+// TODO check country in case of several cities
+function timezone(city: string) {
+  return cityTimezones.lookupViaCity(city ?? '')?.[0]?.timezone ?? ''
+}
 
 export default function ControlPane(props) {
   const inputRef = {
@@ -36,20 +56,6 @@ export default function ControlPane(props) {
   const {natalData, transitData} = useContext(CelestialContext)
 
   const [successfulSave, setSuccessfulSave] = useState(false)
-
-  function deriveCitiesFrom(country) {
-    let cities = (country && getCitiesByCountryCode(country)) ?? []
-
-    let uniqueNames = new Set()
-    cities = cities.reduce((acc, item) => {
-      if (!uniqueNames.has(item.name)) {
-        uniqueNames.add(item.name)
-        acc.push(item)
-      }
-      return acc.sort((a, b) => a.name.localeCompare(b.name))
-    }, [])
-    return cities
-  }
 
   const data = {
     transit: transitData,
@@ -84,18 +90,7 @@ export default function ControlPane(props) {
       return
     }
 
-    // Try to get city timezone, if fails, set local \o/
-    // calculate timezone delta between city timezone and local timezone
-    // set date to local date + timezone delta
-    const tz =
-      cityTimezones.lookupViaCity(data[chartType]?.city || '')?.[0]
-        ?.timezone ?? ''
-
-    let date = moment(e.target.value).tz(tz).toDate()
-    const tzUTCOffset = moment(date).tz(tz).utcOffset()
-    const localUTCOffset = moment(date).utcOffset()
-    const delta = localUTCOffset - tzUTCOffset
-    date = new Date(date.getTime() + delta * 60000)
+    let date = moment(e.target.value).toDate()
 
     setter[chartType]({
       ...data[chartType],
@@ -103,11 +98,39 @@ export default function ControlPane(props) {
     })
   }
 
+  /**
+   * We keep time in LOCAL datetime, since we have to
+   * Maybe it was a mistake and UTC should have used everywhere
+   * but localdatetime inputs are easiest way to interact
+   * on mobiles etc without bothering with UI
+   * So here we hack the input to show correct time after rerender
+   */
+  const localDateTime = chartType => {
+    const tz = timezone(data[chartType]?.city)
+
+    let date = data[chartType]?.date
+
+    const tzUTCOffset = moment(date).tz(tz)?.utcOffset()
+    const localUTCOffset = moment(date)?.utcOffset()
+    const delta = localUTCOffset - tzUTCOffset
+
+    date = new Date(date.getTime() + delta * 60000)
+
+    return (
+      moment(date).tz(tz)?.format()?.substring(0, 16) ??
+      new Date().toUTCString()
+    )
+  }
+
   function handleCitySelect(e, chartType) {
     const city = e.target.value
+
+    const tz = timezone(city)
+
     setter[chartType]({
       ...data[chartType],
-      city
+      city,
+      tz
     })
   }
 
@@ -233,7 +256,6 @@ export default function ControlPane(props) {
           >
             ⌛
           </button>
-
           <div className={s.checkboxWrapper}>
             houses
             <input
@@ -253,17 +275,7 @@ export default function ControlPane(props) {
             className={s.input}
             type="datetime-local"
             onInput={e => handleDateInput(e, chartType)}
-            defaultValue={
-              moment(data[chartType].date)
-                .tz(
-                  // TODO check country in case of several cities
-                  cityTimezones.lookupViaCity(
-                    data[chartType]?.city || ''
-                  )?.[0]?.timezone ?? ''
-                )
-                ?.format()
-                ?.substring(0, 16) ?? new Date().toUTCString()
-            }
+            defaultValue={localDateTime(chartType)}
           />
           <select
             onChange={e => handleCountrySelection(e, chartType)}
@@ -293,7 +305,6 @@ export default function ControlPane(props) {
               </option>
             ))}
           </select>
-
           <div className={s.transitInfo}>
             <button onClick={() => save(chartType)}>
               {successfulSave ? '✅' : '💾'}
@@ -311,12 +322,7 @@ export default function ControlPane(props) {
 
             <ul className={s.dates}>
               <FormattedDate data={data} chartType={chartType} />
-              <li>
-                Local:{' '}
-                {moment(data[chartType]?.date).format('LLLL Z')}
-              </li>
             </ul>
-
             <span></span>
           </div>
         </section>
@@ -325,17 +331,21 @@ export default function ControlPane(props) {
   )
 }
 
+/**
+ * Yet another localdatetime hack
+ */
 const FormattedDate = ({data, chartType}) => {
-  const timezone =
-    cityTimezones.lookupViaCity(data[chartType]?.city || '')?.[0]
-      ?.timezone ?? ''
-  const formattedDate = moment(data[chartType]?.date)
-    ?.tz(timezone)
-    ?.format('lll Z')
+  const d0 = data[chartType]?.date
+  const tz = timezone(data[chartType]?.city)
+  const tzUTCOffset = moment(d0).tz(tz)?.utcOffset()
+  const localUTCOffset = moment(d0)?.utcOffset()
+  const delta = localUTCOffset - tzUTCOffset
+  const date = new Date(d0.getTime() + delta * 60000)
+  const formattedDate = moment(date).tz(tz)?.format('lll Z')
 
   return (
     <li>
-      {timezone}: {formattedDate}
+      {tz}: {formattedDate}
     </li>
   )
 }
