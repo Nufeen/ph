@@ -15,6 +15,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "tests/hooks/useData.test.ts"],
   "references": [{"path": "./tsconfig.node.json"}]
 }
