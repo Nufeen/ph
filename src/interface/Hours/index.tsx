@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useMemo} from 'react'
 import {getSunrise, getSunset} from 'sunrise-sunset-js'
 import {
   Body,
@@ -28,14 +28,21 @@ const locale = 'ru-RU'
 type Day = keyof typeof haldeanTable
 type Planet = keyof typeof planets
 
-type Props = {lat: number; lng: number; calendarDay: Date; today: Date}
+type Props = {
+  lat: number
+  lng: number
+  calendarDay: Date
+  today: Date
+}
 
 export default function HourTable(props: Props) {
   const {lat, lng, calendarDay, today} = props
 
   const tomorrow = new Date(+today + 86400000)
 
-  const weekday: Day = Object.keys(haldeanTable)[today.getDay()] as Day
+  const weekday: Day = Object.keys(haldeanTable)[
+    today.getDay()
+  ] as Day
 
   const sunrise = getSunrise(lat, lng, today)
   const sunset = getSunset(lat, lng, today)
@@ -54,18 +61,24 @@ export default function HourTable(props: Props) {
   const nightlyN = ~~((12 * (now - t1)) / (t2 - t1) + 12)
   const N = now < t1 ? dailyN : nightlyN
 
-  const hourTableData = haldeanTable[weekday].map((planet, i) => ({
-    current: i == N,
-    n: i + 1,
-    planet: planet as Planet,
-    start: i < 12 ? t0 + i * dayHourL : t1 + (i - 12) * nightHourL,
-    end: i < 12 ? t0 + (i + 1) * dayHourL : t1 + (i - 11) * nightHourL,
-    moonday: moonday(
-      i < 12 ? t0 + i * dayHourL : t1 + (i - 12) * nightHourL,
-      lat,
-      lng
-    )
-  }))
+  const hourTableData = useMemo(() => {
+    return haldeanTable[weekday].map((planet, i) => ({
+      current: i === N,
+      n: i + 1,
+      planet: planet as Planet,
+      start: i < 12 ? t0 + i * dayHourL : t1 + (i - 12) * nightHourL,
+      end:
+        i < 12
+          ? t0 + (i + 1) * dayHourL
+          : t1 + (i - 11) * nightHourL,
+      // expensive operation
+      moonday: moonday(
+        i < 12 ? t0 + i * dayHourL : t1 + (i - 12) * nightHourL,
+        lat,
+        lng
+      )
+    }))
+  }, [weekday, N, t0, dayHourL, t1, nightHourL, lat, lng])
 
   return (
     <div className={s.wrap}>

@@ -12,6 +12,9 @@ import {CelestialContext} from '../../CelestialContext.js'
 
 import houses from '../../assets/zodiac.json'
 
+import Decans from './Decans/index.js'
+import Dnames from './Dnames/index.js'
+
 import s from './index.module.css'
 
 const {sin, cos} = Math
@@ -121,6 +124,20 @@ export default function Zodiac(props: Props) {
         )}
 
         <Lots x0={x0} y0={y0} />
+
+        {['traditional', '72'].includes(
+          settings.interface?.planets
+        ) && <Decans zero={zero} x0={x0} y0={y0} r={r} />}
+
+        {settings.interface?.planets == '72' && (
+          <Dnames
+            zero={zero}
+            x0={x0}
+            y0={y0}
+            r={r}
+            calendarDay={calendarDay}
+          />
+        )}
       </svg>
     </div>
   )

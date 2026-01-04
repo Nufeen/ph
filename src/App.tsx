@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react'
+import {useState, useRef, useEffect, useMemo} from 'react'
 import {getSunrise} from 'sunrise-sunset-js'
 
 import Zodiac from './interface/Zodiac'
@@ -7,6 +7,8 @@ import ElementsTable from './interface/Elements'
 import HourTable from './interface/Hours'
 import TraditionalPlanetsTable from './interface/Planets/Traditional'
 import ModernPlanetsTable from './interface/Planets/Modern'
+
+import Table72 from './interface/Planets/72'
 import ThirtyDegrees from './interface/Planets/ThirtyDegrees'
 import AspectTable from './interface/Planets/Aspects'
 
@@ -24,13 +26,13 @@ import {connectedStars, starsOnFictivePoints} from './compute/stars'
 import {SettingContext} from './SettingContext.js'
 import {CelestialContext} from './CelestialContext.js'
 
-import {getCitiesByCountryCode} from 'country-city-location'
-
 import s from './App.module.css'
 
 import defaultSettings from './defaultSettings.json'
 
 import useData from './hooks/useData'
+
+import deriveCitiesFrom from './compute/cities'
 
 const LS = window.localStorage
 
@@ -98,29 +100,24 @@ function App() {
    */
   const {country, city} = natalData
 
-  let cities = (country && getCitiesByCountryCode(country)) ?? []
+  const {lat, lng} = useMemo(
+    () => deriveLatLngFromLocation(city, country),
+    [city]
+  )
 
-  let uniqueNames = new Set()
-  cities = cities.reduce((acc, item) => {
-    if (!uniqueNames.has(item.name)) {
-      uniqueNames.add(item.name)
-      acc.push(item)
-    }
-    return acc.sort((a, b) => a.name.localeCompare(b.name))
-  }, [])
-
-  const {lat, lng} = deriveLatLngFromLocation(city)
-
-  const latlng = {
-    natal: deriveLatLngFromLocation(natalData.city),
-    transit: deriveLatLngFromLocation(transitData.city)
-  }
-
-  function deriveLatLngFromLocation(city) {
-    const cc = cities?.find(x => x.name === city)
-    if (!cc) return {lat: 0, lng: 0}
-    return {lat: +cc.lat, lng: +cc.lng}
-  }
+  const latlng = useMemo(
+    () => ({
+      natal: deriveLatLngFromLocation(
+        natalData.city,
+        natalData.country
+      ),
+      transit: deriveLatLngFromLocation(
+        transitData.city,
+        transitData.country
+      )
+    }),
+    [natalData.city, transitData.city]
+  )
 
   /**
    * Prepare horoscopes context for all types
@@ -301,18 +298,27 @@ function App() {
                       'modern',
                       'traditional',
                       'hours',
-                      'aspects'
-                    ].map(planet => (
-                      <button
-                        disabled={
-                          settings.interface?.planets === planet
-                        }
-                        onClick={() => selectPlanetsTable(planet)}
-                        key={planet}
-                      >
-                        {planet}
-                      </button>
-                    ))}
+                      'aspects',
+                      '72'
+                    ]
+                      .filter(x =>
+                        JSON.parse(
+                          window.localStorage.d72 || 'false'
+                        )
+                          ? true
+                          : x != '72'
+                      )
+                      .map(planet => (
+                        <button
+                          disabled={
+                            settings.interface?.planets === planet
+                          }
+                          onClick={() => selectPlanetsTable(planet)}
+                          key={planet}
+                        >
+                          {planet}
+                        </button>
+                      ))}
                   </div>
 
                   {settings.interface?.planets != 'hours' &&
@@ -329,6 +335,10 @@ function App() {
 
                   {settings.interface?.planets == 'modern' && (
                     <ModernPlanetsTable />
+                  )}
+
+                  {settings.interface?.planets == '72' && (
+                    <Table72 />
                   )}
 
                   {settings.interface?.planets == 'hours' && (
@@ -350,6 +360,13 @@ function App() {
       </CelestialContext.Provider>
     </SettingContext.Provider>
   )
+}
+
+function deriveLatLngFromLocation(city, country) {
+  const cities = deriveCitiesFrom(country)
+  const cc = cities?.find(x => x.name === city)
+  if (!cc) return {lat: 0, lng: 0}
+  return {lat: +cc.lat, lng: +cc.lng}
 }
 
 export default App

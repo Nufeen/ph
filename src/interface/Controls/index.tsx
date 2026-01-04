@@ -1,17 +1,16 @@
-import {useContext, useRef, useState} from 'react'
+import {useContext, useMemo, useRef, useState} from 'react'
 
 import cityTimezones from 'city-timezones'
 import moment from 'moment-timezone'
 
-import {
-  countries,
-  getCitiesByCountryCode
-} from 'country-city-location'
+import {countries} from 'country-city-location'
 
 import {SettingContext} from '../../SettingContext'
 import {CelestialContext} from '../../CelestialContext'
 
 import s from './index.module.css'
+
+import deriveCitiesFrom from '../../compute/cities.js'
 
 import {openDB} from 'idb'
 
@@ -24,20 +23,6 @@ function valid(dateString: string) {
 }
 
 const LS = window.localStorage
-
-function deriveCitiesFrom(country) {
-  let cities = (country && getCitiesByCountryCode(country)) ?? []
-
-  let uniqueNames = new Set()
-  cities = cities.reduce((acc, item) => {
-    if (!uniqueNames.has(item.name)) {
-      uniqueNames.add(item.name)
-      acc.push(item)
-    }
-    return acc.sort((a, b) => a.name.localeCompare(b.name))
-  }, [])
-  return cities
-}
 
 // Try to get city timezone, if fails, set local \o/
 // TODO check country in case of several cities
@@ -62,10 +47,13 @@ export default function ControlPane(props) {
     natal: natalData
   }
 
-  const cities = {
-    transit: deriveCitiesFrom(transitData.country),
-    natal: deriveCitiesFrom(natalData.country)
-  }
+  const cities = useMemo(
+    () => ({
+      transit: deriveCitiesFrom(transitData.country),
+      natal: deriveCitiesFrom(natalData.country)
+    }),
+    [transitData.country, natalData.country]
+  )
 
   const setter = {
     transit: props.setTransitData,
@@ -136,7 +124,7 @@ export default function ControlPane(props) {
 
   function handleCountrySelection(e, chartType) {
     const country = e.target.value
-    let cities = getCitiesByCountryCode(country)
+    let cities = deriveCitiesFrom(country)
 
     setter[chartType]({
       ...data[chartType],

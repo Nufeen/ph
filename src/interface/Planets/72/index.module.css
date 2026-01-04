@@ -1,0 +1,130 @@
+.table {
+  font-size: 0.85em;
+  line-height: 1.4em;
+  padding-left: 15px;
+  padding-top: 10px;
+  margin: 0 auto;
+}
+
+@container (max-width: 400px) {
+  .table {
+    font-size: 0.7em;
+  }
+}
+
+@container (max-width: 350px) {
+  .table {
+    font-size: 0.6em;
+  }
+}
+
+.sign {
+  font-family: 'Noto Emoji';
+  font-weight: 700;
+  padding-left: 10px;
+  padding-right: 14px;
+}
+
+.house {
+  text-align: center;
+  opacity: 0.7;
+  font-size: 0.7;
+  padding-left: 10px;
+  padding-right: 14px;
+}
+
+.retro[data-type='natal'],
+.degrees[data-type='natal'] {
+  display: none;
+}
+
+.retro[data-type='transit'] {
+  color: var(--transit-color);
+  opacity: 0.8;
+}
+
+.degrees[data-type='transit'] {
+  color: var(--transit-color);
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.degrees > span:first-child {
+  display: inline-block;
+  text-align: right;
+  width: 20px;
+  margin-right: 4px;
+}
+.degrees > span:nth-child(2) {
+  display: inline-block;
+  text-align: center;
+  width: 10px;
+  margin-right: 2px;
+}
+
+.thead th {
+  font-size: 0.7em;
+  opacity: 0.6;
+}
+.star {
+  font-size: 0.8em;
+  line-height: 1.2em;
+}
+
+.star pre {
+  margin: 0;
+}
+
+.starDetail {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  width: 300px;
+  background: #272525;
+  text-wrap: balance;
+}
+
+@media (hover: hover) {
+  .star:hover .starDetail {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    max-width: 300px;
+    background: #272525;
+  }
+}
+
+.label {
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.retro {
+  font-weight: bold;
+  font-size: 0.7em;
+  display: inline-block;
+  margin-bottom: -2px;
+  padding-right: 3px;
+}
+
+.CelestialPoints {
+  color: var(--fictive-color);
+}
+
+.CelestialPoints .degrees[data-type='transit'] {
+  color: var(--fictive-color);
+  opacity: 0.7;
+}
+
+.aname:nth-child(1) {
+  text-align: right;
+  padding-right: 7px;
+}
+
+.aname {
+  padding-left: 5px;
+}
