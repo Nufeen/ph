@@ -48,7 +48,7 @@ export default function Houses({zero, x0, y0, chartType}) {
         <line
           key={i}
           stroke={chartType == 'natal' ? 'violet' : 'green'}
-          strokeOpacity={chartType == 'natal' ? 1 : 0.2}
+          strokeOpacity={chartType == 'natal' ? 1 : 0.5}
           strokeWidth={i % 3 == 0 ? 1 : 0.3}
           x1={x0 + (l - 56) * sin(deg(i))}
           y1={y0 + (l - 56) * cos(deg(i))}
@@ -61,7 +61,7 @@ export default function Houses({zero, x0, y0, chartType}) {
         <text
           fill={chartType == 'natal' ? 'violet' : 'green'}
           fontSize={5}
-          opacity={chartType == 'natal' ? 1 : 0.4}
+          opacity={chartType == 'natal' ? 1 : 0.5}
           fontWeight={i % 3 == 0 ? 'bold' : 'normal'}
           key={i}
           x={x0 + (l + 8) * sin(deg(i)) - 7}
