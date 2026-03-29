@@ -398,6 +398,20 @@ const PlanetCheckboxTable = () => {
       </div>
 
       <div className={s.houseSelector}>
+        {JSON.parse(window.localStorage.zodiacButton || 'false') && (
+          <select
+            value={settings?.zodiacType ?? 'Tropical'}
+            onChange={e => {
+              const s = {...settings, zodiacType: e.target.value}
+              setSettings(s)
+              LS.setItem('settings', JSON.stringify(s))
+            }}
+          >
+            <option value="Tropical">Tropical</option>
+            <option value="Sidereal">Sidereal</option>
+          </select>
+        )}
+
         <select
           value={settings?.interface?.houseSystem ?? 'Placidus'}
           onChange={handleHouseSystemSelect}

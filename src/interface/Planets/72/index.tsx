@@ -81,9 +81,12 @@ export default function DTable() {
 }
 
 function Name({body, show}) {
+  const {settings} = useContext(SettingContext)
+  const sid = settings.zodiacType === 'Sidereal' ? 24 : 0
+
   const d = body.ChartPosition.Ecliptic.DecimalDegrees
 
-  const x = ~~((d / 360) * 72)
+  const x = ~~(((d - sid) / 360) * 72)
 
   let out = {
     d: dnames[x]?.[1],

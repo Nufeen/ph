@@ -212,22 +212,21 @@ export default function ControlPane(props) {
       )}
 
       <div className={s.chartTypeSelector}>
-        {[
-          'natal',
-          'transit',
-          'progressed',
-          'graphic'
-          // WIP:
-          // 'barbo'
-        ].map(type => (
-          <button
-            key={type}
-            disabled={settings.chartType === type}
-            onClick={() => setChartType(type)}
-          >
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-          </button>
-        ))}
+        {['natal', 'transit', 'progressed', 'graphic']
+          .concat(
+            JSON.parse(window.localStorage.barbo || 'false')
+              ? ['barbo']
+              : []
+          )
+          .map(type => (
+            <button
+              key={type}
+              disabled={settings.chartType === type}
+              onClick={() => setChartType(type)}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </button>
+          ))}
       </div>
 
       {(['transit', 'progressed', 'graphic', 'barbo'].includes(

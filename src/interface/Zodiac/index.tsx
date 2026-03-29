@@ -39,13 +39,16 @@ export default function Zodiac(props: Props) {
 
   const {horoscope} = useContext(CelestialContext)
 
-  let zero = -90
+  const sid = settings.zodiacType === 'Sidereal' ? 24 : 0
+
+  let zero = -90 - sid
 
   if (
     settings.objects.houses.visibility.natal &&
     settings.interface.startFrom == 'Asc'
   ) {
-    zero = -_ascendant.ChartPosition.Ecliptic.DecimalDegrees - 90
+    zero =
+      -_ascendant.ChartPosition.Ecliptic.DecimalDegrees - 90 - sid
   }
 
   if (
@@ -78,8 +81,12 @@ export default function Zodiac(props: Props) {
             key={i}
             x1={x0}
             y1={y0}
-            x2={x0 + r * sin(((i * 30 + zero + 1) * π - π) / 180)}
-            y2={y0 + r * cos(((i * 30 + zero + 1) * π - π) / 180)}
+            x2={
+              x0 + r * sin(((i * 30 + zero + sid + 1) * π - π) / 180)
+            }
+            y2={
+              y0 + r * cos(((i * 30 + zero + sid + 1) * π - π) / 180)
+            }
             stroke="currentColor"
           />
         ))}
@@ -96,12 +103,12 @@ export default function Zodiac(props: Props) {
             x={
               x0 -
               5 +
-              (r - 15) * sin(((i * 30 + zero + 15) * π) / 180)
+              (r - 15) * sin(((i * 30 + sid + zero + 15) * π) / 180)
             }
             y={
               y0 +
               2 +
-              (r - 15) * cos(((i * 30 + zero + 15) * π) / 180)
+              (r - 15) * cos(((i * 30 + sid + zero + 15) * π) / 180)
             }
           >
             {houses[i]}

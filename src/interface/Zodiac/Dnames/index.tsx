@@ -18,37 +18,49 @@ function pos(body: keyof typeof Body, date: Date) {
 export default function Decans72({zero, x0, r, y0, calendarDay}) {
   const {settings} = useContext(SettingContext)
 
+  const sid = settings.zodiacType === 'Sidereal' ? 24 : 0
+
   const P = Object.entries(planets)
     .filter(([key]) => settings.objects.planets[key])
-    .map(([key]: any) => pos(key, calendarDay))
+    .map(([key]: any) => pos(key, calendarDay) - sid)
     .map(p => ~~(p / 5))
 
   const ll = [...Array(72).keys()].map(i => ({
     x1:
       x0 +
       (r + (i % 2 ? 15 : 18)) *
-        sin(((i * 5 + zero + 1) * π - π) / 180),
+        sin(((i * 5 + zero + sid + 1) * π - π) / 180),
     y1:
       y0 +
       (r + (i % 2 ? 15 : 18)) *
-        cos(((i * 5 + zero + 1) * π - π) / 180),
-    x2: x0 + (r + 14) * sin(((i * 5 + zero + 1) * π - π) / 180),
-    y2: y0 + (r + 14) * cos(((i * 5 + zero + 1) * π - π) / 180),
+        cos(((i * 5 + zero + sid + 1) * π - π) / 180),
+    x2:
+      x0 + (r + 14) * sin(((i * 5 + zero + sid + 1) * π - π) / 180),
+    y2:
+      y0 + (r + 14) * cos(((i * 5 + zero + sid + 1) * π - π) / 180),
 
-    x3: x0 - (r + 14) * sin(((i * 5 + zero + 3.5) * π - π) / 180),
-    y3: y0 - (r + 14) * cos(((i * 5 + zero + 3.5) * π - π) / 180),
-    x4: x0 - (r + 0) * sin(((i * 5 + zero + 3.5) * π - π) / 180),
-    y4: y0 - (r + 0) * cos(((i * 5 + zero + 3.5) * π - π) / 180)
+    x3:
+      x0 -
+      (r + 14) * sin(((i * 5 + zero + sid + 3.5) * π - π) / 180),
+    y3:
+      y0 -
+      (r + 14) * cos(((i * 5 + zero + sid + 3.5) * π - π) / 180),
+    x4:
+      x0 - (r + 0) * sin(((i * 5 + zero + sid + 3.5) * π - π) / 180),
+    y4:
+      y0 - (r + 0) * cos(((i * 5 + zero + sid + 3.5) * π - π) / 180)
   }))
 
   const nn = [...Array(72).keys()].map(i => ({
     x1:
       x0 +
-      (r * 1.1 + 15) * sin(((i * 5 + zero + 4) * π - π) / 180) -
+      (r * 1.1 + 15) *
+        sin(((i * 5 + zero + sid + 4) * π - π) / 180) -
       10,
     y1:
       y0 +
-      (r * 1.1 + 15) * cos(((i * 5 + zero + 4) * π - π) / 180) -
+      (r * 1.1 + 15) *
+        cos(((i * 5 + zero + sid + 4) * π - π) / 180) -
       0
   }))
 
