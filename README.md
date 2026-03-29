@@ -4,7 +4,7 @@ Check the live app at https://nufeen.github.io/ph/
 
 Astro processor working as online website. Main goals: free processor for mac os and mobile phones.
 
-Build electron package: `npm run build-electron`
+You can build electron package if needed: `npm run build-electron`
 
 ## Features
 
@@ -31,7 +31,7 @@ Very basic set still complete enough for mobile usage
 
 ## Flags
 
-Hidden features enabled via browser console:
+Hidden (not ready) features enabled via browser console:
 
 | Flag           | Default | Description                      |
 | -------------- | ------- | -------------------------------- |
