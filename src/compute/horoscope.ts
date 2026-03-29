@@ -9,25 +9,22 @@ export default function getHoroscope(
   longitude: number,
   houseSystem = 'placidus'
 ) {
-  const year = calendarDay.getFullYear()
-  const month = calendarDay.getMonth()
-  const date = calendarDay.getDate()
-  const hour = calendarDay.getHours()
-  const minute = calendarDay.getMinutes()
-
   const origin = new Origin({
-    year,
-    month, // 0 = January, 11 = December!
-    date,
-    hour,
-    minute,
+    year: calendarDay.getFullYear(),
+    month: calendarDay.getMonth(),
+    date: calendarDay.getDate(),
+    hour: calendarDay.getHours(),
+    minute: calendarDay.getMinutes(),
     latitude,
     longitude
   })
 
-  const horoscope = new Horoscope({
-    origin: origin,
-    houseSystem: houseSystem ?? 'placidus',
+  return new Horoscope({
+    origin,
+    houseSystem:
+      houseSystem == null || houseSystem === 'moonchart'
+        ? 'placidus'
+        : houseSystem,
     zodiac: 'tropical',
     aspectPoints: ['bodies', 'points', 'angles'],
     aspectWithPoints: ['bodies', 'points', 'angles'],
@@ -35,6 +32,4 @@ export default function getHoroscope(
     customOrbs: {},
     language: 'en'
   })
-
-  return horoscope
 }

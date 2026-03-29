@@ -37,11 +37,25 @@ export default function Zodiac(props: Props) {
     horoscope: {_ascendant}
   } = useContext(CelestialContext)
 
-  const zero =
+  const {horoscope} = useContext(CelestialContext)
+
+  let zero = -90
+
+  if (
     settings.objects.houses.visibility.natal &&
     settings.interface.startFrom == 'Asc'
-      ? -_ascendant.ChartPosition.Ecliptic.DecimalDegrees - 90
-      : -90
+  ) {
+    zero = -_ascendant.ChartPosition.Ecliptic.DecimalDegrees - 90
+  }
+
+  if (
+    settings.objects.houses.visibility.natal &&
+    settings.interface.startFrom == 'Moon'
+  ) {
+    zero =
+      -horoscope.CelestialBodies.moon.ChartPosition.Ecliptic
+        .DecimalDegrees - 90
+  }
 
   const x0 = 150
   const y0 = 155

@@ -1,14 +1,18 @@
 import {useContext} from 'react'
 import {CelestialContext} from '../../../CelestialContext.js'
+import {SettingContext} from '../../../SettingContext.js'
 
 const {sin, cos} = Math
 
 export default function Houses({zero, x0, y0, chartType}) {
+  const {settings} = useContext(SettingContext)
   const {
     horoscope,
     transitHoroscope,
     chart: latlng
   } = useContext(CelestialContext)
+
+  const houseSystem = settings.interface.houseSystem
 
   const {lat, lng} = latlng[chartType]
 
@@ -19,11 +23,32 @@ export default function Houses({zero, x0, y0, chartType}) {
     transit: transitHoroscope
   }
 
+  const houses = H[chartType].Houses
+
   function deg(i) {
-    const x =
-      H[chartType].Houses[i].ChartPosition.StartPosition.Ecliptic
-        .DecimalDegrees
+    let x =
+      houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
+
+    if (houseSystem == 'moonchart') {
+      x =
+        horoscope.CelestialBodies.moon.ChartPosition.Ecliptic
+          .DecimalDegrees +
+        i * 30
+    }
+
     return ((x + zero) * Math.PI) / 180
+  }
+
+  function pos(i) {
+    let x =
+      houses[i].ChartPosition.StartPosition.Ecliptic.DecimalDegrees
+    if (houseSystem == 'moonchart') {
+      x =
+        horoscope.CelestialBodies.moon.ChartPosition.Ecliptic
+          .DecimalDegrees +
+        i * 30
+    }
+    return x % 30
   }
 
   const l = 155
@@ -44,7 +69,7 @@ export default function Houses({zero, x0, y0, chartType}) {
 
   return (
     <>
-      {H[chartType].Houses.map((_, i) => (
+      {houses.map((_, i) => (
         <line
           key={i}
           stroke={chartType == 'natal' ? 'violet' : 'green'}
@@ -57,7 +82,7 @@ export default function Houses({zero, x0, y0, chartType}) {
         />
       ))}
 
-      {H[chartType].Houses.map((_, i) => (
+      {houses.map((_, i) => (
         <text
           fill={chartType == 'natal' ? 'violet' : 'green'}
           fontSize={5}
@@ -69,13 +94,7 @@ export default function Houses({zero, x0, y0, chartType}) {
         >
           {A[i]}
           <tspan fontSize={4} dy="-4">
-            {
-              ~~(
-                H[chartType].Houses[i].ChartPosition.StartPosition
-                  .Ecliptic.DecimalDegrees % 30
-              )
-            }
-            °
+            {~~pos(i)}°
           </tspan>
         </text>
       ))}

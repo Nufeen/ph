@@ -409,6 +409,7 @@ const PlanetCheckboxTable = () => {
           <option value="equal-house">Equal-house</option>
           <option value="regiomontanus">Regiomontanus</option>
           <option value="topocentric">Topocentric</option>
+          <option value="moonchart">Moonchart</option>
         </select>
 
         <select
@@ -417,6 +418,7 @@ const PlanetCheckboxTable = () => {
         >
           <option value="Aries">0: Aries</option>
           <option value="Asc">0: Asc</option>
+          <option value="Moon">0: Moon</option>
         </select>
       </div>
     </div>
