@@ -87,8 +87,9 @@ function App() {
     ([k, v]) => !!v && url.searchParams.set(k, v?.toString())
   )
 
-  !!natalData?.date &&
+  if (natalData?.date) {
     url.searchParams.set('date', (+natalData?.date).toString())
+  }
 
   window.history.pushState({}, '', url)
 
@@ -188,8 +189,8 @@ function App() {
   }
 
   const actualPlanets = Object.entries(settings.objects.planets)
-    .filter(([k, v]) => !!v)
-    .map(([k, v]) => k)
+    .filter(([, v]) => !!v)
+    .map(([k]) => k)
 
   return (
     <SettingContext.Provider value={settingsContextValue}>

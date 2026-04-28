@@ -43,13 +43,8 @@ const fictivePointsIcons = {
 }
 
 export default function ModernPlanetsTable() {
-  const {
-    horoscope,
-    transitHoroscope,
-    progressedHoroscope,
-    stars,
-    fictivePointsStars
-  } = useContext(CelestialContext)
+  const {horoscope, transitHoroscope, stars, fictivePointsStars} =
+    useContext(CelestialContext)
 
   const {settings} = useContext(SettingContext)
 

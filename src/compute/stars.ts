@@ -68,7 +68,7 @@ function findStar(elon, calendarDay) {
 
 export function starsOnFictivePoints(calendarDay, horoscope) {
   const out = ['lilith', 'northnode', 'southnode'].reduce(
-    (a, x: any, i) => {
+    (a, x: any) => {
       return {
         ...a,
         [x]: findStar(

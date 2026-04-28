@@ -27,11 +27,11 @@ const createMockHoroscope = (houses = createMockHouses()) => ({
 const defaultSettings = {interface: {houseSystem: 'placidus'}}
 
 const getDegrees = (container: Element) =>
-  Array.from(container.querySelectorAll('text')).map(
-    t =>
-      // @ts-ignore
-      +t.querySelector('tspan')?.textContent?.replace('°', '')
-  )
+   Array.from(container.querySelectorAll('text')).map(
+     t =>
+       // @ts-expect-error: TypeScript can't infer the type of tspan.textContent
+       +t.querySelector('tspan')?.textContent?.replace('°', '')
+   )
 
 const defaultLatlng = {
   natal: {lat: 40.7128, lng: -74.006},

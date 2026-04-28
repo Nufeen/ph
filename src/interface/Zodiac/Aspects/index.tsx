@@ -62,7 +62,7 @@ export default function Aspects({zero, x0, y0}) {
     )
   }
 
-  function aspectBetween([label1, a], [label2, b]) {
+  function aspectBetween([, a], [, b]) {
     let d = angleDistance(a, b)
 
     if (d < 50 || (d > 133 && d < 170)) return null
@@ -107,7 +107,7 @@ export default function Aspects({zero, x0, y0}) {
 
   return (
     <>
-      {AT.map(({a, b, d, d0, x, y, caption}) => (
+      {AT.map(({a, b, d, d0, x, y}) => (
         <React.Fragment key={JSON.stringify([a, b])}>
           <line
             data-d={~~d0}

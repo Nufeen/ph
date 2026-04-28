@@ -7,8 +7,8 @@ import {CelestialContext} from '../../CelestialContext'
 import {useContext} from 'react'
 import {useMemo} from 'react'
 
-import planets from '../../assets/planets.json'
-import zodiacSigns from '../../assets/zodiac.json'
+import {} from '../../assets/planets.json'
+import {} from '../../assets/zodiac.json'
 
 function angleDistance(a, b) {
   return Math.min(

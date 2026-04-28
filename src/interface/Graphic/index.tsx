@@ -77,7 +77,7 @@ const color = {
 
 function dayNum(now: Date) {
   let startOfYear = new Date(now.getFullYear(), 0, 0)
-  // @ts-ignore
+  // @ts-expect-error: TypeScript can't infer the type of Date subtraction
   let diff = now - startOfYear
   let oneDay = 1000 * 60 * 60 * 24
   return Math.floor(diff / oneDay)
@@ -149,21 +149,26 @@ export default function GraphicChart() {
         {Object.keys(settings.objects.planets)
           .filter(x => settings.objects.planets[x])
           .map((body, i) => (
-            <NatalLine body={body} i={i} />
+            <NatalLine key={body} body={body} i={i} />
           ))}
 
         {/* Transit planets */}
         {Object.keys(settings.objects.planets)
           .filter(x => settings.objects.planets[x])
-          .map(body => (
-            <Lines body={body} dates={dates} />
+          .map((body, index) => (
+            <Lines
+              key={body}
+              body={body}
+              dates={dates}
+              index={index}
+            />
           ))}
       </svg>
     </div>
   )
 }
 
-function NatalLine({body, i}) {
+function NatalLine({body}) {
   const {natalData} = useContext(CelestialContext)
   const x = pos(body, natalData.date)
   return (
@@ -183,12 +188,13 @@ function Lines({body, dates}) {
 
   return (
     <>
-      {lines.map(line => (
-        <Path A={line} color={color[body]} body={body} />
+      {lines.map((line, index) => (
+        <Path key={index} A={line} color={color[body]} body={body} />
       ))}
 
-      {lines.map(line => (
+      {lines.map((line, index) => (
         <text
+          key={index}
           fontSize={12}
           x={line[line.length - 1][0]}
           y={line[line.length - 1][1] + 10}

@@ -21,13 +21,13 @@ async function readDB() {
 }
 
 export default function DbScreen(props) {
-  const {natalData, transitData} = useContext(CelestialContext)
+  const {natalData} = useContext(CelestialContext)
 
   const [people, getPeople] = useState([])
   const [rnd, updateState] = useState(0)
 
   const forceUpdate = useCallback(
-    () => updateState(_ => Math.random()),
+    () => updateState(() => Math.random()),
     []
   )
 
