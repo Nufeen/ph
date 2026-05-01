@@ -45,7 +45,7 @@ const LS = window.localStorage
  * -> user ui settings are kept in local storage and shared via SettingContext
  */
 function App() {
-  const localSavedSettings = JSON.parse(LS.getItem('settings'))
+  const localSavedSettings = LS.getItem('settings') ? JSON.parse(LS.getItem('settings') as string) : null
 
   /**
    * Interface settings management
@@ -63,7 +63,7 @@ function App() {
     )
   }
 
-  const settingsContextValue = {settings, setSettings}
+  const settingsContextValue = {settings, setSettings} as const
 
   /**
    * Interface State
@@ -73,7 +73,7 @@ function App() {
   /**
    * Setting cenered scroll position on mobile phones
    */
-  const centerSectionRef = useRef(null)
+  const centerSectionRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     centerSectionRef?.current?.scrollIntoView()
   }, [])
@@ -159,12 +159,12 @@ function App() {
   /**
    * Planetary hours
    */
-  const cDaySunrise = getSunrise(
+  const cDaySunrise: Date | null = getSunrise(
     latlng.natal.lat,
     latlng.natal.lng,
     natalData.date
   )
-  const morning = natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
+  const morning = cDaySunrise && natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
   const today = morning
     ? new Date(+new Date() - 86400000)
     : natalData.date

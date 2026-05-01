@@ -12,8 +12,15 @@ const LS = window.localStorage
 const useData = () => {
   const urlParams = new URLSearchParams(window.location.search)
 
-  const LSNatalData = JSON.parse(LS.getItem('natalData'))
-  const LSTransitData = JSON.parse(LS.getItem('transitData'))
+  const LSNatalData =
+    LS && typeof LS.getItem === 'function'
+      ? JSON.parse(LS.getItem('natalData') as string)
+      : null
+
+  const LSTransitData =
+    LS && typeof LS.getItem === 'function'
+      ? JSON.parse(LS.getItem('transitData') as string)
+      : null
 
   const natalCity =
     urlParams.get('city') ?? LSNatalData?.city ?? null
@@ -21,10 +28,10 @@ const useData = () => {
   const natalTZ =
     cityTimezones.lookupViaCity(natalCity || '')?.[0]?.timezone ?? ''
 
+  const d = Number(urlParams.get('date'))
+
   const date =
-    (urlParams.get('date')
-      ? new Date(+urlParams.get('date'))
-      : null) ??
+    (d ? new Date(d) : null) ??
     (LSNatalData?.date && new Date(LSNatalData?.date)) ??
     new Date()
 

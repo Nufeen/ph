@@ -5,6 +5,7 @@ Thumbs.db
 
 *.swp
 .idea
+.qwen
 .vscode
 ./stats.json
 
