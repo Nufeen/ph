@@ -5,6 +5,7 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,6 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "tests/hooks/useData.test.ts"],
-  "references": [{"path": "./tsconfig.node.json"}]
+  "include": ["src", "tests/hooks/useData.test.ts", "vite.config.ts"]
 }

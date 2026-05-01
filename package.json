@@ -5,6 +5,8 @@
   "type": "module",
   "homepage": "https://nufeen.github.io/ph/",
   "scripts": {
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
     "dev": "vite --host",
     "build": "tsc && vite build",
     "build-electron": "tsc && vite build --config vite.electron.config.js && electron .",
