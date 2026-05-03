@@ -10,10 +10,13 @@ import icons from '../../../assets/planets.json'
 const {sin, cos} = Math
 
 export default function TransitPlanets({zero, x0, y0}) {
-  const {progressedHoroscope, transitHoroscope} =
-    useContext(CelestialContext)
+  const celestial = useContext(CelestialContext)
+  if (!celestial) return null
+  const {progressedHoroscope, transitHoroscope} = celestial
 
-  const {settings} = useContext(SettingContext)
+  const settingCtx = useContext(SettingContext)
+  if (!settingCtx) return null
+  const {settings} = settingCtx
 
   let l = 126
 
