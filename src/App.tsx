@@ -23,8 +23,8 @@ import getHoroscope from './compute/horoscope'
 
 import {connectedStars, starsOnFictivePoints} from './compute/stars'
 
-import {SettingContext} from './SettingContext.js'
-import {CelestialContext} from './CelestialContext.js'
+import {SettingContext} from './SettingContext'
+import {CelestialContext} from './CelestialContext'
 
 import s from './App.module.css'
 

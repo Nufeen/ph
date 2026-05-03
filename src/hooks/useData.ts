@@ -1,15 +1,35 @@
 import cityTimezones from 'city-timezones'
-
 import {useState} from 'react'
 
 const LS = window.localStorage
+
+interface NatalData {
+  city: string
+  tz: string
+  country: string
+  date: Date
+}
+
+interface TransitData {
+  city: string
+  tz: string
+  country: string
+  date: Date
+}
+
+interface UseDataReturn {
+  natalData: NatalData
+  setNatalData: React.Dispatch<React.SetStateAction<NatalData>>
+  transitData: TransitData
+  setTransitData: React.Dispatch<React.SetStateAction<TransitData>>
+}
 
 /**
  * Time and location management
  * Read from URL in case of new location
  * If not, read latest from LS then provide state store
  */
-const useData = () => {
+const useData = (): UseDataReturn => {
   const urlParams = new URLSearchParams(window.location.search)
 
   const LSNatalData =
@@ -31,8 +51,8 @@ const useData = () => {
   const d = Number(urlParams.get('date'))
 
   const date =
-    (d ? new Date(d) : null) ??
-    (LSNatalData?.date && new Date(LSNatalData?.date)) ??
+    (d ? new Date(d) : null) ||
+    (LSNatalData?.date && new Date(LSNatalData?.date)) ||
     new Date()
 
   const transitCity =
@@ -45,11 +65,11 @@ const useData = () => {
   const date2 =
     (urlParams.get('date2')
       ? new Date(+urlParams.get('date2'))
-      : null) ??
-    (LSTransitData?.date && new Date(LSTransitData?.date)) ??
+      : null) ||
+    (LSTransitData?.date && new Date(LSTransitData?.date)) ||
     new Date()
 
-  const [natalData, setNatalData] = useState({
+  const [natalData, setNatalData] = useState<NatalData>({
     city: natalCity,
     tz: natalTZ,
     country:
@@ -57,7 +77,7 @@ const useData = () => {
     date
   })
 
-  const [transitData, setTransitData] = useState({
+  const [transitData, setTransitData] = useState<TransitData>({
     city: urlParams.get('city2') ?? LSTransitData?.city ?? null,
     tz: transitTZ,
     country:

@@ -1,4 +1,17 @@
 import {createContext} from 'react'
 
-export const SettingContext = createContext<{settings:any; setSettings:React.Dispatch<React.SetStateAction<any>>} | null>(null)
+interface Settings {
+  objects: any
+  interface: any
+  colors: any
+  zodiacType: string
+  chartType: string
+}
+
+interface SettingContextType {
+  settings: Settings
+  setSettings: React.Dispatch<React.SetStateAction<Settings>>
+}
+
+export const SettingContext = createContext<SettingContextType | null>(null)
 export const SettingDispatchContext = createContext(null)
