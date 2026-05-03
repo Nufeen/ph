@@ -5,14 +5,28 @@ import s from './index.module.css'
 import {CelestialContext} from '../../../CelestialContext.js'
 import {SettingContext} from '../../../SettingContext.js'
 
+interface CelestialContextType {
+  stars: Record<string, any>
+  transitStars: Record<string, any>
+  progressedStars: Record<string, any>
+  fictivePointsStars: Record<string, any>
+}
+
+interface SettingContextType {
+  settings: any
+}
+
+interface Star { name: string; elon: number }
+
 const {sin, cos} = Math
 const π = Math.PI
 
-export default function Stars({calendarDay, zero, x0, y0}) {
-  const {stars, transitStars, progressedStars, fictivePointsStars} =
-    useContext(CelestialContext)
+export default function Stars({calendarDay, zero, x0, y0}: {calendarDay: Date; zero: number; x0: number; y0: number}) {
+  const context = useContext(CelestialContext) as CelestialContextType
+  const {stars, transitStars, progressedStars, fictivePointsStars} = context
 
-  const {settings} = useContext(SettingContext)
+  const settingsContext = useContext(SettingContext) as SettingContextType
+  const {settings} = settingsContext
 
   const year = calendarDay.getFullYear()
   const delta = 2000 - year
@@ -30,11 +44,13 @@ export default function Stars({calendarDay, zero, x0, y0}) {
     .map(x => x && [x[0]])
     .flat()
     .filter(x => !!x)
-    .map(x => ({
-      ...x,
-      // TODO test precession logic
-      elon: x.elon - (1 / 72) * delta
-    }))
+    .map(x => {
+      if (!x || typeof x !== 'object' || !x[0] || typeof x[0].elon !== 'number') return null
+      return {
+        name: x[0].name as string,
+        elon: x[0].elon - (1 / 72) * delta
+      }
+    }).filter(Boolean) as Star[]
 
   // in case of planet conjunction we get duplicates
   const uniq = Array.from(new Set(flatten))
