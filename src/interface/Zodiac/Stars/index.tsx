@@ -63,13 +63,12 @@ export default function Stars({
       if (
         !x ||
         typeof x !== 'object' ||
-        !x[0] ||
-        typeof +x[0].elon !== 'number'
+        typeof +x.elon !== 'number'
       )
         return null
       return {
-        name: x[0].name as string,
-        elon: x[0].elon - (1 / 72) * delta
+        name: x.name as string,
+        elon: x.elon - (1 / 72) * delta
       }
     })
     .filter(Boolean) as Star[]
