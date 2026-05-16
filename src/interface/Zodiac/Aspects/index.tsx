@@ -4,13 +4,57 @@ import {CelestialContext} from '../../../CelestialContext.js'
 
 import React from 'react'
 
+interface CelestialBody {
+  label: string
+  ChartPosition: {Ecliptic: {DecimalDegrees: number}}
+}
+
+interface CelestialContextType {
+  horoscope: {CelestialBodies: {all: CelestialBody[]}}
+  progressedHoroscope: {CelestialBodies: {all: CelestialBody[]}}
+  transitHoroscope: {CelestialBodies: {all: CelestialBody[]}}
+}
+
+interface SettingContextType {
+  settings: {
+    objects: {planets: Record<string | number, boolean>}
+    chartType: string
+    interface: {
+      aspectOrb: number
+      aspectAngles: boolean
+    }
+  }
+}
+
+interface Aspect {
+  a: number
+  b: number
+  d: number
+  d0: number
+  x: number
+  y: number
+}
+
 const {sin, cos, abs} = Math
 
-export default function Aspects({zero, x0, y0}) {
-  const {horoscope, progressedHoroscope, transitHoroscope} =
-    useContext(CelestialContext)
+export default function Aspects({
+  zero,
+  x0,
+  y0
+}: {
+  zero: number
+  x0: number
+  y0: number
+}) {
+  const context = useContext(
+    CelestialContext
+  ) as CelestialContextType
+  const {horoscope, progressedHoroscope, transitHoroscope} = context
 
-  const {settings} = useContext(SettingContext)
+  const settingsContext = useContext(
+    SettingContext
+  ) as SettingContextType
+  const {settings} = settingsContext
 
   const threshold = settings.interface.aspectOrb ?? 4
 
@@ -38,10 +82,10 @@ export default function Aspects({zero, x0, y0}) {
     natal
   }
 
-  const AT = []
+  const AT: Aspect[] = []
   const uniqueAspects = new Set<number>()
 
-  M.natal.forEach((a: [any, any]) => {
+  M.natal.forEach(a => {
     M[settings.chartType].forEach((b: any) => {
       const aspect = aspectBetween(a, b)
       if (aspect && !uniqueAspects.has(aspect.d0)) {
@@ -143,7 +187,12 @@ export default function Aspects({zero, x0, y0}) {
   )
 }
 
-function getMidpoint(x1, y1, x2, y2) {
+function getMidpoint(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
   const centerX = (x1 + x2) / 2
   const centerY = (y1 + y2) / 2
   return {centerX, centerY}
