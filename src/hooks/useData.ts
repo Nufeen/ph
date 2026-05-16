@@ -62,9 +62,10 @@ const useData = (): UseDataReturn => {
     cityTimezones.lookupViaCity(transitCity || '')?.[0]?.timezone ??
     ''
 
+  const date2Param = urlParams.get('date2')
   const date2 =
-    (urlParams.get('date2')
-      ? new Date(+urlParams.get('date2'))
+    (date2Param
+      ? new Date(+date2Param)
       : null) ||
     (LSTransitData?.date && new Date(LSTransitData?.date)) ||
     new Date()

@@ -21,6 +21,7 @@ import DbScreen from './interface/IndexedDB'
 
 import getHoroscope from './compute/horoscope'
 
+import {Body} from 'astronomy-engine'
 import {connectedStars, starsOnFictivePoints} from './compute/stars'
 
 import {SettingContext} from './SettingContext'
@@ -190,7 +191,7 @@ function App() {
 
   const actualPlanets = Object.entries(settings.objects.planets)
     .filter(([, v]) => !!v)
-    .map(([k]) => k)
+    .map(([k]) => k) as (keyof typeof Body)[]
 
   return (
     <SettingContext.Provider value={settingsContextValue}>
