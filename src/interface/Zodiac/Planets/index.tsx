@@ -9,6 +9,17 @@ import planets from '../../../assets/planets.json'
 import {CelestialContext} from '../../../CelestialContext.js'
 import {SettingContext} from '../../../SettingContext.js'
 
+interface CelestialContextType {
+  horoscope: {CelestialBodies: Record<string, {isRetrograde: boolean; ChartPosition: {Ecliptic: {ArcDegreesFormatted30: string; DecimalDegrees: number}}}>}
+}
+
+interface SettingContextType {
+  settings: {
+    objects: {planets: Record<string, boolean>}
+    interface: {planetAngles: boolean}
+  }
+}
+
 const {sin, cos, abs} = Math
 const π = Math.PI
 
@@ -17,8 +28,11 @@ export default function Planets({calendarDay, zero, x0, y0}) {
   // to calculate burned and kazimi status of planets
   const sunLng = pos('Sun', calendarDay)
 
-  const {settings} = useContext(SettingContext)
-  const {horoscope} = useContext(CelestialContext)
+  const context = useContext(CelestialContext) as CelestialContextType
+  const {horoscope} = context
+
+  const settingsContext = useContext(SettingContext) as SettingContextType
+  const {settings} = settingsContext
 
   // Chart data preparation
   const P = Object.entries(planets)

@@ -1,16 +1,16 @@
 import {useContext} from 'react'
-import {CelestialContext} from '../../../CelestialContext.js'
-import {SettingContext} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
 
 const {sin, cos} = Math
 
 export default function Houses({zero, x0, y0, chartType}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
   const {
     horoscope,
     transitHoroscope,
     chart: latlng
-  } = useContext(CelestialContext)
+  } = useContext(CelestialContext) as CelestialContextType
 
   const houseSystem = settings.interface.houseSystem
 

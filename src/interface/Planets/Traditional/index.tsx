@@ -97,7 +97,7 @@ const triplicity = {
 export default function PlanetsTable(props: Props) {
   const P = Object.keys(planets).filter(
     x => !['Neptune', 'Pluto', 'Uranus'].includes(x)
-  )
+  ) as Planet[]
 
   return (
     <div className={s.wrap}>
@@ -145,7 +145,7 @@ function Line(props: Props & {planet: Planet}) {
   const sunrise = getSunrise(props.lat, props.lng, now)
   const sunset = getSunset(props.lat, props.lng, now)
   const t = now.getTime()
-  const its_night_now = sunrise.getTime() > t || t > sunset.getTime()
+  const its_night_now = !!(sunrise && sunset) && (sunrise.getTime() > t || t > sunset.getTime())
 
   const in_triplicity =
     triplicity[its_night_now ? 'night' : 'day'][H - 1] == planet && 3

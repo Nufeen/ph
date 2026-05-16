@@ -48,6 +48,8 @@ export default function HourTable(props: Props) {
   const sunset = getSunset(lat, lng, today)
   const nextSunrise = getSunrise(lat, lng, tomorrow)
 
+  if (!sunrise || !sunset || !nextSunrise) return null
+
   const t0 = sunrise.getTime()
   const t1 = sunset.getTime()
   const t2 = nextSunrise.getTime()
@@ -170,6 +172,7 @@ function moonday(timestamp: number, lat: number, lng: number) {
     const n = t.getTime()
     const t2 = new Date(n + 60 * 1000)
     const moonrise = SearchRiseSet(Body.Moon, o, +1, t2, 30)
+    if (!moonrise) break
     t = moonrise.date
     daystarts.push(t)
   }

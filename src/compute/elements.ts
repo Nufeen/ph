@@ -17,7 +17,7 @@ export default function reduceToElements(horoscope) {
   if (!horoscope?.CelestialBodies) return {}
 
   return Object.values(horoscope?.CelestialBodies).reduce(
-    (acc, body: any) => {
+    (acc: Record<string, number>, body: any) => {
       const sign = body?.Sign?.key
       if (!sign) return acc
       if (!acc[elementMap[sign]]) {
@@ -26,6 +26,6 @@ export default function reduceToElements(horoscope) {
       acc[elementMap[sign]] += 1
       return acc
     },
-    {}
+    {} as Record<string, number>
   )
 }

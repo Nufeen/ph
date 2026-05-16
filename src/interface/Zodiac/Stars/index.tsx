@@ -2,30 +2,45 @@ import {useContext} from 'react'
 
 import s from './index.module.css'
 
-import {CelestialContext} from '../../../CelestialContext.js'
-import {SettingContext} from '../../../SettingContext.js'
+import {
+  CelestialContext,
+  CelestialContextType
+} from '../../../CelestialContext.js'
 
-interface CelestialContextType {
-  stars: Record<string, any>
-  transitStars: Record<string, any>
-  progressedStars: Record<string, any>
-  fictivePointsStars: Record<string, any>
-}
+import {SettingContext} from '../../../SettingContext.js'
 
 interface SettingContextType {
   settings: any
 }
 
-interface Star { name: string; elon: number }
+interface Star {
+  name: string
+  elon: number
+}
 
 const {sin, cos} = Math
 const π = Math.PI
 
-export default function Stars({calendarDay, zero, x0, y0}: {calendarDay: Date; zero: number; x0: number; y0: number}) {
-  const context = useContext(CelestialContext) as CelestialContextType
-  const {stars, transitStars, progressedStars, fictivePointsStars} = context
+export default function Stars({
+  calendarDay,
+  zero,
+  x0,
+  y0
+}: {
+  calendarDay: Date
+  zero: number
+  x0: number
+  y0: number
+}) {
+  const context = useContext(
+    CelestialContext
+  ) as CelestialContextType
+  const {stars, transitStars, progressedStars, fictivePointsStars} =
+    context
 
-  const settingsContext = useContext(SettingContext) as SettingContextType
+  const settingsContext = useContext(
+    SettingContext
+  ) as SettingContextType
   const {settings} = settingsContext
 
   const year = calendarDay.getFullYear()
@@ -45,12 +60,19 @@ export default function Stars({calendarDay, zero, x0, y0}: {calendarDay: Date; z
     .flat()
     .filter(x => !!x)
     .map(x => {
-      if (!x || typeof x !== 'object' || !x[0] || typeof x[0].elon !== 'number') return null
+      if (
+        !x ||
+        typeof x !== 'object' ||
+        !x[0] ||
+        typeof +x[0].elon !== 'number'
+      )
+        return null
       return {
         name: x[0].name as string,
         elon: x[0].elon - (1 / 72) * delta
       }
-    }).filter(Boolean) as Star[]
+    })
+    .filter(Boolean) as Star[]
 
   // in case of planet conjunction we get duplicates
   const uniq = Array.from(new Set(flatten))

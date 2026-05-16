@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from 'react'
-import {SettingContext} from '../../SettingContext.js'
+import {SettingContext, SettingContextType} from '../../SettingContext.js'
 
 import defaultSettings from '../../defaultSettings.json'
 
@@ -8,7 +8,7 @@ import s from './index.module.css'
 const LS = window.localStorage
 
 const ColorSelectors = () => {
-  const {settings, setSettings} = useContext(SettingContext)
+  const {settings, setSettings} = useContext(SettingContext) as SettingContextType
 
   const [colors, setColors] = useState({})
 

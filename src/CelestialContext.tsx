@@ -15,11 +15,11 @@ interface TransitData {
 }
 
 interface Chart {
-  natal: { lat: number; lng: number }
-  transit: { lat: number; lng: number }
+  natal: {lat: number; lng: number}
+  transit: {lat: number; lng: number}
 }
 
-interface CelestialContextType {
+export interface CelestialContextType {
   horoscope: any
   transitHoroscope: any
   progressedHoroscope: any
@@ -32,4 +32,5 @@ interface CelestialContextType {
   chart: Chart
 }
 
-export const CelestialContext = createContext<CelestialContextType | null>(null)
+export const CelestialContext =
+  createContext<CelestialContextType | null>(null)

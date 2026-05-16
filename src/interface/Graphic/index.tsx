@@ -1,8 +1,11 @@
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
-import {SettingContext} from '../../SettingContext'
-import {CelestialContext} from '../../CelestialContext'
+import {SettingContext, SettingContextType} from '../../SettingContext'
+import {
+  CelestialContext,
+  CelestialContextType
+} from '../../CelestialContext'
 
 import {useContext} from 'react'
 
@@ -22,8 +25,8 @@ function pos(body: keyof typeof Body, date: Date) {
   return ((pos.elon - 0) / 360) * W
 }
 
-function getStartDatesOfEveryDayPerYear(year) {
-  let dates = []
+function getStartDatesOfEveryDayPerYear(year: number) {
+  const dates: Date[] = []
   let date = new Date(year, 0, 1)
   while (date.getFullYear() === year) {
     dates.push(new Date(date))
@@ -32,9 +35,9 @@ function getStartDatesOfEveryDayPerYear(year) {
   return dates
 }
 
-function splitArray(arr: number[]) {
-  let result = []
-  let temp = []
+function splitArray(arr: number[][]) {
+  const result: number[][][] = []
+  let temp: number[][] = []
   for (let i = 0; i < arr.length - 1; i++) {
     temp.push(arr[i])
     if (Math.abs(arr[i][0] - arr[i + 1][0]) > 500) {
@@ -84,8 +87,10 @@ function dayNum(now: Date) {
 }
 
 export default function GraphicChart() {
-  const {settings} = useContext(SettingContext)
-  const {transitData} = useContext(CelestialContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
+  const {transitData} = useContext(
+    CelestialContext
+  ) as CelestialContextType
 
   const year = transitData.date.getFullYear()
 
@@ -149,19 +154,18 @@ export default function GraphicChart() {
         {Object.keys(settings.objects.planets)
           .filter(x => settings.objects.planets[x])
           .map((body, i) => (
-            <NatalLine key={body} body={body} i={i} />
+                <NatalLine key={body} body={body} />
           ))}
 
         {/* Transit planets */}
         {Object.keys(settings.objects.planets)
           .filter(x => settings.objects.planets[x])
           .map((body, index) => (
-            <Lines
-              key={body}
-              body={body}
-              dates={dates}
-              index={index}
-            />
+              <Lines
+                key={body}
+                body={body}
+                dates={dates}
+              />
           ))}
       </svg>
     </div>
@@ -169,7 +173,9 @@ export default function GraphicChart() {
 }
 
 function NatalLine({body}) {
-  const {natalData} = useContext(CelestialContext)
+  const {natalData} = useContext(
+    CelestialContext
+  ) as CelestialContextType
   const x = pos(body, natalData.date)
   return (
     <>
@@ -181,9 +187,10 @@ function NatalLine({body}) {
   )
 }
 
-function Lines({body, dates}) {
-  const pzz = dates.map(dt => pos(body, dt))
-  const pairs = pzz.map((p, i) => [p, (i * H) / dates.length])
+function Lines({body, dates}: {body: string; dates: Date[]}) {
+  type Planet = keyof typeof Body
+  const pzz = dates.map(dt => pos(body as Planet, dt))
+  const pairs: number[][] = pzz.map((p, i) => [p, (i * H) / dates.length])
   const lines = splitArray(pairs)
 
   return (

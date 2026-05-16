@@ -87,7 +87,7 @@ export default function Aspects({
 
   M.natal.forEach(a => {
     M[settings.chartType].forEach((b: any) => {
-      const aspect = aspectBetween(a, b)
+      const aspect = aspectBetween(a as [string, number], b)
       if (aspect && !uniqueAspects.has(aspect.d0)) {
         uniqueAspects.add(aspect.d0)
 

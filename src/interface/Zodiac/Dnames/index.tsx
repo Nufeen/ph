@@ -1,5 +1,5 @@
 import {useContext} from 'react'
-import {SettingContext} from '../../../SettingContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 
@@ -16,7 +16,7 @@ function pos(body: keyof typeof Body, date: Date) {
   return pos.elon
 }
 export default function Decans72({zero, x0, r, y0, calendarDay}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   const sid = settings.zodiacType === 'Sidereal' ? 24 : 0
 

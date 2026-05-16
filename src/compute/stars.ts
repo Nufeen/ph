@@ -46,13 +46,21 @@ function elon(s, sign) {
 
 export function connectedStars(
   calendarDay: Date,
-  actualPlanets: (keyof typeof Body)[] = Object.keys(planets) as (keyof typeof Body)[]
+  actualPlanets: (keyof typeof Body)[] = Object.keys(
+    planets
+  ) as (keyof typeof Body)[]
 ) {
-  const out = actualPlanets.reduce((a, x) => {
-    // Ensure the planet name matches the Body enum
-    const bodyKey = x as keyof typeof Body
-    return { ...a, [x]: findStar(pos(bodyKey, calendarDay), calendarDay) }
-  }, {} as Record<keyof typeof Body, ReturnType<typeof findStar>>)
+  const out = actualPlanets.reduce(
+    (a, x) => {
+      // Ensure the planet name matches the Body enum
+      const bodyKey = x as keyof typeof Body
+      return {
+        ...a,
+        [x]: findStar(pos(bodyKey, calendarDay), calendarDay)
+      }
+    },
+    {} as Record<keyof typeof Body, ReturnType<typeof findStar>>
+  )
 
   return out
 }
@@ -64,7 +72,9 @@ function findStar(elon, calendarDay) {
   const delta = 2000 - year
 
   return stars.filter(
-    x => Math.abs(x.elon - (1 / 72) * delta - elon) < 1
+    (x): x is {name: string; elon: number; size: string} =>
+      x.elon !== null &&
+      Math.abs(x.elon - (1 / 72) * delta - elon) < 1
   )
 }
 
