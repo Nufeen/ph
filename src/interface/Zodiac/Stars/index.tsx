@@ -59,7 +59,7 @@ export default function Stars({
     .map(x => x && [x[0]])
     .flat()
     .filter(x => !!x)
-    .map(x => {
+    .map((x: any) => {
       if (!x || typeof x !== 'object' || typeof +x.elon !== 'number')
         return null
       return {
