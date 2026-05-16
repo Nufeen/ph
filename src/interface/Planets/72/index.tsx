@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
-import {CelestialContext} from '../../../CelestialContext.js'
-import {SettingContext} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 
@@ -39,9 +39,9 @@ const romanNumbers = [
 ]
 
 export default function DTable() {
-  const {horoscope} = useContext(CelestialContext)
+  const {horoscope} = useContext(CelestialContext) as CelestialContextType
 
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   return (
     <table className={s.table}>
@@ -81,7 +81,7 @@ export default function DTable() {
 }
 
 function Name({body, show}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
   const sid = settings.zodiacType === 'Sidereal' ? 24 : 0
 
   const d = body.ChartPosition.Ecliptic.DecimalDegrees

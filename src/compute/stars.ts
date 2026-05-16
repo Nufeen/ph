@@ -45,30 +45,43 @@ function elon(s, sign) {
 }
 
 export function connectedStars(
-  calendarDay,
-  actualPlanets = Object.keys(planets)
+  calendarDay: Date,
+  natalData: Date,
+  actualPlanets: (keyof typeof Body)[] = Object.keys(
+    planets
+  ) as (keyof typeof Body)[]
 ) {
-  const out = actualPlanets.reduce((a, x: any) => {
-    return {...a, [x]: findStar(pos(x, calendarDay), calendarDay)}
-  }, {})
+  const out = actualPlanets.reduce(
+    (a, x) => {
+      // Ensure the planet name matches the Body enum
+      const bodyKey = x as keyof typeof Body
+      return {
+        ...a,
+        [x]: findStar(pos(bodyKey, calendarDay), natalData)
+      }
+    },
+    {} as Record<keyof typeof Body, ReturnType<typeof findStar>>
+  )
 
   return out
 }
 
-function findStar(elon, calendarDay) {
-  const year = calendarDay.getFullYear()
+function findStar(elon, day) {
+  const year = day.getFullYear()
 
   // TODO test precession logic
   const delta = 2000 - year
 
   return stars.filter(
-    x => Math.abs(x.elon - (1 / 72) * delta - elon) < 1
+    (x): x is {name: string; elon: number; size: string} =>
+      x.elon !== null &&
+      Math.abs(x.elon - (1 / 72) * delta - elon) < 1
   )
 }
 
 export function starsOnFictivePoints(calendarDay, horoscope) {
   const out = ['lilith', 'northnode', 'southnode'].reduce(
-    (a, x: any, i) => {
+    (a, x: any) => {
       return {
         ...a,
         [x]: findStar(

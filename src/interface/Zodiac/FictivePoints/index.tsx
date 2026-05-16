@@ -1,6 +1,6 @@
 import {useContext} from 'react'
-import {SettingContext} from '../../../SettingContext.js'
-import {CelestialContext} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
 
 import s from './index.module.css'
 
@@ -33,10 +33,10 @@ function calculateDegrees(
 }
 
 export default function Fictive({zero, x0, y0}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   const {horoscope, transitHoroscope, progressedHoroscope} =
-    useContext(CelestialContext)
+    useContext(CelestialContext) as CelestialContextType
 
   const degrees = calculateDegrees(horoscope, zero)
 
@@ -134,7 +134,7 @@ export default function Fictive({zero, x0, y0}) {
 }
 
 function Lilith({x0, y0, zero, horoscope, type}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   const degrees = calculateDegrees(horoscope, zero)
 
@@ -187,7 +187,7 @@ function Lilith({x0, y0, zero, horoscope, type}) {
 }
 
 function Node({x0, y0, zero, horoscope, type, node}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   const degrees = calculateDegrees(horoscope, zero)
 

@@ -4,7 +4,10 @@ import cityTimezones from 'city-timezones'
 import moment from 'moment-timezone'
 
 import s from './index.module.css'
-import {CelestialContext} from '../../CelestialContext'
+import {
+  CelestialContext,
+  CelestialContextType
+} from '../../CelestialContext'
 
 import {openDB} from 'idb'
 
@@ -21,13 +24,15 @@ async function readDB() {
 }
 
 export default function DbScreen(props) {
-  const {natalData, transitData} = useContext(CelestialContext)
+  const {natalData} = useContext(
+    CelestialContext
+  ) as CelestialContextType
 
-  const [people, getPeople] = useState([])
+  const [people, getPeople] = useState<Person[]>([])
   const [rnd, updateState] = useState(0)
 
   const forceUpdate = useCallback(
-    () => updateState(_ => Math.random()),
+    () => updateState(() => Math.random()),
     []
   )
 
@@ -103,6 +108,8 @@ export default function DbScreen(props) {
 interface Person {
   name: string
   date: Date
+  city: string
+  country: string
 }
 
 const deletePerson = async (person: Person) => {

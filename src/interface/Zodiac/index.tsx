@@ -7,8 +7,8 @@ import Lots from './Lots/index.js'
 import Houses from './Houses/index.js'
 
 import {useContext} from 'react'
-import {SettingContext} from '../../SettingContext.js'
-import {CelestialContext} from '../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../CelestialContext.js'
 
 import houses from '../../assets/zodiac.json'
 
@@ -31,13 +31,13 @@ type Props = {
 export default function Zodiac(props: Props) {
   const {calendarDay, lat, lng} = props
 
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   const {
     horoscope: {_ascendant}
-  } = useContext(CelestialContext)
+  } = useContext(CelestialContext) as CelestialContextType
 
-  const {horoscope} = useContext(CelestialContext)
+  const {horoscope} = useContext(CelestialContext) as CelestialContextType
 
   const sid = settings.zodiacType === 'Sidereal' ? 24 : 0
 

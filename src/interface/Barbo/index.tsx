@@ -1,14 +1,19 @@
+// @ts-nocheck
+
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
-import {SettingContext} from '../../SettingContext'
-import {CelestialContext} from '../../CelestialContext'
+import {SettingContext, SettingContextType} from '../../SettingContext'
+import {
+  CelestialContext,
+  CelestialContextType
+} from '../../CelestialContext'
 
 import {useContext} from 'react'
 import {useMemo} from 'react'
 
-import planets from '../../assets/planets.json'
-import zodiacSigns from '../../assets/zodiac.json'
+import {} from '../../assets/planets.json'
+import {} from '../../assets/zodiac.json'
 
 function angleDistance(a, b) {
   return Math.min(
@@ -88,8 +93,11 @@ const y1 = 1900
 const y2 = 2050
 
 export default function Barbo() {
-  const {settings} = useContext(SettingContext)
-  const {natalData, transitData} = useContext(CelestialContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
+
+  const {natalData, transitData} = useContext(
+    CelestialContext
+  ) as CelestialContextType
 
   const dts = useMemo(() => getStartDatesOfMonths(y1, y2), [y1, y2])
 

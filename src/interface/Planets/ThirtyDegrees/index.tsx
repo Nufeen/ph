@@ -1,6 +1,6 @@
 import {useContext} from 'react'
-import {CelestialContext} from '../../../CelestialContext.js'
-import {SettingContext} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 
@@ -16,9 +16,9 @@ interface CelestialBody {
 }
 
 export default function ThirtyDegrees() {
-  const {horoscope, transitHoroscope} = useContext(CelestialContext)
+  const {horoscope, transitHoroscope} = useContext(CelestialContext) as CelestialContextType
 
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   return (
     <div className={s.layout}>
@@ -35,7 +35,7 @@ export default function ThirtyDegrees() {
         <span className={s.number}>30°</span>
       </div>
 
-      {Object.values(horoscope.CelestialBodies)
+      {(Object.values(horoscope.CelestialBodies) as CelestialBody[])
         .filter(
           (body: CelestialBody) =>
             settings.objects.planets[body.label]
@@ -56,7 +56,7 @@ export default function ThirtyDegrees() {
 
       {settings.chartType == 'transit' && (
         <div className={s.transit}>
-          {Object.values(transitHoroscope.CelestialBodies)
+          {(Object.values(transitHoroscope.CelestialBodies) as CelestialBody[])
             .filter(
               (body: CelestialBody) =>
                 settings.objects.planets[body.label]

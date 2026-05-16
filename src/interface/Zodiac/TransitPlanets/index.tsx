@@ -2,18 +2,18 @@ import React, {useContext} from 'react'
 
 import s from './index.module.css'
 
-import {CelestialContext} from '../../../CelestialContext.js'
-import {SettingContext} from '../../../SettingContext'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext'
 
 import icons from '../../../assets/planets.json'
 
 const {sin, cos} = Math
 
 export default function TransitPlanets({zero, x0, y0}) {
-  const {progressedHoroscope, transitHoroscope} =
-    useContext(CelestialContext)
+  const celestial = useContext(CelestialContext) as CelestialContextType
+  const {progressedHoroscope, transitHoroscope} = celestial
 
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   let l = 126
 

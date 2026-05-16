@@ -21,10 +21,11 @@ import DbScreen from './interface/IndexedDB'
 
 import getHoroscope from './compute/horoscope'
 
+import {Body} from 'astronomy-engine'
 import {connectedStars, starsOnFictivePoints} from './compute/stars'
 
-import {SettingContext} from './SettingContext.js'
-import {CelestialContext} from './CelestialContext.js'
+import {SettingContext} from './SettingContext'
+import {CelestialContext} from './CelestialContext'
 
 import s from './App.module.css'
 
@@ -45,7 +46,9 @@ const LS = window.localStorage
  * -> user ui settings are kept in local storage and shared via SettingContext
  */
 function App() {
-  const localSavedSettings = JSON.parse(LS.getItem('settings'))
+  const localSavedSettings = LS.getItem('settings')
+    ? JSON.parse(LS.getItem('settings') as string)
+    : null
 
   /**
    * Interface settings management
@@ -63,7 +66,7 @@ function App() {
     )
   }
 
-  const settingsContextValue = {settings, setSettings}
+  const settingsContextValue = {settings, setSettings} as const
 
   /**
    * Interface State
@@ -73,7 +76,7 @@ function App() {
   /**
    * Setting cenered scroll position on mobile phones
    */
-  const centerSectionRef = useRef(null)
+  const centerSectionRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     centerSectionRef?.current?.scrollIntoView()
   }, [])
@@ -87,8 +90,9 @@ function App() {
     ([k, v]) => !!v && url.searchParams.set(k, v?.toString())
   )
 
-  !!natalData?.date &&
+  if (natalData?.date) {
     url.searchParams.set('date', (+natalData?.date).toString())
+  }
 
   window.history.pushState({}, '', url)
 
@@ -158,12 +162,13 @@ function App() {
   /**
    * Planetary hours
    */
-  const cDaySunrise = getSunrise(
+  const cDaySunrise: Date | null = getSunrise(
     latlng.natal.lat,
     latlng.natal.lng,
     natalData.date
   )
-  const morning = natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
+  const morning =
+    cDaySunrise && natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
   const today = morning
     ? new Date(+new Date() - 86400000)
     : natalData.date
@@ -187,9 +192,9 @@ function App() {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  const actualPlanets = Object.entries(settings.objects.planets)
-    .filter(([k, v]) => !!v)
-    .map(([k, v]) => k)
+  const enabledPlanetsList = Object.entries(settings.objects.planets)
+    .filter(([, v]) => !!v)
+    .map(([k]) => k) as (keyof typeof Body)[]
 
   return (
     <SettingContext.Provider value={settingsContextValue}>
@@ -198,14 +203,20 @@ function App() {
           horoscope,
           transitHoroscope,
           progressedHoroscope,
-          stars: connectedStars(natalData.date, actualPlanets),
+          stars: connectedStars(
+            natalData.date,
+            natalData.date,
+            enabledPlanetsList
+          ),
           transitStars: connectedStars(
             transitData.date,
-            actualPlanets
+            natalData.date,
+            enabledPlanetsList
           ),
           progressedStars: connectedStars(
             progressedDate,
-            actualPlanets
+            natalData.date,
+            enabledPlanetsList
           ),
           fictivePointsStars: starsOnFictivePoints(
             natalData.date,

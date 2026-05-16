@@ -5,8 +5,8 @@ import moment from 'moment-timezone'
 
 import {countries} from 'country-city-location'
 
-import {SettingContext} from '../../SettingContext'
-import {CelestialContext} from '../../CelestialContext'
+import {SettingContext, SettingContextType} from '../../SettingContext'
+import {CelestialContext, CelestialContextType} from '../../CelestialContext'
 
 import s from './index.module.css'
 
@@ -37,8 +37,8 @@ export default function ControlPane(props) {
   }
   const cityRef = useRef(null)
 
-  const {settings, setSettings} = useContext(SettingContext)
-  const {natalData, transitData} = useContext(CelestialContext)
+  const {settings, setSettings} = useContext(SettingContext) as SettingContextType
+  const {natalData, transitData} = useContext(CelestialContext) as CelestialContextType
 
   const [successfulSave, setSuccessfulSave] = useState(false)
 
@@ -167,7 +167,8 @@ export default function ControlPane(props) {
   }
 
   const save = async chartType => {
-    let name = prompt('Enter name')
+    const name = prompt('Enter name')
+    if (!name) return
 
     const db = await openDB('astro-ph-db1', 1, {
       upgrade(db) {
@@ -266,9 +267,9 @@ export default function ControlPane(props) {
           />
           <select
             onChange={e => handleCountrySelection(e, chartType)}
-            value={data[chartType].country ?? null}
+            value={data[chartType].country ?? undefined}
           >
-            <option disabled value={null}>
+            <option disabled value={undefined}>
               Location
             </option>
             {countries.map((x, i) => (

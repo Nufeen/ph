@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
-import {CelestialContext} from '../../../CelestialContext.js'
-import {SettingContext} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 
@@ -43,15 +43,10 @@ const fictivePointsIcons = {
 }
 
 export default function ModernPlanetsTable() {
-  const {
-    horoscope,
-    transitHoroscope,
-    progressedHoroscope,
-    stars,
-    fictivePointsStars
-  } = useContext(CelestialContext)
+  const {horoscope, transitHoroscope, stars, fictivePointsStars} =
+    useContext(CelestialContext) as CelestialContextType
 
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   return (
     <table className={s.table}>

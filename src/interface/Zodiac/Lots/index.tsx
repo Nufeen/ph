@@ -1,6 +1,6 @@
 import {useContext} from 'react'
-import {SettingContext} from '../../../SettingContext.js'
-import {CelestialContext} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
 
 import s from './index.module.css'
 
@@ -8,11 +8,11 @@ const {sin, cos} = Math
 const π = Math.PI
 
 export default function Lots({x0, y0}) {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
 
   const {
     horoscope: {_ascendant, CelestialBodies}
-  } = useContext(CelestialContext)
+  } = useContext(CelestialContext) as CelestialContextType
 
   const zero =
     settings.objects.houses.visibility.natal &&

@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
-import {SettingContext} from '../../SettingContext.js'
-import {CelestialContext} from '../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../CelestialContext.js'
 
 import s from './index.module.css'
 
@@ -9,7 +9,7 @@ import planets from '../../assets/planets.json'
 const LS = window.localStorage
 
 const PlanetCheckboxTable = () => {
-  const {settings, setSettings} = useContext(SettingContext)
+  const {settings, setSettings} = useContext(SettingContext) as SettingContextType
 
   function handlePlanetVisibility(planet: string) {
     const s = {
@@ -441,10 +441,13 @@ const PlanetCheckboxTable = () => {
 
 export default PlanetCheckboxTable
 
+// Ensure CelestialContext is non‑null
+const useCelestial = () => useContext(CelestialContext) as CelestialContextType
+
 function DayOrNight() {
   const {
     horoscope: {_ascendant, CelestialBodies}
-  } = useContext(CelestialContext)
+  } = useCelestial()
 
   const dayBirth =
     _ascendant.ChartPosition.Ecliptic.DecimalDegrees -

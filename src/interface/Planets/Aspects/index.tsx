@@ -1,6 +1,6 @@
 import {useContext} from 'react'
-import {SettingContext} from '../../../SettingContext.js'
-import {CelestialContext} from '../../../CelestialContext.js'
+import {SettingContext, SettingContextType} from '../../../SettingContext.js'
+import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
 
 import planets from '../../../assets/planets.json'
 
@@ -8,10 +8,19 @@ import s from './index.module.css'
 
 const {abs, min} = Math
 
+interface AspectResult {
+  a: number
+  b: number
+  d: number
+  d0: number
+  label1: string
+  label2: string
+}
+
 export default function Aspects() {
-  const {settings} = useContext(SettingContext)
+  const {settings} = useContext(SettingContext) as SettingContextType
   const {horoscope, progressedHoroscope, transitHoroscope} =
-    useContext(CelestialContext)
+    useContext(CelestialContext) as CelestialContextType
 
   const threshold = settings.interface.aspectOrb ?? 4
 
@@ -39,15 +48,15 @@ export default function Aspects() {
     natal
   }
 
-  const positive = []
-  const negative = []
-  const conjunctions = []
+  const positive: AspectResult[] = []
+  const negative: AspectResult[] = []
+  const conjunctions: AspectResult[] = []
 
   const uniqueAspects = new Set<number>()
 
-  M.natal.forEach((a: [string, number]) => {
-    M[settings.chartType].forEach((b: [string, number]) => {
-      const aspect = aspectBetween(a, b, threshold)
+  M.natal.forEach(a => {
+    M[settings.chartType].forEach((b: any) => {
+      const aspect = aspectBetween(a as [string, number], b as [string, number], threshold)
       if (aspect && !uniqueAspects.has(aspect.d0)) {
         uniqueAspects.add(aspect.d0)
 
@@ -63,9 +72,9 @@ export default function Aspects() {
     })
   })
 
-  M.natal.forEach((a: [string, number]) => {
-    M[settings.chartType].forEach((b: [string, number]) => {
-      const aspect = conjunctionBetween(a, b, threshold)
+  M.natal.forEach(a => {
+    M[settings.chartType].forEach((b: any) => {
+      const aspect = conjunctionBetween(a as [string, number], b as [string, number], threshold)
       if (aspect && !uniqueAspects.has(aspect.d0)) {
         uniqueAspects.add(aspect.d0)
         conjunctions.push(aspect)
