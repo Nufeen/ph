@@ -46,7 +46,9 @@ const LS = window.localStorage
  * -> user ui settings are kept in local storage and shared via SettingContext
  */
 function App() {
-  const localSavedSettings = LS.getItem('settings') ? JSON.parse(LS.getItem('settings') as string) : null
+  const localSavedSettings = LS.getItem('settings')
+    ? JSON.parse(LS.getItem('settings') as string)
+    : null
 
   /**
    * Interface settings management
@@ -165,7 +167,8 @@ function App() {
     latlng.natal.lng,
     natalData.date
   )
-  const morning = cDaySunrise && natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
+  const morning =
+    cDaySunrise && natalData.date.getTime() < cDaySunrise.getTime() // for planet hours
   const today = morning
     ? new Date(+new Date() - 86400000)
     : natalData.date
@@ -189,7 +192,7 @@ function App() {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  const actualPlanets = Object.entries(settings.objects.planets)
+  const enabledPlanetsList = Object.entries(settings.objects.planets)
     .filter(([, v]) => !!v)
     .map(([k]) => k) as (keyof typeof Body)[]
 
@@ -200,14 +203,20 @@ function App() {
           horoscope,
           transitHoroscope,
           progressedHoroscope,
-          stars: connectedStars(natalData.date, actualPlanets),
+          stars: connectedStars(
+            natalData.date,
+            natalData.date,
+            enabledPlanetsList
+          ),
           transitStars: connectedStars(
             transitData.date,
-            actualPlanets
+            natalData.date,
+            enabledPlanetsList
           ),
           progressedStars: connectedStars(
             progressedDate,
-            actualPlanets
+            natalData.date,
+            enabledPlanetsList
           ),
           fictivePointsStars: starsOnFictivePoints(
             natalData.date,

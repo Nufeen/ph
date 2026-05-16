@@ -46,6 +46,7 @@ function elon(s, sign) {
 
 export function connectedStars(
   calendarDay: Date,
+  natalData: Date,
   actualPlanets: (keyof typeof Body)[] = Object.keys(
     planets
   ) as (keyof typeof Body)[]
@@ -56,7 +57,7 @@ export function connectedStars(
       const bodyKey = x as keyof typeof Body
       return {
         ...a,
-        [x]: findStar(pos(bodyKey, calendarDay), calendarDay)
+        [x]: findStar(pos(bodyKey, calendarDay), natalData)
       }
     },
     {} as Record<keyof typeof Body, ReturnType<typeof findStar>>
@@ -65,8 +66,8 @@ export function connectedStars(
   return out
 }
 
-function findStar(elon, calendarDay) {
-  const year = calendarDay.getFullYear()
+function findStar(elon, day) {
+  const year = day.getFullYear()
 
   // TODO test precession logic
   const delta = 2000 - year

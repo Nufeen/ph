@@ -60,11 +60,7 @@ export default function Stars({
     .flat()
     .filter(x => !!x)
     .map(x => {
-      if (
-        !x ||
-        typeof x !== 'object' ||
-        typeof +x.elon !== 'number'
-      )
+      if (!x || typeof x !== 'object' || typeof +x.elon !== 'number')
         return null
       return {
         name: x.name as string,
@@ -74,7 +70,9 @@ export default function Stars({
     .filter(Boolean) as Star[]
 
   // in case of planet conjunction we get duplicates
-  const uniq = Array.from(new Set(flatten))
+  const uniq = Array.from(
+    new Map(flatten.map(s => [s.name, s])).values()
+  )
 
   return (
     <>
