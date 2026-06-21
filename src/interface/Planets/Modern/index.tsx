@@ -1,10 +1,18 @@
 import React, {useContext} from 'react'
-import {CelestialContext, CelestialContextType} from '../../../CelestialContext.js'
-import {SettingContext, SettingContextType} from '../../../SettingContext.js'
+import {
+  CelestialContext,
+  CelestialContextType
+} from '../../../CelestialContext.js'
+import {
+  SettingContext,
+  SettingContextType
+} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 
 import planets from '../../../assets/planets.json'
+
+import details from './details.json'
 
 const icons = {
   Aries: '♈︎︎',
@@ -123,7 +131,7 @@ export default function ModernPlanetsTable() {
                             {x.name} ({x.size})
                           </span>
                           <span className={s.starDetail}>
-                            {details[x.name]}
+                            {details[x.name]?.summary}
                           </span>
                         </React.Fragment>
                       ))}
@@ -185,7 +193,7 @@ export default function ModernPlanetsTable() {
                             {x.name} ({x.size})
                           </span>
                           <span className={s.starDetail}>
-                            {details[x.name]}
+                            {details[x.name]?.summary}
                           </span>
                         </React.Fragment>
                       ))}
@@ -217,22 +225,4 @@ function addZeros(input) {
   const formattedMinutes = minutes.padStart(3, '0')
   const formattedSeconds = seconds.padStart(4, '0')
   return `${formattedMinutes} ${formattedSeconds}`
-}
-
-/**
- * TODO parse descriptions from classic books
- */
-const details = {
-  Rigel:
-    'Rigel has particular meaning when found in charts of government officials, military people, politicians, leaders of political parties, barristers and priests. Rigel gives splendor, honor, riches, and happiness to those who are born under it.',
-
-  Regulus: 'The heart of the Lion',
-
-  'Deneb Adige':
-    'A white star in the tail of the Swan. The native is mentally quick, psychic, and idealist, has a keen intellect, a very likable person, intelligent',
-
-  Unukalhai:
-    'Cor Serpentis, the Serpent’s Heart. It gives immorality, accidents, violence and danger of poison',
-
-  Sadachbia: 'The Lucky Star of Hidden Things'
 }

@@ -1,0 +1,354 @@
+{
+  "Rigel": {
+    "normalized_name": "Rigel (Beta Orionis)",
+    "summary": "Traditional fixed-star sources associate Rigel with honor, ambition, leadership, and success through disciplined effort."
+  },
+  "Regulus": {
+    "normalized_name": "Regulus",
+    "summary": "Regulus is the Heart of the Lion and a Royal Star, commonly linked with leadership, honor, courage, and public recognition, with caution about pride."
+  },
+  "Deneb Adige": {
+    "normalized_name": "Deneb (Alpha Cygni)",
+    "summary": "Deneb is commonly described as a spiritual, artistic, visionary star tied to inspiration, refinement, and higher ideals."
+  },
+  "Unukalhai": {
+    "normalized_name": "Unukalhai (Cor Serpentis)",
+    "summary": "Traditional descriptions link Unukalhai with danger, poison, misfortune, and difficult circumstances."
+  },
+  "Sadachbia": {
+    "normalized_name": "Sadachbia",
+    "summary": "Often translated as the Lucky Star of Hidden Things, with associations to protection, subtle opportunities, or concealed matters.",
+    "confidence": "partial"
+  },
+  "Alderamin": {
+    "normalized_name": "Alderamin",
+    "summary": "Commonly linked with leadership, honor, vision, and sometimes military or intellectual distinction."
+  },
+  "Alpheratz": {
+    "normalized_name": "Alpheratz",
+    "summary": "Usually associated with freedom, independence, intelligence, movement, and occasional benefits through partnership or marriage."
+  },
+  "Alrischa": {
+    "normalized_name": "Alrescha",
+    "summary": "Generally read as a Venus-Mercury style star tied to charm, refinement, beauty, and helpful relationships."
+  },
+  "Hamal": {
+    "normalized_name": "Hamal",
+    "summary": "Hamal is usually described as forceful, headstrong, and leadership-oriented, with some risk of accidents or conflict when afflicted."
+  },
+  "Shedir": {
+    "normalized_name": "Schedar",
+    "summary": "Associated with eloquence, writing, dignity, public recognition, and benefits in legal, educational, or clerical matters."
+  },
+  "Menkar": {
+    "normalized_name": "Menkar",
+    "summary": "Traditionally connected with hardship, illness, disgrace, and emotional or physical suffering."
+  },
+  "Mirfak": {
+    "normalized_name": "Mirfak",
+    "summary": "Often linked to courage, perseverance, personal effort, and eventual success through sustained work."
+  },
+  "Aldebaran": {
+    "normalized_name": "Aldebaran",
+    "summary": "A Royal Star associated with honor, integrity, courage, recognition, and high achievement, with risk if moral discipline is lacking."
+  },
+  "Arneb": {
+    "normalized_name": "Arneb",
+    "summary": "Commonly described as sharp-tempered but generous, with potential for business or public success and hidden opposition."
+  },
+  "Capella": {
+    "normalized_name": "Capella",
+    "summary": "Usually linked with honors, wealth, ambition, military or civic success, and occasional accident risk if poorly placed."
+  },
+  "Phact": {
+    "normalized_name": "Phact",
+    "summary": "Often associated with idealism, good fortune, and visionary qualities, but some sources treat it as a less standardized fixed-star reference.",
+    "confidence": "partial"
+  },
+  "Polaris": {
+    "normalized_name": "Polaris",
+    "summary": "Known as the North Star, symbolically tied to guidance, constancy, direction, and sometimes isolation in a high position."
+  },
+  "Beteigeuze": {
+    "normalized_name": "Betelgeuse (Alpha Orionis)",
+    "summary": "Usually linked with ambition, honors, fame, strategic ability, and volatile success or sudden change."
+  },
+  "Sirius": {
+    "normalized_name": "Sirius",
+    "summary": "Traditionally associated with brilliance, honor, wealth, devotion, and intensity, with both constructive and disruptive expressions."
+  },
+  "Canopus": {
+    "normalized_name": "Canopus",
+    "summary": "Commonly linked to navigation, wisdom, long journeys, leadership, and spiritual or humanitarian guidance."
+  },
+  "Castor": {
+    "normalized_name": "Castor",
+    "summary": "Usually read as a star of distinction, intelligence, duality, and success, but also instability or violence when badly placed."
+  },
+  "Procyon": {
+    "normalized_name": "Procyon",
+    "summary": "Associated with quick success, fame, loyalty, and sudden events, with caution about conflict or danger when afflicted."
+  },
+  "Acubens": {
+    "normalized_name": "Acubens",
+    "summary": "Often interpreted as sharp-minded but difficult, with associations to hostility, confinement, or water-related danger."
+  },
+  "Dubhe": {
+    "normalized_name": "Dubhe",
+    "summary": "Frequently tied to strong will, leadership, power, and extremes of force or destructiveness."
+  },
+  "Alphard": {
+    "normalized_name": "Alphard",
+    "summary": "Commonly associated with wisdom, solitude, poison, emotional excess, and danger from water or isolation."
+  },
+  "Thuban": {
+    "normalized_name": "Thuban",
+    "summary": "Traditionally linked with ancient knowledge, spiritual depth, and esoteric wisdom, with possible themes of power struggles or excess."
+  },
+  "Alkes": {
+    "normalized_name": "Alkes",
+    "summary": "Often described as refined, mentally capable, and nurturing, with some caution about excess or alcohol."
+  },
+  "Diadem": {
+    "normalized_name": "Diadem",
+    "summary": "Usually associated with honor and distinction, but also the possibility of loss or a fall from status."
+  },
+  "Alchiba": {
+    "normalized_name": "Alchiba",
+    "summary": "Commonly linked with cunning, secrecy, betrayal, and legal or reputational problems."
+  },
+  "Spica": {
+    "normalized_name": "Spica",
+    "summary": "One of the most benefic fixed stars, strongly associated with talent, success, abundance, refinement, and artistic or intellectual gifts."
+  },
+  "Arcturus": {
+    "normalized_name": "Arcturus",
+    "summary": "Frequently associated with wealth, honors, high renown, navigation, and pioneering ability."
+  },
+  "Acrux": {
+    "normalized_name": "Acrux",
+    "summary": "Often linked to spiritual purpose, devotion, sacrifice, and service to a larger cause."
+  },
+  "Zuben Elgenubi": {
+    "normalized_name": "Zubenelgenubi",
+    "summary": "Traditionally tied to compromise, partnership, social success, and balance, though some texts also give it harsher tones."
+  },
+  "Toliman": {
+    "normalized_name": "Toliman (Alpha Centauri)",
+    "summary": "Usually associated with philosophy, wisdom, benevolence, and a dual or hybrid nature."
+  },
+  "Antares": {
+    "normalized_name": "Antares",
+    "summary": "A Royal Star tied to courage, intensity, military or strategic success, and the risk of violence or downfall if misused."
+  },
+  "Ras Alhague": {
+    "normalized_name": "Ras Alhague",
+    "summary": "Commonly associated with healing, wisdom, philosophy, and serpent-bearer symbolism, with some health-related cautions."
+  },
+  "Vega": {
+    "normalized_name": "Vega",
+    "summary": "Usually associated with artistry, music, refinement, charisma, and idealism, with some traditions warning about excess or loss."
+  },
+  "Rukbat": {
+    "normalized_name": "Rukbat",
+    "summary": "Typically linked with travel, philosophy, higher learning, and a questing or adventurous spirit."
+  },
+  "Altair": {
+    "normalized_name": "Altair",
+    "summary": "Commonly associated with courage, boldness, ambition, and high aspiration, with caution about falls from position."
+  },
+  "Giedi Prima": {
+    "normalized_name": "Giedi Prima",
+    "summary": "Usually described as serious, philosophical, ambitious, and interested in hidden or esoteric matters."
+  },
+  "Giedi Secunda": {
+    "normalized_name": "Giedi Secunda",
+    "summary": "Similar to Giedi Prima, with themes of seriousness, mysticism, ambition, and hidden knowledge."
+  },
+  "Sualocin": {
+    "normalized_name": "Sualocin",
+    "summary": "Often associated with spirituality, intuition, service, and subtle or psychic insight."
+  },
+  "Sadalmelik": {
+    "normalized_name": "Sadalmelik",
+    "summary": "Usually linked with success, public office, dignity, and humanitarian or administrative ability."
+  },
+  "Achernar": {
+    "normalized_name": "Achernar",
+    "summary": "Traditionally associated with spiritual success, but also with water, emotional excess, or danger if poorly placed."
+  },
+  "Ankaa": {
+    "normalized_name": "Ankaa",
+    "summary": "Commonly tied to rebirth, renewal, resilience, and rising after hardship."
+  },
+  "Markab": {
+    "normalized_name": "Markab",
+    "summary": "Usually associated with honor, strength, freedom, travel, and occasional accident risk."
+  },
+
+  "Diphda": {
+    "normalized_name": "Diphda (Beta Ceti)",
+    "summary": "Commonly associated with strong instincts, resilience, and practical ability, though some traditions also attach hardship or illness themes.",
+    "confidence": "partial"
+  },
+  "Mirach": {
+    "normalized_name": "Mirach (Beta Andromedae)",
+    "summary": "Frequently linked with harmony, marriage, affection, beauty, and a gentle artistic temperament."
+  },
+  "Sheratan": {
+    "normalized_name": "Sheratan (Beta Arietis)",
+    "summary": "Usually described as bold, assertive, and quick-minded, with potential for rashness or conflict if poorly placed."
+  },
+  "Caph": {
+    "normalized_name": "Caph (Beta Cassiopeiae)",
+    "summary": "Traditionally tied to practical skill, technical or artistic aptitude, and a steady connection to nature or craft.",
+    "confidence": "partial"
+  },
+  "Algol": {
+    "normalized_name": "Algol (Beta Persei)",
+    "summary": "A highly intense star historically linked with crisis, violence, taboo power, and transformative pressure; modern readings often soften this into raw, difficult, or cathartic energy."
+  },
+  "Cursa": {
+    "normalized_name": "Cursa (Beta Eridani)",
+    "summary": "Often associated with quickness, status through service or duty, and some danger or strain in harsher interpretations.",
+    "confidence": "partial"
+  },
+  "Nihal": {
+    "normalized_name": "Nihal (Beta Leporis)",
+    "summary": "Usually connected with mental agility, communication, adaptability, and sometimes restlessness or instability."
+  },
+  "El Nath": {
+    "normalized_name": "El Nath (Beta Tauri)",
+    "summary": "Traditionally tied to force, endurance, and martial or combative themes, with potential for accident or injury if afflicted."
+  },
+  "Wazn": {
+    "normalized_name": "Wazn (Beta Columbae)",
+    "summary": "Often associated with gentleness, kindness, and a philanthropic or aesthetically inclined nature.",
+    "confidence": "partial"
+  },
+  "Menkalinan": {
+    "normalized_name": "Menkalinan (Beta Aurigae)",
+    "summary": "Commonly linked with intelligence, sharp speech, mechanical or intellectual ability, and a risk of domestic or relational strain."
+  },
+  "Mirzam": {
+    "normalized_name": "Mirzam",
+    "summary": "A bright herald star often linked with prominence, coming events, and visible success that may be brief or unstable."
+  },
+  "Elgomeisa": {
+    "normalized_name": "Elgomeisa",
+    "summary": "Frequently associated with mental activity, nervous energy, and writing or communication, with some restlessness."
+  },
+  "Pollux": {
+    "normalized_name": "Pollux",
+    "summary": "A strong and martial star, often linked with courage, athleticism, and achievement, but also possible brutality or arrogance."
+  },
+  "Al Tarf": {
+    "normalized_name": "Al Tarf",
+    "summary": "Usually connected with deep feeling, strong will, and sometimes hidden or occult interests, with caution around domestic conflict.",
+    "confidence": "partial"
+  },
+  "Kochab": {
+    "normalized_name": "Kochab (Beta Ursae Minoris)",
+    "summary": "Historically associated with constancy, guardianship, endurance, and navigational symbolism."
+  },
+  "Merak": {
+    "normalized_name": "Merak (Beta Ursae Majoris)",
+    "summary": "Often treated as a steady, grounding star with themes of support, endurance, and protective strength.",
+    "confidence": "partial"
+  },
+  "β-Canum Venaticorum": {
+    "normalized_name": "Chara (Beta Canum Venaticorum)",
+    "summary": "Commonly associated with affection, loyalty, harmony, and a fondness for animals or the outdoors."
+  },
+  "Denebola": {
+    "normalized_name": "Denebola (Beta Leonis)",
+    "summary": "Traditionally linked with independence, nonconformity, moral courage, and reversals or sudden changes in status."
+  },
+  "Zavijava": {
+    "normalized_name": "Zavijava (Beta Virginis)",
+    "summary": "Often described as intelligent, literary, and somewhat critical or skeptical, with interest in subtle or hidden matters.",
+    "confidence": "partial"
+  },
+  "Kraz": {
+    "normalized_name": "Kraz (Beta Corvi)",
+    "summary": "Usually associated with sharp judgment, occult interest, and a sometimes difficult or suspicious temperament.",
+    "confidence": "partial"
+  },
+  "Miaplacidus": {
+    "normalized_name": "Miaplacidus (Beta Carinae)",
+    "summary": "Generally linked with calmness, composure, and a navigational or sea-travel theme."
+  },
+  "β-Coronae Borealis": {
+    "normalized_name": "Nusakan (Beta Coronae Borealis)",
+    "summary": "Typically associated with charm, refinement, artistic taste, and relationship themes, though some sources emphasize mixed or dependent dynamics."
+  },
+  "Becrux": {
+    "normalized_name": "Becrux (Beta Crucis)",
+    "summary": "Often read as gentle, spiritual, and sympathetic, with some sacrifice or vulnerability themes."
+  },
+  "β-Librae": {
+    "normalized_name": "Zubeneschamali (Beta Librae)",
+    "summary": "Commonly described as favorable, refined, and intellectually strong, with benefic or protective qualities."
+  },
+  "Chow": {
+    "normalized_name": "unknown",
+    "summary": "healing, wisdom, and regeneration, linked to the mythological figure Asclepius"
+  },
+  "Agena": {
+    "normalized_name": "Agena (Beta Centauri)",
+    "summary": "Usually connected with wisdom, generosity, and philosophical or healing interests, sometimes with a strong, noble tone."
+  },
+
+  "Kornephoros": {
+    "normalized_name": "Kornephoros (Beta Herculis)",
+    "summary": "Generally associated with strength, determination, and presence, with possible stubbornness or rashness."
+  },
+  "Acrab": {
+    "normalized_name": "Acrab",
+    "summary": "A Scorpio/Scorpion star often linked with sharpness, strategy, secrecy, and potentially dangerous or extreme circumstances.",
+    "confidence": "partial"
+  },
+  "Rastaban": {
+    "normalized_name": "Rastaban (Beta Draconis)",
+    "summary": "Traditionally connected with intense curiosity, occult or hidden knowledge, and the need to handle conflict carefully."
+  },
+  "Karnot Mizbeach": {
+    "normalized_name": "unknown",
+    "summary": "The constellation Ara represents the sacred altar of the gods"
+  },
+  "Celbalrai": {
+    "normalized_name": "Celbalrai",
+    "summary": "traditionally linked with themes of a faithful, vigilant nature, teaching ability, and strong connections with animals or guardianship"
+  },
+
+  "Sheliak": {
+    "normalized_name": "Sheliak (Beta Lyrae)",
+    "summary": "Often associated with artistry, music, beauty, and relationship complexity, including instability or disappointment in partnership.",
+    "confidence": "partial"
+  },
+  "Albireo": {
+    "normalized_name": "Albireo",
+    "summary": "Usually described as charming, eloquent, and dual in nature, with themes of choice and divided loyalties."
+  },
+  "Alshain": {
+    "normalized_name": "Alshain (Beta Aquilae)",
+    "summary": "Commonly linked with protection, ambition, freedom, and higher ideals."
+  },
+  "Dabih": {
+    "normalized_name": "Dabih (Beta Capricorni)",
+    "summary": "Often associated with practical success, strategy, and ambition, with some traditional caution about animal danger or harsh outcomes."
+  },
+  "Rotanev": {
+    "normalized_name": "Rotanev (Beta Delphini)",
+    "summary": "Usually interpreted as witty, expressive, adaptable, and suited to performance or imitation.",
+    "confidence": "partial"
+  },
+  "Sadalsuud": {
+    "normalized_name": "Sadalsuud",
+    "summary": "A fortunate Aquarius star commonly associated with success, elevation, and good fortune after difficulty."
+  },
+  "Scheat": {
+    "normalized_name": "Scheat (Beta Pegasi)",
+    "summary": "Traditionally one of the harsher fixed stars, linked with misfortune, confinement, illness, and danger, though modern readings sometimes frame it as extreme mental or spiritual intensity."
+  }
+}
