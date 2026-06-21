@@ -10,6 +10,10 @@
   fill: red;
 }
 
+.dname[data-opposite='true'] {
+  fill: green;
+}
+
 .dline {
   z-index: -4;
 }

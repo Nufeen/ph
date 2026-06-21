@@ -1,5 +1,8 @@
 import {useContext} from 'react'
-import {SettingContext, SettingContextType} from '../../../SettingContext.js'
+import {
+  SettingContext,
+  SettingContextType
+} from '../../../SettingContext.js'
 
 import s from './index.module.css'
 
@@ -25,30 +28,24 @@ export default function Decans72({zero, x0, r, y0, calendarDay}) {
     .map(([key]: any) => pos(key, calendarDay) - sid)
     .map(p => ~~(p / 5))
 
-  const ll = [...Array(72).keys()].map(i => ({
+  const lines = [...Array(72).keys()].map(i => ({
     x1:
       x0 +
       (r + (i % 2 ? 15 : 18)) *
-        sin(((i * 5 + zero + sid + 1) * π - π) / 180),
+        sin(((i * 5 + zero + sid + 1) * π) / 180),
     y1:
       y0 +
       (r + (i % 2 ? 15 : 18)) *
-        cos(((i * 5 + zero + sid + 1) * π - π) / 180),
-    x2:
-      x0 + (r + 14) * sin(((i * 5 + zero + sid + 1) * π - π) / 180),
-    y2:
-      y0 + (r + 14) * cos(((i * 5 + zero + sid + 1) * π - π) / 180),
+        cos(((i * 5 + zero + sid + 1) * π) / 180),
+    x2: x0 + (r + 14) * sin(((i * 5 + zero + sid + 1) * π) / 180),
+    y2: y0 + (r + 14) * cos(((i * 5 + zero + sid + 1) * π) / 180)
+  }))
 
-    x3:
-      x0 -
-      (r + 14) * sin(((i * 5 + zero + sid + 3.5) * π - π) / 180),
-    y3:
-      y0 -
-      (r + 14) * cos(((i * 5 + zero + sid + 3.5) * π - π) / 180),
-    x4:
-      x0 - (r + 0) * sin(((i * 5 + zero + sid + 3.5) * π - π) / 180),
-    y4:
-      y0 - (r + 0) * cos(((i * 5 + zero + sid + 3.5) * π - π) / 180)
+  const marks = [...Array(72).keys()].map(i => ({
+    x1: x0 - (r + 14) * sin(((i * 5 + zero + sid + 3.5) * π) / 180),
+    y1: y0 - (r + 14) * cos(((i * 5 + zero + sid + 3.5) * π) / 180),
+    x2: x0 - (r + 0) * sin(((i * 5 + zero + sid + 3.5) * π) / 180),
+    y2: y0 - (r + 0) * cos(((i * 5 + zero + sid + 3.5) * π) / 180)
   }))
 
   const nn = [...Array(72).keys()].map(i => ({
@@ -66,28 +63,34 @@ export default function Decans72({zero, x0, r, y0, calendarDay}) {
 
   return (
     <>
-      {ll.map((x, i) => (
-        <line
-          className={s.dline}
-          opacity={P.includes(i) ? 0.2 : 0}
-          key={i}
-          x1={x.x3}
-          y1={x.y3}
-          x2={x.x4}
-          y2={x.y4}
-          stroke="red"
-        />
-      ))}
-      {ll.map((x, i) => (
-        <line
-          opacity={0.5}
-          key={i}
-          x1={x.x1}
-          y1={x.y1}
-          x2={x.x2}
-          y2={x.y2}
-          stroke="cyan"
-        />
+      {marks.map(
+        (x, i) =>
+          P.includes(i) && (
+            <line
+              className={s.dline}
+              opacity={0.2}
+              key={i}
+              {...x}
+              stroke="green"
+            />
+          )
+      )}
+
+      {marks.map(
+        (x, i) =>
+          P.includes((i + 36) % 72) && (
+            <line
+              className={s.dline}
+              opacity={0.2}
+              key={i}
+              {...x}
+              stroke="red"
+            />
+          )
+      )}
+
+      {lines.map((x, i) => (
+        <line opacity={0.5} key={i} {...x} stroke="cyan" />
       ))}
 
       {dnames.map(([a, d], i) => (
@@ -95,6 +98,7 @@ export default function Decans72({zero, x0, r, y0, calendarDay}) {
           className={s.dname}
           key={a}
           data-planet={P.includes(i)}
+          data-opposite={P.includes((i + 36) % 72)}
           x={nn[i].x1}
           y={nn[i].y1}
         >
