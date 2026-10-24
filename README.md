@@ -2,9 +2,9 @@
 
 Check the live app at https://nufeen.github.io/ph/
 
-Astro processor working as online website. Main goals: free processor for mac os and mobile phones.
+Astro processor working as online website. 
 
-You can build electron package if needed: `npm run build-electron`
+Goal of the project is to provide free and open sourced working processor for browsers, including mobile.
 
 ## Features
 
@@ -29,31 +29,3 @@ Very basic set still complete enough for mobile usage
 - [country-city-location](https://www.npmjs.com/package/country-city-location) - country and city data
 - [moment-timezone](https://www.npmjs.com/package/moment-timezone) - timezone conversions
 
-## Flags
-
-Hidden (not ready) features enabled via browser console:
-
-| Flag           | Default | Description                      |
-| -------------- | ------- | -------------------------------- |
-| `barbo`        | false   | Shows Barbo chart type           |
-| `zodiacButton` | false   | Shows Tropical/Sidereal selector |
-| `d72`          | false   | Shows 72 decans table            |
-
-### Usage
-
-```javascript
-// Enable barbo chart type
-window.localStorage.barbo = 'true'
-
-// Enable zodiac type selector
-// Logic based on western approach, experimental
-window.localStorage.zodiacButton = 'true'
-
-// Enable 72 decans / quinars table
-window.localStorage.d72 = 'true'
-
-// Disable a flag
-window.localStorage.zodiacButton = 'false'
-```
-
-Refresh the page after changing flags.

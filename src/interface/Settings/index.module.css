@@ -98,6 +98,23 @@
   }
 }
 
+.graphic {
+  grid-area: thirty;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin: 0;
+  padding: 0;
+
+  select {
+    min-height: 25px;
+    background: transparent;
+    border-radius: 6px;
+    padding: 5px 4px;
+    appearance: none;
+  }
+}
+
 .orb {
   h3 {
     margin: 0;

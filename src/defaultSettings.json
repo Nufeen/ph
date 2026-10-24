@@ -55,5 +55,6 @@
     "circle-color": null
   },
   "zodiacType": "Tropical",
-  "chartType": "natal"
+  "chartType": "natal",
+  "graphicType": "transit"
 }

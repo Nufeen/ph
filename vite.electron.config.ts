@@ -1,3 +1,5 @@
+// You can build electron package if needed: `npm run build-electron`
+
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import dsv from '@rollup/plugin-dsv'

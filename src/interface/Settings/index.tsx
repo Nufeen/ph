@@ -1,5 +1,9 @@
 import React, {useContext} from 'react'
-import {SettingContext, SettingContextType} from '../../SettingContext.js'
+import {
+  GraphicChartType,
+  SettingContext,
+  SettingContextType
+} from '../../SettingContext.js'
 import {CelestialContext, CelestialContextType} from '../../CelestialContext.js'
 
 import s from './index.module.css'
@@ -10,6 +14,17 @@ const LS = window.localStorage
 
 const PlanetCheckboxTable = () => {
   const {settings, setSettings} = useContext(SettingContext) as SettingContextType
+
+  const isGraphic = settings.chartType == 'graphic'
+
+  function handleGraphicTypeSelect(e: {target: {value: any}}) {
+    const s = {
+      ...settings,
+      graphicType: e.target.value as GraphicChartType
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
 
   function handlePlanetVisibility(planet: string) {
     const s = {
@@ -229,137 +244,145 @@ const PlanetCheckboxTable = () => {
         </tbody>
       </table>
 
-      <table className={s.other}>
-        <thead className={s.thead}>
-          <tr>
-            <th>Fixed stars</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Chart</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={
-                  settings.objects.celestialPoints?.fixedStars?.chart
-                }
-                onChange={() => handleStarsVisibility('chart')}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>Table</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={
-                  settings.objects.celestialPoints?.fixedStars?.table
-                }
-                onChange={() => handleStarsVisibility('table')}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {!isGraphic && (
+        <table className={s.other}>
+          <thead className={s.thead}>
+            <tr>
+              <th>Fixed stars</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Chart</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={
+                    settings.objects.celestialPoints?.fixedStars?.chart
+                  }
+                  onChange={() => handleStarsVisibility('chart')}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Table</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={
+                    settings.objects.celestialPoints?.fixedStars?.table
+                  }
+                  onChange={() => handleStarsVisibility('table')}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
 
-      <table className={s.elements}>
-        <thead className={s.thead}>
-          <tr>
-            <th>Elements</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Show</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={settings.interface?.elements}
-                onChange={handleElementsVisibility}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {!isGraphic && (
+        <table className={s.elements}>
+          <thead className={s.thead}>
+            <tr>
+              <th>Elements</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Show</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.interface?.elements}
+                  onChange={handleElementsVisibility}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
 
-      <table className={s.thirty}>
-        <thead className={s.thead}>
-          <tr>
-            <th>Other</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Show 30°</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={settings.interface?.thirty}
-                onChange={handleThirtyVisibility}
-              />
-            </td>
-          </tr>
+      {!isGraphic && (
+        <table className={s.thirty}>
+          <thead className={s.thead}>
+            <tr>
+              <th>Other</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Show 30°</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.interface?.thirty}
+                  onChange={handleThirtyVisibility}
+                />
+              </td>
+            </tr>
 
-          <tr>
-            <td>Aspect angles</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={settings.interface?.aspectAngles}
-                onChange={handleAspectAnglesVisibility}
-              />
-            </td>
-          </tr>
+            <tr>
+              <td>Aspect angles</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.interface?.aspectAngles}
+                  onChange={handleAspectAnglesVisibility}
+                />
+              </td>
+            </tr>
 
-          <tr>
-            <td>Planet angles</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={settings.interface?.planetAngles}
-                onChange={handlePlanetAnglesVisibility}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td>Planet angles</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.interface?.planetAngles}
+                  onChange={handlePlanetAnglesVisibility}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
 
-      <table className={s.lots}>
-        <thead className={s.thead}>
-          <tr>
-            <th>
-              Lots (<DayOrNight />)
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Fortune (⊗)</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={settings.objects?.lots?.fortune}
-                onChange={handleFortuneLotVisibility}
-              />
-            </td>
-          </tr>
+      {!isGraphic && (
+        <table className={s.lots}>
+          <thead className={s.thead}>
+            <tr>
+              <th>
+                Lots (<DayOrNight />)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Fortune (⊗)</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.objects?.lots?.fortune}
+                  onChange={handleFortuneLotVisibility}
+                />
+              </td>
+            </tr>
 
-          <tr>
-            <td>Spirit (PS)</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={settings.objects?.lots?.spirit}
-                onChange={handleSpiritLotVisibility}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td>Spirit (PS)</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={settings.objects?.lots?.spirit}
+                  onChange={handleSpiritLotVisibility}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
 
       {false && (
         <div className={s.theme}>
@@ -380,61 +403,79 @@ const PlanetCheckboxTable = () => {
         </div>
       )}
 
-      <div className={s.orb}>
-        <h3 className={s.thead}>Orb for all planets</h3>
+      {!isGraphic && (
+        <div className={s.orb}>
+          <h3 className={s.thead}>Orb for all planets</h3>
 
-        <div className={s.aspectLine}>
-          <input
-            type="range"
-            id="aspectLine"
-            name="aspectLine"
-            min="1"
-            max="10"
-            value={settings.interface.aspectOrb ?? 4}
-            onChange={setOrb}
-          />
-          {settings.interface.aspectOrb}°
+          <div className={s.aspectLine}>
+            <input
+              type="range"
+              id="aspectLine"
+              name="aspectLine"
+              min="1"
+              max="10"
+              value={settings.interface.aspectOrb ?? 4}
+              onChange={setOrb}
+            />
+            {settings.interface.aspectOrb}°
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className={s.houseSelector}>
-        {JSON.parse(window.localStorage.zodiacButton || 'false') && (
+      {isGraphic && (
+        <div className={s.graphic}>
+          <h3 className={s.thead}>Graphic chart</h3>
+
           <select
-            value={settings?.zodiacType ?? 'Tropical'}
-            onChange={e => {
-              const s = {...settings, zodiacType: e.target.value}
-              setSettings(s)
-              LS.setItem('settings', JSON.stringify(s))
-            }}
+            value={settings?.graphicType ?? 'transit'}
+            onChange={handleGraphicTypeSelect}
           >
-            <option value="Tropical">Tropical</option>
-            <option value="Sidereal">Sidereal</option>
+            <option value="transit">Transit</option>
+            <option value="progressed">Progressed</option>
           </select>
-        )}
+        </div>
+      )}
 
-        <select
-          value={settings?.interface?.houseSystem ?? 'Placidus'}
-          onChange={handleHouseSystemSelect}
-        >
-          <option value="placidus">Placidus</option>
-          <option value="koch">Koch</option>
-          <option value="campanus">Campanus</option>
-          <option value="whole-sign">Whole-sign</option>
-          <option value="equal-house">Equal-house</option>
-          <option value="regiomontanus">Regiomontanus</option>
-          <option value="topocentric">Topocentric</option>
-          <option value="moonchart">Moonchart</option>
-        </select>
+      {!isGraphic && (
+        <div className={s.houseSelector}>
+          {JSON.parse(window.localStorage.zodiacButton || 'false') && (
+            <select
+              value={settings?.zodiacType ?? 'Tropical'}
+              onChange={e => {
+                const s = {...settings, zodiacType: e.target.value}
+                setSettings(s)
+                LS.setItem('settings', JSON.stringify(s))
+              }}
+            >
+              <option value="Tropical">Tropical</option>
+              <option value="Sidereal">Sidereal</option>
+            </select>
+          )}
 
-        <select
-          value={settings?.interface?.startFrom ?? 'Aries'}
-          onChange={handleCircleStartSelect}
-        >
-          <option value="Aries">0: Aries</option>
-          <option value="Asc">0: Asc</option>
-          <option value="Moon">0: Moon</option>
-        </select>
-      </div>
+          <select
+            value={settings?.interface?.houseSystem ?? 'Placidus'}
+            onChange={handleHouseSystemSelect}
+          >
+            <option value="placidus">Placidus</option>
+            <option value="koch">Koch</option>
+            <option value="campanus">Campanus</option>
+            <option value="whole-sign">Whole-sign</option>
+            <option value="equal-house">Equal-house</option>
+            <option value="regiomontanus">Regiomontanus</option>
+            <option value="topocentric">Topocentric</option>
+            <option value="moonchart">Moonchart</option>
+          </select>
+
+          <select
+            value={settings?.interface?.startFrom ?? 'Aries'}
+            onChange={handleCircleStartSelect}
+          >
+            <option value="Aries">0: Aries</option>
+            <option value="Asc">0: Asc</option>
+            <option value="Moon">0: Moon</option>
+          </select>
+        </div>
+      )}
     </div>
   )
 }

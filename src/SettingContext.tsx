@@ -1,11 +1,14 @@
 import {createContext} from 'react'
 
+export type GraphicChartType = 'transit' | 'progressed'
+
 interface Settings {
   objects: any
   interface: any
   colors: any
   zodiacType: string
   chartType: string
+  graphicType?: GraphicChartType
 }
 
 export interface SettingContextType {

@@ -1,13 +1,12 @@
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
+import {Fragment, useContext, useMemo} from 'react'
 import {SettingContext, SettingContextType} from '../../SettingContext'
 import {
   CelestialContext,
   CelestialContextType
 } from '../../CelestialContext'
-
-import {useContext} from 'react'
 
 import planets from '../../assets/planets.json'
 import zodiacSigns from '../../assets/zodiac.json'
@@ -19,15 +18,38 @@ const H = 600
 // 1200 is nice for 12 * i math
 const W = 1200
 
-function pos(body: keyof typeof Body, date: Date) {
-  const x = GeoVector(Body[body], date, false)
-  const pos = Ecliptic(x)
-  return ((pos.elon - 0) / 360) * W
+// Consecutive x jump (px) that marks the 360° -> 0° wrap,
+// splitting a planet path in two segments
+const WRAP_GAP = 500
+
+const MS_PER_DAY = 86400000
+const DAYS_PER_YEAR = 365.25
+
+// Progressed axis resolution: curve samples per year of life
+const SAMPLES_PER_YEAR = 12
+
+export type PlanetName = keyof typeof planets
+
+export interface Point {
+  x: number
+  y: number
 }
 
-function getStartDatesOfEveryDayPerYear(year: number) {
+// A curve sample: an ephemeris date and its y position on the axis
+export interface Sample {
+  date: Date
+  y: number
+}
+
+export function pos(body: PlanetName, date: Date): number {
+  const vector = GeoVector(Body[body], date, false)
+  const {elon} = Ecliptic(vector)
+  return (elon / 360) * W
+}
+
+export function getStartDatesOfEveryDayPerYear(year: number): Date[] {
   const dates: Date[] = []
-  let date = new Date(year, 0, 1)
+  const date = new Date(year, 0, 1)
   while (date.getFullYear() === year) {
     dates.push(new Date(date))
     date.setDate(date.getDate() + 1)
@@ -35,19 +57,28 @@ function getStartDatesOfEveryDayPerYear(year: number) {
   return dates
 }
 
-function splitArray(arr: number[][]) {
-  const result: number[][][] = []
-  let temp: number[][] = []
-  for (let i = 0; i < arr.length - 1; i++) {
-    temp.push(arr[i])
-    if (Math.abs(arr[i][0] - arr[i + 1][0]) > 500) {
-      result.push(temp)
-      temp = []
+export function splitArray(points: Point[]): Point[][] {
+  if (points.length === 0) return []
+
+  const groups: Point[][] = []
+  let group: Point[] = []
+  for (let i = 0; i < points.length - 1; i++) {
+    group.push(points[i])
+    if (Math.abs(points[i].x - points[i + 1].x) > WRAP_GAP) {
+      groups.push(group)
+      group = []
     }
   }
-  temp.push(arr[arr.length - 1])
-  result.push(temp)
-  return result
+  group.push(points[points.length - 1])
+  groups.push(group)
+  return groups
+}
+
+export function dayNum(date: Date): number {
+  const startOfYear = new Date(date.getFullYear(), 0, 0)
+  const diff = date.getTime() - startOfYear.getTime()
+  const oneDay = 1000 * 60 * 60 * 24
+  return Math.floor(diff / oneDay)
 }
 
 const months = [
@@ -65,7 +96,7 @@ const months = [
   'December'
 ]
 
-const color = {
+const color: Record<PlanetName, string> = {
   Sun: '#ff0',
   Moon: '#444',
   Venus: 'green',
@@ -78,23 +109,96 @@ const color = {
   Pluto: 'purple'
 }
 
-function dayNum(now: Date) {
-  let startOfYear = new Date(now.getFullYear(), 0, 0)
-  // @ts-expect-error: TypeScript can't infer the type of Date subtraction
-  let diff = now - startOfYear
-  let oneDay = 1000 * 60 * 60 * 24
-  return Math.floor(diff / oneDay)
+interface GridLine {
+  y: number
+  label: string
+  showLabel: boolean
+}
+
+/**
+ * Transit mode: one sample per day of the transit year,
+ * y axis is the day of the year
+ */
+function buildTransitAxis(date: Date) {
+  const dates = getStartDatesOfEveryDayPerYear(date.getFullYear())
+  const year = date.getFullYear()
+
+  return {
+    samples: dates.map(
+      (dt, i): Sample => ({date: dt, y: (i * H) / dates.length})
+    ),
+    grid: months.map(
+      (mo, i): GridLine => ({
+        y: i * (H / 12),
+        label: `${mo} ${year}`,
+        showLabel: true
+      })
+    ),
+    currentY: ((dayNum(date) - 1) / dates.length) * H
+  }
+}
+
+/**
+ * Progressed mode (secondary progressions, 1 day = 1 year):
+ * y axis is the age, from birth to the current age rounded up
+ * to the next birthday. A planet at age A sits at its ephemeris
+ * position A days after birth.
+ */
+function buildProgressedAxis(natal: Date, transit: Date) {
+  const ageYears = Math.abs(
+    (transit.getTime() - natal.getTime()) /
+      (DAYS_PER_YEAR * MS_PER_DAY)
+  )
+  const span = Math.max(1, Math.ceil(ageYears))
+
+  const samples: Sample[] = Array.from(
+    {length: span * SAMPLES_PER_YEAR + 1},
+    (_, i) => {
+      const age = i / SAMPLES_PER_YEAR
+      return {
+        date: new Date(natal.getTime() + age * MS_PER_DAY),
+        y: (age / span) * H
+      }
+    }
+  )
+
+  // Keep the amount of year labels readable
+  const labelStep = Math.max(1, Math.round(span / 12))
+  const grid: GridLine[] = Array.from({length: span + 1}, (_, i) => ({
+    y: (i / span) * H,
+    label: `${natal.getFullYear() + i}`,
+    showLabel: i % labelStep === 0
+  }))
+
+  return {samples, grid, currentY: (ageYears / span) * H}
 }
 
 export default function GraphicChart() {
   const {settings} = useContext(SettingContext) as SettingContextType
-  const {transitData} = useContext(
+  const {transitData, natalData} = useContext(
     CelestialContext
   ) as CelestialContextType
 
-  const year = transitData.date.getFullYear()
+  const isProgressed = (settings.graphicType ?? 'transit') === 'progressed'
 
-  const dates = getStartDatesOfEveryDayPerYear(year)
+  const natal = natalData.date
+  const transit = transitData.date
+
+  const {samples, grid, currentY} = useMemo(
+    () =>
+      isProgressed
+        ? buildProgressedAxis(natal, transit)
+        : buildTransitAxis(transit),
+    [isProgressed, natal, transit]
+  )
+
+  const enabledPlanets = useMemo(
+    () =>
+      (Object.keys(settings.objects.planets) as PlanetName[]).filter(
+        name => settings.objects.planets[name]
+      ),
+    [settings.objects.planets]
+  )
 
   return (
     <div className={s.wrap}>
@@ -106,10 +210,10 @@ export default function GraphicChart() {
       >
         {/* Lets draw some grid */}
         {zodiacSigns.map((sign, index) => (
-          <>
+          <Fragment key={sign}>
             <line
               className={s.signline}
-              key={sign}
+              data-testid="sign-line"
               x1={index * 100}
               y1="0"
               x2={index * 100}
@@ -118,93 +222,100 @@ export default function GraphicChart() {
             <text x={index * 100 + 45} y="-10" opacity=".5">
               {sign}
             </text>
-          </>
+          </Fragment>
         ))}
 
-        {months.map((mo, index) => (
-          <>
+        {grid.map(({y, label, showLabel}) => (
+          <Fragment key={label}>
             <line
               className={s.monthline}
-              key={mo}
+              data-testid="grid-line"
               x1={0}
-              y1={index * (H / 12)}
+              y1={y}
               x2={W}
-              y2={index * (H / 12)}
+              y2={y}
             />
-            <text
-              className={s.month}
-              x={10}
-              y={index * (H / 12) + H / 24 + 5}
-            >
-              {mo} {year}
-            </text>
-          </>
+            {showLabel && (
+              <text
+                className={s.month}
+                data-testid="grid-label"
+                x={10}
+                y={y + H / 24 + 5}
+              >
+                {label}
+              </text>
+            )}
+          </Fragment>
         ))}
 
         {/* Current date line */}
         <line
           className={s.currentdateline}
+          data-testid="current-date-line"
           x1={0}
-          y1={(dayNum(transitData.date) / 365) * H}
+          y1={currentY}
           x2={W}
-          y2={(dayNum(transitData.date) / 365) * H}
+          y2={currentY}
         />
 
         {/* Natal planets */}
-        {Object.keys(settings.objects.planets)
-          .filter(x => settings.objects.planets[x])
-          .map((body, i) => (
-                <NatalLine key={body} body={body} />
-          ))}
+        {enabledPlanets.map(body => (
+          <NatalLine key={body} body={body} />
+        ))}
 
-        {/* Transit planets */}
-        {Object.keys(settings.objects.planets)
-          .filter(x => settings.objects.planets[x])
-          .map((body, index) => (
-              <Lines
-                key={body}
-                body={body}
-                dates={dates}
-              />
-          ))}
+        {/* Transit / progressed planets */}
+        {enabledPlanets.map(body => (
+          <Lines key={body} body={body} samples={samples} />
+        ))}
       </svg>
     </div>
   )
 }
 
-function NatalLine({body}) {
+function NatalLine({body}: {body: PlanetName}) {
   const {natalData} = useContext(
     CelestialContext
   ) as CelestialContextType
   const x = pos(body, natalData.date)
   return (
     <>
-      <line className={s.natalline} x1={x} y1={10} x2={x} y2={H} />
-      <text className={s.natalText} x={x - 4} y={8}>
+      <line
+        className={s.natalline}
+        data-testid="natal-line"
+        x1={x}
+        y1={10}
+        x2={x}
+        y2={H}
+      />
+      <text className={s.natalText} data-testid="natal-label" x={x - 4} y={8}>
         {planets[body]}
       </text>
     </>
   )
 }
 
-function Lines({body, dates}: {body: string; dates: Date[]}) {
-  type Planet = keyof typeof Body
-  const pzz = dates.map(dt => pos(body as Planet, dt))
-  const pairs: number[][] = pzz.map((p, i) => [p, (i * H) / dates.length])
-  const lines = splitArray(pairs)
+function Lines({body, samples}: {body: PlanetName; samples: Sample[]}) {
+  const lines = useMemo(() => {
+    const points: Point[] = samples.map(sample => ({
+      x: pos(body, sample.date),
+      y: sample.y
+    }))
+    return splitArray(points)
+  }, [body, samples])
 
   return (
     <>
       {lines.map((line, index) => (
-        <Path key={index} A={line} color={color[body]} body={body} />
+        <Path key={index} points={line} color={color[body]} body={body} />
       ))}
 
       {lines.map((line, index) => (
         <text
           key={index}
+          data-body={body}
           fontSize={12}
-          x={line[line.length - 1][0]}
-          y={line[line.length - 1][1] + 10}
+          x={line[line.length - 1].x}
+          y={line[line.length - 1].y + 10}
           fill={color[body]}
         >
           {planets[body]}
@@ -214,18 +325,26 @@ function Lines({body, dates}: {body: string; dates: Date[]}) {
   )
 }
 
-function Path(props) {
-  const [head, ...tail] = props.A
+function Path({
+  points,
+  color,
+  body
+}: {
+  points: Point[]
+  color: string
+  body: PlanetName
+}) {
+  const [head, ...tail] = points
 
   const d =
-    `M ${head[0]} ${head[1]} ` +
-    tail.map((x: number[]) => `L ${x[0]}, ${x[1]}`).join(' ')
+    `M ${head.x} ${head.y} ` +
+    tail.map(p => `L ${p.x}, ${p.y}`).join(' ')
 
   return (
     <path
-      data-body={props.body}
+      data-body={body}
       d={d}
-      stroke={props.color}
+      stroke={color}
       fill="transparent"
     />
   )
