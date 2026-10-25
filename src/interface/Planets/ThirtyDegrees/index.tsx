@@ -59,7 +59,8 @@ export default function ThirtyDegrees() {
           {(Object.values(transitHoroscope.CelestialBodies) as CelestialBody[])
             .filter(
               (body: CelestialBody) =>
-                settings.objects.planets[body.label]
+                (settings.objects.transitPlanets ??
+                  settings.objects.planets)[body.label]
             )
             .map((body: CelestialBody, i) => (
               <div
