@@ -126,37 +126,50 @@ function App() {
   /**
    * Prepare horoscopes context for all types
    */
-  const horoscope = getHoroscope(
-    natalData.date,
-    latlng.natal.lat,
-    latlng.natal.lng,
-    settings?.interface?.houseSystem
+  const horoscope = useMemo(
+    () =>
+      getHoroscope(
+        natalData.date,
+        latlng.natal.lat,
+        latlng.natal.lng,
+        settings?.interface?.houseSystem
+      ),
+    [natalData.date, latlng.natal, settings?.interface?.houseSystem]
   )
 
-  const transitHoroscope = getHoroscope(
-    transitData.date,
-    latlng.transit.lat,
-    latlng.transit.lng,
-    settings?.interface?.houseSystem
+  const transitHoroscope = useMemo(
+    () =>
+      getHoroscope(
+        transitData.date,
+        latlng.transit.lat,
+        latlng.transit.lng,
+        settings?.interface?.houseSystem
+      ),
+    [transitData.date, latlng.transit, settings?.interface?.houseSystem]
   )
 
-  function calculateProgressedDate(dateA, dateB) {
+  /**
+   * Secondary progressions: 1 day = 1 year
+   */
+  const progressedDate = useMemo(() => {
     const timestamp =
-      dateA.getTime() + Math.abs((dateA - dateB) / 365.25)
+      natalData.date.getTime() +
+      Math.abs(
+        (natalData.date.getTime() - transitData.date.getTime()) / 365.25
+      )
 
     return new Date(timestamp)
-  }
+  }, [natalData.date, transitData.date])
 
-  const progressedDate = calculateProgressedDate(
-    natalData.date,
-    transitData.date
-  )
-
-  const progressedHoroscope = getHoroscope(
-    progressedDate,
-    latlng.transit.lat,
-    latlng.transit.lng,
-    settings?.interface?.houseSystem
+  const progressedHoroscope = useMemo(
+    () =>
+      getHoroscope(
+        progressedDate,
+        latlng.transit.lat,
+        latlng.transit.lng,
+        settings?.interface?.houseSystem
+      ),
+    [progressedDate, latlng.transit, settings?.interface?.houseSystem]
   )
 
   /**
@@ -192,9 +205,53 @@ function App() {
     LS.setItem('settings', JSON.stringify(s))
   }
 
-  const enabledPlanetsList = Object.entries(settings.objects.planets)
-    .filter(([, v]) => !!v)
-    .map(([k]) => k) as (keyof typeof Body)[]
+  const enabledPlanetsList = useMemo(
+    () =>
+      Object.entries(settings.objects.planets)
+        .filter(([, v]) => !!v)
+        .map(([k]) => k) as (keyof typeof Body)[],
+    [settings.objects.planets]
+  )
+
+  const enabledTransitPlanetsList = useMemo(
+    () =>
+      Object.entries(
+        settings.objects.transitPlanets ?? settings.objects.planets
+      )
+        .filter(([, v]) => !!v)
+        .map(([k]) => k) as (keyof typeof Body)[],
+    [settings.objects.transitPlanets, settings.objects.planets]
+  )
+
+  const stars = useMemo(
+    () => connectedStars(natalData.date, natalData.date, enabledPlanetsList),
+    [natalData.date, enabledPlanetsList]
+  )
+
+  const transitStars = useMemo(
+    () =>
+      connectedStars(
+        transitData.date,
+        natalData.date,
+        enabledTransitPlanetsList
+      ),
+    [transitData.date, natalData.date, enabledTransitPlanetsList]
+  )
+
+  const progressedStars = useMemo(
+    () =>
+      connectedStars(
+        progressedDate,
+        natalData.date,
+        enabledTransitPlanetsList
+      ),
+    [progressedDate, natalData.date, enabledTransitPlanetsList]
+  )
+
+  const fictivePointsStars = useMemo(
+    () => starsOnFictivePoints(natalData.date, horoscope),
+    [natalData.date, horoscope]
+  )
 
   return (
     <SettingContext.Provider value={settingsContextValue}>
@@ -203,25 +260,10 @@ function App() {
           horoscope,
           transitHoroscope,
           progressedHoroscope,
-          stars: connectedStars(
-            natalData.date,
-            natalData.date,
-            enabledPlanetsList
-          ),
-          transitStars: connectedStars(
-            transitData.date,
-            natalData.date,
-            enabledPlanetsList
-          ),
-          progressedStars: connectedStars(
-            progressedDate,
-            natalData.date,
-            enabledPlanetsList
-          ),
-          fictivePointsStars: starsOnFictivePoints(
-            natalData.date,
-            horoscope
-          ),
+          stars,
+          transitStars,
+          progressedStars,
+          fictivePointsStars,
           natalData,
           transitData,
           chart: latlng

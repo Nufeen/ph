@@ -2,6 +2,8 @@ import {createContext} from 'react'
 
 export type GraphicChartType = 'transit' | 'progressed'
 
+export type GraphicYearsSpan = 1 | 10 | 30 | 100
+
 interface Settings {
   objects: any
   interface: any
@@ -9,6 +11,8 @@ interface Settings {
   zodiacType: string
   chartType: string
   graphicType?: GraphicChartType
+  graphicYears?: GraphicYearsSpan
+  graphicStartYear?: number
 }
 
 export interface SettingContextType {

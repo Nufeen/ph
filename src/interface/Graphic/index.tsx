@@ -1,12 +1,14 @@
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
-import {Fragment, useContext, useMemo} from 'react'
+import {Fragment, memo, useContext, useMemo} from 'react'
 import {SettingContext, SettingContextType} from '../../SettingContext'
 import {
   CelestialContext,
   CelestialContextType
 } from '../../CelestialContext'
+
+import {clampStartYear, defaultStartYear} from '../../compute/graphic'
 
 import planets from '../../assets/planets.json'
 import zodiacSigns from '../../assets/zodiac.json'
@@ -25,8 +27,31 @@ const WRAP_GAP = 500
 const MS_PER_DAY = 86400000
 const DAYS_PER_YEAR = 365.25
 
-// Progressed axis resolution: curve samples per year of life
-const SAMPLES_PER_YEAR = 12
+// 1 year axis resolution: weekly samples
+const AXIS_SAMPLES_PER_YEAR = 52
+
+// Multi-year spans use adaptive resolution: keep the total
+// amount of curve samples per planet around MAX_SAMPLES
+const MAX_SAMPLES = 60
+
+function samplesPerYear(span: number): number {
+  return Math.max(1, Math.round(MAX_SAMPLES / span))
+}
+
+const posCache = new Map<string, number>()
+
+export function pos(body: PlanetName, date: Date): number {
+  const key = `${body}:${date.getTime()}`
+  const cached = posCache.get(key)
+  if (cached !== undefined) return cached
+
+  const vector = GeoVector(Body[body], date, false)
+  const {elon} = Ecliptic(vector)
+  const x = (elon / 360) * W
+
+  posCache.set(key, x)
+  return x
+}
 
 export type PlanetName = keyof typeof planets
 
@@ -39,12 +64,6 @@ export interface Point {
 export interface Sample {
   date: Date
   y: number
-}
-
-export function pos(body: PlanetName, date: Date): number {
-  const vector = GeoVector(Body[body], date, false)
-  const {elon} = Ecliptic(vector)
-  return (elon / 360) * W
 }
 
 export function getStartDatesOfEveryDayPerYear(year: number): Date[] {
@@ -116,16 +135,22 @@ interface GridLine {
 }
 
 /**
- * Transit mode: one sample per day of the transit year,
+ * Transit mode: one sample per week of the transit year,
  * y axis is the day of the year
  */
 function buildTransitAxis(date: Date) {
-  const dates = getStartDatesOfEveryDayPerYear(date.getFullYear())
   const year = date.getFullYear()
+  const daysInYear = getStartDatesOfEveryDayPerYear(year).length
+  const start = new Date(year, 0, 1).getTime()
+  const yearMs = daysInYear * MS_PER_DAY
 
   return {
-    samples: dates.map(
-      (dt, i): Sample => ({date: dt, y: (i * H) / dates.length})
+    samples: Array.from(
+      {length: AXIS_SAMPLES_PER_YEAR + 1},
+      (_, i): Sample => ({
+        date: new Date(start + (i / AXIS_SAMPLES_PER_YEAR) * yearMs),
+        y: (i / AXIS_SAMPLES_PER_YEAR) * H
+      })
     ),
     grid: months.map(
       (mo, i): GridLine => ({
@@ -134,43 +159,50 @@ function buildTransitAxis(date: Date) {
         showLabel: true
       })
     ),
-    currentY: ((dayNum(date) - 1) / dates.length) * H
+    currentY: ((dayNum(date) - 1) / daysInYear) * H
   }
 }
 
 /**
  * Progressed mode (secondary progressions, 1 day = 1 year):
- * y axis is the age, from birth to the current age rounded up
- * to the next birthday. A planet at age A sits at its ephemeris
- * position A days after birth.
+ * every sample date of the axis is mapped to its progressed
+ * date -- natal + elapsed time / 365.25
  */
-function buildProgressedAxis(natal: Date, transit: Date) {
-  const ageYears = Math.abs(
-    (transit.getTime() - natal.getTime()) /
-      (DAYS_PER_YEAR * MS_PER_DAY)
+function progressedDateOf(date: Date, natal: Date): Date {
+  return new Date(
+    natal.getTime() + (date.getTime() - natal.getTime()) / DAYS_PER_YEAR
   )
-  const span = Math.max(1, Math.ceil(ageYears))
+}
 
-  const samples: Sample[] = Array.from(
-    {length: span * SAMPLES_PER_YEAR + 1},
-    (_, i) => {
-      const age = i / SAMPLES_PER_YEAR
-      return {
-        date: new Date(natal.getTime() + age * MS_PER_DAY),
-        y: (age / span) * H
-      }
-    }
-  )
+/**
+ * Multi-year spans (10/30/100): the y axis is the years range
+ * from startYear to startYear + span. Resolution adapts to the
+ * span so the total sample count stays around MAX_SAMPLES
+ */
+function buildMultiYearAxis(startYear: number, span: number, transit: Date) {
+  // Keep the axis inside the fast ephemeris range
+  const clampedStartYear = clampStartYear(startYear, span)
+  const spy = samplesPerYear(span)
+  const count = span * spy
+  const start = new Date(clampedStartYear, 0, 1).getTime()
+  const yearMs = DAYS_PER_YEAR * MS_PER_DAY
+
+  const samples: Sample[] = Array.from({length: count + 1}, (_, i) => ({
+    date: new Date(start + (i / spy) * yearMs),
+    y: (i / count) * H
+  }))
 
   // Keep the amount of year labels readable
   const labelStep = Math.max(1, Math.round(span / 12))
   const grid: GridLine[] = Array.from({length: span + 1}, (_, i) => ({
     y: (i / span) * H,
-    label: `${natal.getFullYear() + i}`,
+    label: `${clampedStartYear + i}`,
     showLabel: i % labelStep === 0
   }))
 
-  return {samples, grid, currentY: (ageYears / span) * H}
+  const yearsSinceStart = (transit.getTime() - start) / yearMs
+
+  return {samples, grid, currentY: (yearsSinceStart / span) * H}
 }
 
 export default function GraphicChart() {
@@ -180,24 +212,49 @@ export default function GraphicChart() {
   ) as CelestialContextType
 
   const isProgressed = (settings.graphicType ?? 'transit') === 'progressed'
+  const graphicYears = settings.graphicYears ?? 1
+  const startYear =
+    settings.graphicStartYear ??
+    defaultStartYear(graphicYears, natalData.date, transitData.date)
 
-  const natal = natalData.date
-  const transit = transitData.date
+  const {samples, grid, currentY} = useMemo(() => {
+    // 1 year span keeps the month axis, other spans use years
+    const axis =
+      graphicYears > 1
+        ? buildMultiYearAxis(startYear, graphicYears, transitData.date)
+        : buildTransitAxis(transitData.date)
 
-  const {samples, grid, currentY} = useMemo(
-    () =>
-      isProgressed
-        ? buildProgressedAxis(natal, transit)
-        : buildTransitAxis(transit),
-    [isProgressed, natal, transit]
-  )
+    if (!isProgressed) return axis
 
-  const enabledPlanets = useMemo(
+    return {
+      ...axis,
+      samples: axis.samples.map(({date, y}): Sample => ({
+        date: progressedDateOf(date, natalData.date),
+        y
+      }))
+    }
+  }, [isProgressed, graphicYears, startYear, natalData, transitData])
+
+  const natalPlanets = useMemo(
     () =>
       (Object.keys(settings.objects.planets) as PlanetName[]).filter(
         name => settings.objects.planets[name]
       ),
     [settings.objects.planets]
+  )
+
+  const transitPlanets = useMemo(
+    () =>
+      (
+        Object.keys(
+          settings.objects.transitPlanets ?? settings.objects.planets
+        ) as PlanetName[]
+      ).filter(
+        name =>
+          (settings.objects.transitPlanets ??
+            settings.objects.planets)[name]
+      ),
+    [settings.objects.transitPlanets, settings.objects.planets]
   )
 
   return (
@@ -259,12 +316,12 @@ export default function GraphicChart() {
         />
 
         {/* Natal planets */}
-        {enabledPlanets.map(body => (
+        {natalPlanets.map(body => (
           <NatalLine key={body} body={body} />
         ))}
 
         {/* Transit / progressed planets */}
-        {enabledPlanets.map(body => (
+        {transitPlanets.map(body => (
           <Lines key={body} body={body} samples={samples} />
         ))}
       </svg>
@@ -294,7 +351,13 @@ function NatalLine({body}: {body: PlanetName}) {
   )
 }
 
-function Lines({body, samples}: {body: PlanetName; samples: Sample[]}) {
+const Lines = memo(function Lines({
+  body,
+  samples
+}: {
+  body: PlanetName
+  samples: Sample[]
+}) {
   const lines = useMemo(() => {
     const points: Point[] = samples.map(sample => ({
       x: pos(body, sample.date),
@@ -323,7 +386,7 @@ function Lines({body, samples}: {body: PlanetName; samples: Sample[]}) {
       ))}
     </>
   )
-}
+})
 
 function Path({
   points,

@@ -17,7 +17,10 @@ interface CelestialContextType {
 
 interface SettingContextType {
   settings: {
-    objects: {planets: Record<string | number, boolean>}
+    objects: {
+      planets: Record<string | number, boolean>
+      transitPlanets?: Record<string | number, boolean>
+    }
     chartType: string
     interface: {
       aspectOrb: number
@@ -58,22 +61,25 @@ export default function Aspects({
 
   const threshold = settings.interface.aspectOrb ?? 4
 
+  const transitVisible = (planet: {label: string | number}) =>
+    (
+      settings?.objects?.transitPlanets ?? settings?.objects?.planets
+    )[planet?.label]
+
   const [natal, transit, progressed] = [
-    horoscope,
-    transitHoroscope,
-    progressedHoroscope
+    horoscope.CelestialBodies.all.filter(
+      (planet: {label: string | number}) =>
+        settings?.objects?.planets[planet?.label]
+    ),
+    transitHoroscope.CelestialBodies.all.filter(transitVisible),
+    progressedHoroscope.CelestialBodies.all.filter(transitVisible)
   ].map(x =>
-    x.CelestialBodies.all
-      .filter(
-        (planet: {label: string | number}) =>
-          settings?.objects?.planets[planet?.label]
-      )
-      .map(
-        (z: {
-          label: string
-          ChartPosition: {Ecliptic: {DecimalDegrees: number}}
-        }) => [z.label, z.ChartPosition.Ecliptic.DecimalDegrees]
-      )
+    x.map(
+      (z: {
+        label: string
+        ChartPosition: {Ecliptic: {DecimalDegrees: number}}
+      }) => [z.label, z.ChartPosition.Ecliptic.DecimalDegrees]
+    )
   )
 
   const M = {

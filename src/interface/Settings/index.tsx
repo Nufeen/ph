@@ -1,6 +1,7 @@
 import React, {useContext} from 'react'
 import {
   GraphicChartType,
+  GraphicYearsSpan,
   SettingContext,
   SettingContextType
 } from '../../SettingContext.js'
@@ -9,11 +10,20 @@ import {CelestialContext, CelestialContextType} from '../../CelestialContext.js'
 import s from './index.module.css'
 
 import planets from '../../assets/planets.json'
+import {
+  clampStartYear,
+  defaultStartYear,
+  MAX_START_YEAR,
+  MIN_START_YEAR
+} from '../../compute/graphic'
 
 const LS = window.localStorage
 
 const PlanetCheckboxTable = () => {
   const {settings, setSettings} = useContext(SettingContext) as SettingContextType
+  const {natalData, transitData} = useContext(
+    CelestialContext
+  ) as CelestialContextType
 
   const isGraphic = settings.chartType == 'graphic'
 
@@ -26,6 +36,42 @@ const PlanetCheckboxTable = () => {
     LS.setItem('settings', JSON.stringify(s))
   }
 
+  function handleGraphicYearsSelect(e: {target: {value: any}}) {
+    const s = {
+      ...settings,
+      graphicYears: +e.target.value as GraphicYearsSpan
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleStartYearChange(e: {target: {value: string}}) {
+    const s = {
+      ...settings,
+      // an empty input falls back to the span default
+      graphicStartYear: e.target.value === '' ? undefined : +e.target.value
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleStartYearBlur() {
+    if (settings?.graphicStartYear === undefined) return
+
+    const clamped = clampStartYear(
+      settings.graphicStartYear,
+      settings?.graphicYears ?? 1
+    )
+    if (clamped !== settings.graphicStartYear) {
+      const s = {
+        ...settings,
+        graphicStartYear: clamped
+      }
+      setSettings(s)
+      LS.setItem('settings', JSON.stringify(s))
+    }
+  }
+
   function handlePlanetVisibility(planet: string) {
     const s = {
       ...settings,
@@ -34,6 +80,25 @@ const PlanetCheckboxTable = () => {
         planets: {
           ...settings.objects.planets,
           [planet]: !settings.objects.planets[planet]
+        }
+      }
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleTransitPlanetVisibility(planet: string) {
+    const s = {
+      ...settings,
+      objects: {
+        ...settings.objects,
+        transitPlanets: {
+          ...(settings.objects.transitPlanets || {}),
+          // falls back to the natal visibility when unset
+          [planet]: !(
+            settings.objects.transitPlanets?.[planet] ??
+            settings.objects.planets[planet]
+          )
         }
       }
     }
@@ -202,7 +267,8 @@ const PlanetCheckboxTable = () => {
         <thead className={s.thead}>
           <tr>
             <th></th>
-            <th>On</th>
+            <th>Natal</th>
+            <th>Transit</th>
           </tr>
         </thead>
         <tbody>
@@ -214,6 +280,16 @@ const PlanetCheckboxTable = () => {
                   type="checkbox"
                   checked={settings.objects.planets[planet]}
                   onChange={() => handlePlanetVisibility(planet)}
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={
+                    settings.objects.transitPlanets?.[planet] ??
+                    settings.objects.planets[planet]
+                  }
+                  onChange={() => handleTransitPlanetVisibility(planet)}
                 />
               </td>
             </tr>
@@ -433,6 +509,36 @@ const PlanetCheckboxTable = () => {
             <option value="transit">Transit</option>
             <option value="progressed">Progressed</option>
           </select>
+
+          <select
+            value={settings?.graphicYears ?? 1}
+            onChange={handleGraphicYearsSelect}
+          >
+            <option value={1}>1 year</option>
+            <option value={10}>10 years</option>
+            <option value={30}>30 years</option>
+            <option value={100}>100 years</option>
+          </select>
+
+          <div>
+            <h3 className={s.thead}>Start year</h3>
+
+            <input
+              type="number"
+              min={MIN_START_YEAR}
+              max={MAX_START_YEAR}
+              value={
+                settings?.graphicStartYear ??
+                defaultStartYear(
+                  settings?.graphicYears ?? 1,
+                  natalData.date,
+                  transitData.date
+                )
+              }
+              onChange={handleStartYearChange}
+              onBlur={handleStartYearBlur}
+            />
+          </div>
         </div>
       )}
 

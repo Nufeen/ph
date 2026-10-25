@@ -12,6 +12,18 @@
       "Neptune": true,
       "Uranus": true
     },
+    "transitPlanets": {
+      "Saturn": true,
+      "Jupiter": true,
+      "Mars": true,
+      "Sun": true,
+      "Venus": true,
+      "Mercury": true,
+      "Moon": true,
+      "Pluto": true,
+      "Neptune": true,
+      "Uranus": true
+    },
     "celestialPoints": {
       "lilith": true,
       "northnode": true,
@@ -56,5 +68,6 @@
   },
   "zodiacType": "Tropical",
   "chartType": "natal",
-  "graphicType": "transit"
+  "graphicType": "transit",
+  "graphicYears": 1
 }

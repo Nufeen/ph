@@ -3,7 +3,7 @@
   height: auto;
 
   display: grid;
-  grid-template-columns: 60px 1fr 1fr;
+  grid-template-columns: 80px 1fr 1fr;
   grid-template-areas:
     'planetes fictive thirty'
     'planetes lots house'
@@ -113,6 +113,10 @@
     padding: 5px 4px;
     appearance: none;
   }
+}
+
+.graphic > * {
+  margin-top: 0.5em;
 }
 
 .orb {

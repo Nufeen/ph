@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import {render, screen, fireEvent, cleanup} from '@testing-library/react'
+import {render, screen, fireEvent, cleanup, within} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, test} from 'vitest'
 import {useState} from 'react'
 import {CelestialContext} from '../../../src/CelestialContext'
@@ -43,7 +43,9 @@ const celestialMock = {
     CelestialBodies: {
       sun: {ChartPosition: {Ecliptic: {DecimalDegrees: 10}}}
     }
-  }
+  },
+  natalData: {date: new Date(1999, 5, 15)},
+  transitData: {date: new Date(2024, 6, 1, 12)}
 }
 
 const baseSettings = {
@@ -64,7 +66,7 @@ const baseSettings = {
   chartType: 'natal'
 }
 
-const Harness = ({initial}: {initial: typeof baseSettings}) => {
+const Harness = ({initial}: {initial: any}) => {
   const [settings, setSettings] = useState(initial)
   return (
     <SettingContext.Provider value={{settings, setSettings}}>
@@ -77,6 +79,13 @@ const Harness = ({initial}: {initial: typeof baseSettings}) => {
 
 const renderSettings = (chartType = 'natal') =>
   render(<Harness initial={{...baseSettings, chartType}} />)
+
+const graphicSelects = () =>
+  Array.from(
+    screen
+      .getByText('Graphic chart')
+      .closest('div')!.querySelectorAll('select')
+  ) as HTMLSelectElement[]
 
 beforeEach(() => {
   store.clear()
@@ -121,30 +130,180 @@ describe('Settings panel', () => {
     test('shows a graphic type selector with transit and progressed options', () => {
       renderSettings('graphic')
       expect(screen.getByText('Graphic chart')).toBeTruthy()
-      expect(screen.getByText('Transit')).toBeTruthy()
-      expect(screen.getByText('Progressed')).toBeTruthy()
+      const options = Array.from(graphicSelects()[0].options).map(
+        o => o.textContent
+      )
+      expect(options).toEqual(['Transit', 'Progressed'])
     })
 
     test('defaults to transit when graphicType is not set', () => {
       const settings = {...baseSettings, chartType: 'graphic'}
       delete (settings as any).graphicType
       render(<Harness initial={settings} />)
-      expect((screen.getByRole('combobox') as HTMLSelectElement).value).toBe(
-        'transit'
-      )
+      expect(graphicSelects()[0].value).toBe('transit')
     })
 
     test('switching to progressed updates the selector and persists it', () => {
       renderSettings('graphic')
-      fireEvent.change(screen.getByRole('combobox'), {
+      fireEvent.change(graphicSelects()[0], {
         target: {value: 'progressed'}
       })
-      expect((screen.getByRole('combobox') as HTMLSelectElement).value).toBe(
-        'progressed'
-      )
+      expect(graphicSelects()[0].value).toBe('progressed')
 
       const stored = JSON.parse(store.get('settings') as string)
       expect(stored.graphicType).toBe('progressed')
+    })
+  })
+
+  describe('graphic years span', () => {
+    test('shows a years selector defaulting to 1 year', () => {
+      renderSettings('graphic')
+      const years = graphicSelects()[1]
+      expect(years.value).toBe('1')
+      const options = Array.from(years.options).map(o => o.textContent)
+      expect(options).toEqual(['1 year', '10 years', '30 years', '100 years'])
+    })
+
+    test('defaults to 1 year when graphicYears is not set', () => {
+      const settings = {...baseSettings, chartType: 'graphic'}
+      delete (settings as any).graphicYears
+      render(<Harness initial={settings} />)
+      expect(graphicSelects()[1].value).toBe('1')
+    })
+
+    test('switching the span updates the selector and persists it', () => {
+      renderSettings('graphic')
+      fireEvent.change(graphicSelects()[1], {
+        target: {value: '30'}
+      })
+      expect(graphicSelects()[1].value).toBe('30')
+
+      const stored = JSON.parse(store.get('settings') as string)
+      expect(stored.graphicYears).toBe(30)
+    })
+
+    test('does not show the years selector outside graphic mode', () => {
+      renderSettings('natal')
+      expect(screen.queryByText('100 years')).toBeNull()
+    })
+  })
+
+  describe('graphic start year', () => {
+    const startYear = () => screen.getByRole('spinbutton') as HTMLInputElement
+
+    const renderGraphic = (overrides = {}) =>
+      render(
+        <Harness
+          initial={{...baseSettings, chartType: 'graphic', ...overrides}}
+        />
+      )
+
+    test('defaults to the current year for 1 year span', () => {
+      renderGraphic()
+      expect(startYear().value).toBe('2024')
+    })
+
+    test('defaults to the decade for 10 years span', () => {
+      renderGraphic({graphicYears: 10})
+      expect(startYear().value).toBe('2020')
+    })
+
+    test('defaults to the birth year for 30 years span', () => {
+      renderGraphic({graphicYears: 30})
+      expect(startYear().value).toBe('1999')
+    })
+
+    test('defaults to the century for 100 years span', () => {
+      renderGraphic({graphicYears: 100})
+      expect(startYear().value).toBe('2000')
+    })
+
+    test('changing the start year persists it', () => {
+      renderGraphic()
+      fireEvent.change(startYear(), {target: {value: '2015'}})
+      expect(startYear().value).toBe('2015')
+
+      const stored = JSON.parse(store.get('settings') as string)
+      expect(stored.graphicStartYear).toBe(2015)
+    })
+
+    test('clamps an out of range start year on blur', () => {
+      renderGraphic({graphicStartYear: 20201})
+      fireEvent.blur(startYear())
+      expect(startYear().value).toBe('2999')
+
+      const stored = JSON.parse(store.get('settings') as string)
+      expect(stored.graphicStartYear).toBe(2999)
+    })
+
+    test('clearing the input falls back to the span default', () => {
+      renderGraphic({graphicStartYear: 2015})
+      fireEvent.change(startYear(), {target: {value: ''}})
+
+      expect(startYear().value).toBe('2024')
+      expect(JSON.parse(store.get('settings') as string).graphicStartYear).toBeUndefined()
+    })
+
+    test('does not show the start year outside graphic mode', () => {
+      renderSettings('natal')
+      expect(screen.queryByRole('spinbutton')).toBeNull()
+    })
+  })
+
+  describe('planet visibility', () => {
+    const sunRow = () => screen.getByText('☉').closest('tr')!
+
+    test('renders natal and transit checkboxes for every planet', () => {
+      renderSettings('natal')
+      const moonRow = screen.getByText(/☽/).closest('tr')!
+      expect(within(moonRow).getAllByRole('checkbox')).toHaveLength(2)
+      expect(screen.getByText('Natal')).toBeTruthy()
+      expect(screen.getByText('Transit')).toBeTruthy()
+    })
+
+    test('transit checkbox defaults to the natal visibility', () => {
+      render(
+        <Harness
+          initial={{
+            ...baseSettings,
+            objects: {...baseSettings.objects, planets: {Sun: true}}
+          }}
+        />
+      )
+      const [natal, transit] = within(sunRow()).getAllByRole(
+        'checkbox'
+      ) as HTMLInputElement[]
+      expect(natal.checked).toBe(true)
+      expect(transit.checked).toBe(true)
+    })
+
+    test('toggling the transit checkbox persists it without touching natal', () => {
+      renderSettings('graphic')
+      fireEvent.click(within(sunRow()).getAllByRole('checkbox')[1])
+
+      const stored = JSON.parse(store.get('settings') as string)
+      expect(stored.objects.transitPlanets.Sun).toBe(true)
+      expect(stored.objects.planets.Sun).toBeUndefined()
+    })
+
+    test('toggling the natal checkbox persists it without touching transit', () => {
+      render(
+        <Harness
+          initial={{
+            ...baseSettings,
+            objects: {
+              ...baseSettings.objects,
+              planets: {Sun: true},
+              transitPlanets: {Sun: true}
+            }
+          }}
+        />
+      )
+      fireEvent.click(within(sunRow()).getAllByRole('checkbox')[0])
+
+      const stored = JSON.parse(store.get('settings') as string)
+      expect(stored.objects.planets.Sun).toBe(false)
+      expect(stored.objects.transitPlanets.Sun).toBe(true)
     })
   })
 })

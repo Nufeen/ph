@@ -27,7 +27,11 @@ export default function TransitPlanets({zero, x0, y0}) {
       ? progressedHoroscope
       : transitHoroscope
   ).CelestialBodies.all
-    .filter(planet => settings?.objects?.planets[planet?.label])
+    .filter(
+      planet =>
+        (settings?.objects?.transitPlanets ??
+          settings?.objects?.planets)[planet?.label]
+    )
     .map(planet => ({
       planet,
       name: planet.label,

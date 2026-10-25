@@ -30,14 +30,22 @@ const planetsOff = {
 
 const makeSettings = (
   planetsEnabled: Record<string, boolean> = {},
-  graphicType = 'transit'
+  graphicType = 'transit',
+  graphicYears = 1,
+  graphicStartYear?: number,
+  transitPlanets?: Record<string, boolean>
 ) => ({
-  objects: {planets: {...planetsOff, ...planetsEnabled}},
+  objects: {
+    planets: {...planetsOff, ...planetsEnabled},
+    ...(transitPlanets ? {transitPlanets} : {})
+  },
   interface: {},
   colors: {},
   zodiacType: 'Tropical',
   chartType: 'transit',
-  graphicType
+  graphicType,
+  graphicYears,
+  graphicStartYear
 })
 
 const makeCelestial = (transitDate: Date, natalDate: Date) => ({
@@ -50,18 +58,32 @@ interface RenderChartProps {
   transitDate?: Date
   natalDate?: Date
   planetsEnabled?: Record<string, boolean>
+  transitPlanets?: Record<string, boolean>
   graphicType?: 'transit' | 'progressed'
+  graphicYears?: number
+  graphicStartYear?: number
 }
 
 const renderChart = ({
   transitDate = new Date(2024, 6, 1, 12),
   natalDate = new Date(2024, 0, 15),
   planetsEnabled = {Sun: true},
-  graphicType = 'transit'
+  transitPlanets,
+  graphicType = 'transit',
+  graphicYears = 1,
+  graphicStartYear
 }: RenderChartProps = {}) =>
   render(
     <SettingContext.Provider
-      value={{settings: makeSettings(planetsEnabled, graphicType)} as any}
+      value={{
+        settings: makeSettings(
+          planetsEnabled,
+          graphicType,
+          graphicYears,
+          graphicStartYear,
+          transitPlanets
+        )
+      } as any}
     >
       <CelestialContext.Provider
         value={makeCelestial(transitDate, natalDate) as any}
@@ -270,90 +292,72 @@ describe('GraphicChart (transit)', () => {
       container.querySelectorAll('[data-testid="natal-line"]')
     ).toHaveLength(0)
   })
+
+  test('separates natal and transit visibility', () => {
+    const {container} = renderChart({
+      planetsEnabled: {Sun: true, Mars: true},
+      transitPlanets: {Sun: false, Mars: true}
+    })
+    // both planets are natal enabled
+    expect(
+      container.querySelectorAll('[data-testid="natal-line"]')
+    ).toHaveLength(2)
+    // curves only for the transit enabled planet (Mars)
+    expect(container.querySelector('path[data-body="Mars"]')).not.toBeNull()
+    expect(container.querySelector('path[data-body="Sun"]')).toBeNull()
+  })
 })
 
 describe('GraphicChart (progressed)', () => {
-  // Born 2000-01-01, transit date 2024-06-01 12:00
-  // -> age is 24.416... years, axis spans 25 years (to the next birthday)
-  const natalDate = new Date(2000, 0, 1)
-  const transitDate = new Date(2024, 5, 1, 12)
-  const age =
-    (transitDate.getTime() - natalDate.getTime()) /
-    (365.25 * MS_PER_DAY)
-  const span = Math.ceil(age)
+  const natalDate = new Date(2024, 0, 15)
 
   const renderProgressed = (props = {}) =>
-    renderChart({
-      transitDate,
-      natalDate,
-      graphicType: 'progressed',
-      ...props
-    })
+    renderChart({natalDate, graphicType: 'progressed', ...props})
 
-  test('draws a year grid from birth to the next birthday', () => {
+  test('shows the month grid of the current year', () => {
     const {container} = renderProgressed()
     expect(
       container.querySelectorAll('[data-testid="grid-line"]')
-    ).toHaveLength(span + 1)
+    ).toHaveLength(12)
 
     const labels = Array.from(
       container.querySelectorAll('[data-testid="grid-label"]')
     ).map(t => t.textContent)
-    expect(labels).toContain('2000')
-    expect(labels).toContain('2024')
-    expect(labels).toHaveLength(13) // every 2nd year
+    expect(labels[0]).toBe('January 2024')
+    expect(labels).toHaveLength(12)
   })
 
-  test('does not draw month labels', () => {
+  test('maps each day of the year to its progressed date', () => {
     const {container} = renderProgressed()
-    expect(container.textContent).not.toContain('January')
-  })
 
-  test('places the current age line at the current age', () => {
-    const {container} = renderProgressed()
+    // The progressed date of the current day on the axis
+    // (a midnight date) is natal + elapsed / 365.25
+    const dayDate = new Date(2024, 6, 1)
+    const progressedDate = new Date(
+      natalDate.getTime() +
+        (dayDate.getTime() - natalDate.getTime()) / 365.25
+    )
+    const expectedX = pos('Sun', progressedDate)
+
     const line = container.querySelector('[data-testid="current-date-line"]')
-    const expectedY = (age / span) * H
-    expect(parseFloat(line!.getAttribute('y1')!)).toBeCloseTo(
-      expectedY,
-      5
-    )
-  })
+    const currentY = parseFloat(line!.getAttribute('y1')!)
 
-  test('starts each progressed curve at the natal position', () => {
-    const {container} = renderProgressed()
-    const path = container.querySelector('path[data-body="Sun"]')!
-    const first = parsePath(path.getAttribute('d')!)[0]
-    const natalX = pos('Sun', natalDate)
-    expect(first.x).toBeCloseTo(natalX, 5)
-    expect(first.y).toBeCloseTo(0, 5)
-
-    // The natal line marks the same position
-    const natalLine = container.querySelector('[data-testid="natal-line"]')!
-    expect(parseFloat(natalLine.getAttribute('x1')!)).toBeCloseTo(
-      natalX,
-      5
-    )
-  })
-
-  test('ends the progressed curve one day per year after birth', () => {
-    const {container} = renderProgressed()
-    // Axis spans to the next birthday: last sample = age `span`
-    // -> ephemeris position `span` days after birth
-    const axisEndDate = new Date(natalDate.getTime() + span * MS_PER_DAY)
-    const expectedX = pos('Sun', axisEndDate)
-
-    const paths = Array.from(
+    // Weekly axis: the nearest sample to the current date line
+    const points = Array.from(
       container.querySelectorAll('path[data-body="Sun"]')
+    ).flatMap(p => parsePath(p.getAttribute('d')!))
+    const onCurrentLine = points.reduce((a, b) =>
+      Math.abs(b.y - currentY) < Math.abs(a.y - currentY) ? b : a
     )
-    const points = parsePath(paths[0].getAttribute('d')!)
-    const last = points[points.length - 1]
-    expect(last.x).toBeCloseTo(expectedX, 5)
-    expect(last.y).toBeCloseTo(H, 5)
+    // within half a week of the axis
+    expect(Math.abs(onCurrentLine.y - currentY)).toBeLessThan(H / 52)
+    // Sun moves ~0.01 deg of ephemeris time per week of life
+    expect(Math.abs(onCurrentLine.x - expectedX)).toBeLessThan(0.05)
   })
 
   test('draws different curves than transit mode', () => {
     const progressed = renderProgressed()
-    const transit = renderChart({transitDate, natalDate})
+    const transit = renderChart({natalDate})
 
     const progressedD = Array.from(
       progressed.container.querySelectorAll('path[data-body="Sun"]')
@@ -364,11 +368,139 @@ describe('GraphicChart (progressed)', () => {
 
     expect(progressedD).not.toEqual(transitD)
   })
+})
 
-  test('still renders natal lines', () => {
-    const {container} = renderProgressed()
+describe('GraphicChart (multi-year span)', () => {
+  const natalDate = new Date(2000, 5, 15)
+  const transitDate = new Date(2024, 6, 1, 12)
+
+  const getLabels = (container: Element) =>
+    Array.from(
+      container.querySelectorAll('[data-testid="grid-label"]')
+    ).map(t => t.textContent)
+
+  test('draws a year grid from the decade for the 10 years span', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 10
+    })
+    // start year defaults to the decade -> 2020..2030, every line labeled
     expect(
-      container.querySelectorAll('[data-testid="natal-line"]')
-    ).toHaveLength(1)
+      container.querySelectorAll('[data-testid="grid-line"]')
+    ).toHaveLength(11)
+    const labels = getLabels(container)
+    expect(labels[0]).toBe('2020')
+    expect(labels).toHaveLength(11)
+  })
+
+  test('places the current date line within the span', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 10
+    })
+    const line = container.querySelector('[data-testid="current-date-line"]')
+    const start = new Date(2020, 0, 1).getTime()
+    const yearsSinceStart =
+      (transitDate.getTime() - start) / (365.25 * MS_PER_DAY)
+    const expectedY = (yearsSinceStart / 10) * H
+    expect(parseFloat(line!.getAttribute('y1')!)).toBeCloseTo(expectedY, 5)
+  })
+
+  test('defaults the 30 years span to the birth year', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 30
+    })
+    expect(
+      container.querySelectorAll('[data-testid="grid-line"]')
+    ).toHaveLength(31)
+    const labels = getLabels(container)
+    expect(labels[0]).toBe('2000')
+    expect(labels).toContain('2030')
+  })
+
+  test('honors an explicit start year', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 10,
+      graphicStartYear: 2015
+    })
+    const labels = getLabels(container)
+    expect(labels[0]).toBe('2015')
+    expect(labels[10]).toBe('2025')
+  })
+
+  test('progressed multi-year curves map the axis through the progression', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicType: 'progressed',
+      graphicYears: 10
+    })
+
+    const progressedOf = (d: Date) =>
+      new Date(
+        natalDate.getTime() + (d.getTime() - natalDate.getTime()) / 365.25
+      )
+
+    const path = container.querySelector('path[data-body="Sun"]')!
+    const points = parsePath(path.getAttribute('d')!)
+    const first = points[0]
+    const last = points[points.length - 1]
+
+    // axis years are 365.25-day years: 10 years = 3652.5 days after start
+    const axisEnd = new Date(
+      new Date(2020, 0, 1).getTime() + 10 * 365.25 * MS_PER_DAY
+    )
+
+    expect(first.x).toBeCloseTo(
+      pos('Sun', progressedOf(new Date(2020, 0, 1))),
+      5
+    )
+    expect(first.y).toBeCloseTo(0, 5)
+    expect(last.x).toBeCloseTo(pos('Sun', progressedOf(axisEnd)), 5)
+    expect(last.y).toBeCloseTo(H, 5)
+  })
+
+  test('keeps curve resolution bounded on multi-year spans', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 10
+    })
+    // 6 samples per year for a 10 years span -> 61 points in total
+    const points = Array.from(
+      container.querySelectorAll('path[data-body="Sun"]')
+    ).flatMap(p => parsePath(p.getAttribute('d')!))
+    expect(points).toHaveLength(61)
+  })
+
+  test('clamps the axis to the fast ephemeris range', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 10,
+      graphicStartYear: 20201
+    })
+    // 20201 clamps to 3000 - 10 -> axis 2990..3000
+    const labels = getLabels(container)
+    expect(labels[0]).toBe('2990')
+    expect(labels[10]).toBe('3000')
+  })
+
+  test('keeps the month grid for the 1 year span', () => {
+    const {container} = renderChart({
+      transitDate,
+      natalDate,
+      graphicYears: 1
+    })
+    expect(
+      container.querySelectorAll('[data-testid="grid-line"]')
+    ).toHaveLength(12)
+    expect(getLabels(container)[0]).toBe('January 2024')
   })
 })

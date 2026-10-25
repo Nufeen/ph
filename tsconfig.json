@@ -21,6 +21,9 @@
     "tests/hooks/useData.test.ts",
     "tests/interface/Graphic/index.test.tsx",
     "tests/interface/Settings/index.test.tsx",
+    "tests/interface/Zodiac/TransitPlanets/index.test.tsx",
+    "tests/interface/Zodiac/Aspects/index.test.tsx",
+    "tests/interface/Planets/Aspects/index.test.tsx",
     "vite.config.ts"
   ]
 }
