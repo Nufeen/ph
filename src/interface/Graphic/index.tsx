@@ -135,13 +135,13 @@ interface GridLine {
 }
 
 /**
- * Transit mode: one sample per week of the transit year,
- * y axis is the day of the year
+ * Transit mode: one sample per week of the start year,
+ * y axis is the day of the year. The current date line is
+ * only shown when the transit date falls inside the axis year
  */
-function buildTransitAxis(date: Date) {
-  const year = date.getFullYear()
-  const daysInYear = getStartDatesOfEveryDayPerYear(year).length
-  const start = new Date(year, 0, 1).getTime()
+function buildTransitAxis(startYear: number, date: Date) {
+  const daysInYear = getStartDatesOfEveryDayPerYear(startYear).length
+  const start = new Date(startYear, 0, 1).getTime()
   const yearMs = daysInYear * MS_PER_DAY
 
   return {
@@ -155,11 +155,14 @@ function buildTransitAxis(date: Date) {
     grid: months.map(
       (mo, i): GridLine => ({
         y: i * (H / 12),
-        label: `${mo} ${year}`,
+        label: `${mo} ${startYear}`,
         showLabel: true
       })
     ),
-    currentY: ((dayNum(date) - 1) / daysInYear) * H
+    currentY:
+      date.getFullYear() === startYear
+        ? ((dayNum(date) - 1) / daysInYear) * H
+        : null
   }
 }
 
@@ -202,7 +205,14 @@ function buildMultiYearAxis(startYear: number, span: number, transit: Date) {
 
   const yearsSinceStart = (transit.getTime() - start) / yearMs
 
-  return {samples, grid, currentY: (yearsSinceStart / span) * H}
+  return {
+    samples,
+    grid,
+    currentY:
+      yearsSinceStart >= 0 && yearsSinceStart <= span
+        ? (yearsSinceStart / span) * H
+        : null
+  }
 }
 
 export default function GraphicChart() {
@@ -222,7 +232,7 @@ export default function GraphicChart() {
     const axis =
       graphicYears > 1
         ? buildMultiYearAxis(startYear, graphicYears, transitData.date)
-        : buildTransitAxis(transitData.date)
+        : buildTransitAxis(startYear, transitData.date)
 
     if (!isProgressed) return axis
 
@@ -306,14 +316,16 @@ export default function GraphicChart() {
         ))}
 
         {/* Current date line */}
-        <line
-          className={s.currentdateline}
-          data-testid="current-date-line"
-          x1={0}
-          y1={currentY}
-          x2={W}
-          y2={currentY}
-        />
+        {currentY !== null && (
+          <line
+            className={s.currentdateline}
+            data-testid="current-date-line"
+            x1={0}
+            y1={currentY}
+            x2={W}
+            y2={currentY}
+          />
+        )}
 
         {/* Natal planets */}
         {natalPlanets.map(body => (

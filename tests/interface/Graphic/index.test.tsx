@@ -234,6 +234,41 @@ describe('GraphicChart (transit)', () => {
     expect(parseFloat(line!.getAttribute('y1')!)).toBeCloseTo(0, 5)
   })
 
+  test('honors the start year in the 1 year span', () => {
+    const {container} = renderChart({
+      graphicStartYear: 2030
+    })
+    expect(
+      container.querySelectorAll('[data-testid="grid-line"]')
+    ).toHaveLength(12)
+    const labels = Array.from(
+      container.querySelectorAll('[data-testid="grid-label"]')
+    ).map(t => t.textContent)
+    expect(labels[0]).toBe('January 2030')
+  })
+
+  test('hides the current date line when the transit date is outside the 1 year axis', () => {
+    const {container} = renderChart({
+      graphicStartYear: 2030
+    })
+    expect(
+      container.querySelector('[data-testid="current-date-line"]')
+    ).toBeNull()
+    // the curves of the start year axis are still drawn
+    expect(container.querySelector('path[data-body="Sun"]')).not.toBeNull()
+  })
+
+  test('hides the current date line when the transit date is outside a multi-year axis', () => {
+    const {container} = renderChart({
+      natalDate: new Date(2000, 5, 15),
+      graphicYears: 10,
+      graphicStartYear: 2000
+    })
+    expect(
+      container.querySelector('[data-testid="current-date-line"]')
+    ).toBeNull()
+  })
+
   test('renders natal lines only for enabled planets', () => {
     const {container} = renderChart({
       planetsEnabled: {Sun: true, Mars: true}
