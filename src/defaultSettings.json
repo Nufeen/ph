@@ -69,5 +69,6 @@
   "zodiacType": "Tropical",
   "chartType": "natal",
   "graphicType": "transit",
-  "graphicYears": 1
+  "graphicYears": 1,
+  "graphicModulo": 360
 }

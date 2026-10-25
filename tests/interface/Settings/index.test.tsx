@@ -188,6 +188,40 @@ describe('Settings panel', () => {
     })
   })
 
+  describe('graphic modulo', () => {
+    test('shows a modulo selector defaulting to 360°', () => {
+      renderSettings('graphic')
+      expect(screen.getByText('Modulo')).toBeTruthy()
+      const modulo = graphicSelects()[2]
+      expect(modulo.value).toBe('360')
+      const options = Array.from(modulo.options).map(o => o.textContent)
+      expect(options).toEqual(['360°', '90°', '30°'])
+    })
+
+    test('defaults to 360 when graphicModulo is not set', () => {
+      const settings = {...baseSettings, chartType: 'graphic'}
+      delete (settings as any).graphicModulo
+      render(<Harness initial={settings} />)
+      expect(graphicSelects()[2].value).toBe('360')
+    })
+
+    test('switching the modulo updates the selector and persists it', () => {
+      renderSettings('graphic')
+      fireEvent.change(graphicSelects()[2], {
+        target: {value: '90'}
+      })
+      expect(graphicSelects()[2].value).toBe('90')
+
+      const stored = JSON.parse(store.get('settings') as string)
+      expect(stored.graphicModulo).toBe(90)
+    })
+
+    test('does not show the modulo selector outside graphic mode', () => {
+      renderSettings('natal')
+      expect(screen.queryByText('Modulo')).toBeNull()
+    })
+  })
+
   describe('graphic start year', () => {
     const startYear = () => screen.getByRole('spinbutton') as HTMLInputElement
 

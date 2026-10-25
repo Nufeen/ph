@@ -2,13 +2,19 @@ import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
 import {Fragment, memo, useContext, useMemo} from 'react'
-import {SettingContext, SettingContextType} from '../../SettingContext'
+import {
+  SettingContext,
+  SettingContextType
+} from '../../SettingContext'
 import {
   CelestialContext,
   CelestialContextType
 } from '../../CelestialContext'
 
-import {clampStartYear, defaultStartYear} from '../../compute/graphic'
+import {
+  clampStartYear,
+  defaultStartYear
+} from '../../compute/graphic'
 
 import planets from '../../assets/planets.json'
 import zodiacSigns from '../../assets/zodiac.json'
@@ -40,14 +46,18 @@ function samplesPerYear(span: number): number {
 
 const posCache = new Map<string, number>()
 
-export function pos(body: PlanetName, date: Date): number {
-  const key = `${body}:${date.getTime()}`
+export function pos(
+  body: PlanetName,
+  date: Date,
+  modulo = 360
+): number {
+  const key = `${body}:${date.getTime()}:${modulo}`
   const cached = posCache.get(key)
   if (cached !== undefined) return cached
 
   const vector = GeoVector(Body[body], date, false)
   const {elon} = Ecliptic(vector)
-  const x = (elon / 360) * W
+  const x = ((elon % modulo) / modulo) * W
 
   posCache.set(key, x)
   return x
@@ -66,7 +76,9 @@ export interface Sample {
   y: number
 }
 
-export function getStartDatesOfEveryDayPerYear(year: number): Date[] {
+export function getStartDatesOfEveryDayPerYear(
+  year: number
+): Date[] {
   const dates: Date[] = []
   const date = new Date(year, 0, 1)
   while (date.getFullYear() === year) {
@@ -173,35 +185,50 @@ function buildTransitAxis(startYear: number, date: Date) {
  */
 function progressedDateOf(date: Date, natal: Date): Date {
   return new Date(
-    natal.getTime() + (date.getTime() - natal.getTime()) / DAYS_PER_YEAR
+    natal.getTime() +
+      (date.getTime() - natal.getTime()) / DAYS_PER_YEAR
   )
 }
 
 /**
  * Multi-year spans (10/30/100): the y axis is the years range
  * from startYear to startYear + span. Resolution adapts to the
- * span so the total sample count stays around MAX_SAMPLES
+ * span so the total sample count stays around MAX_SAMPLES.
+ * The 30° modulo wraps often: samples per year are doubled
+ * so the curves keep enough points per segment
  */
-function buildMultiYearAxis(startYear: number, span: number, transit: Date) {
+function buildMultiYearAxis(
+  startYear: number,
+  span: number,
+  transit: Date,
+  modulo = 360
+) {
   // Keep the axis inside the fast ephemeris range
   const clampedStartYear = clampStartYear(startYear, span)
-  const spy = samplesPerYear(span)
+  const spy =
+    modulo === 30 ? samplesPerYear(span) * 3 : samplesPerYear(span)
   const count = span * spy
   const start = new Date(clampedStartYear, 0, 1).getTime()
   const yearMs = DAYS_PER_YEAR * MS_PER_DAY
 
-  const samples: Sample[] = Array.from({length: count + 1}, (_, i) => ({
-    date: new Date(start + (i / spy) * yearMs),
-    y: (i / count) * H
-  }))
+  const samples: Sample[] = Array.from(
+    {length: count + 1},
+    (_, i) => ({
+      date: new Date(start + (i / spy) * yearMs),
+      y: (i / count) * H
+    })
+  )
 
   // Keep the amount of year labels readable
   const labelStep = Math.max(1, Math.round(span / 12))
-  const grid: GridLine[] = Array.from({length: span + 1}, (_, i) => ({
-    y: (i / span) * H,
-    label: `${clampedStartYear + i}`,
-    showLabel: i % labelStep === 0
-  }))
+  const grid: GridLine[] = Array.from(
+    {length: span + 1},
+    (_, i) => ({
+      y: (i / span) * H,
+      label: `${clampedStartYear + i}`,
+      showLabel: i % labelStep === 0
+    })
+  )
 
   const yearsSinceStart = (transit.getTime() - start) / yearMs
 
@@ -221,27 +248,37 @@ export default function GraphicChart() {
     CelestialContext
   ) as CelestialContextType
 
-  const isProgressed = (settings.graphicType ?? 'transit') === 'progressed'
+  const isProgressed =
+    (settings.graphicType ?? 'transit') === 'progressed'
   const graphicYears = settings.graphicYears ?? 1
   const startYear =
     settings.graphicStartYear ??
     defaultStartYear(graphicYears, natalData.date, transitData.date)
 
+  const modulo = settings.graphicModulo ?? 360
+
   const {samples, grid, currentY} = useMemo(() => {
     // 1 year span keeps the month axis, other spans use years
     const axis =
       graphicYears > 1
-        ? buildMultiYearAxis(startYear, graphicYears, transitData.date)
+        ? buildMultiYearAxis(
+            startYear,
+            graphicYears,
+            transitData.date,
+            modulo
+          )
         : buildTransitAxis(startYear, transitData.date)
 
     if (!isProgressed) return axis
 
     return {
       ...axis,
-      samples: axis.samples.map(({date, y}): Sample => ({
-        date: progressedDateOf(date, natalData.date),
-        y
-      }))
+      samples: axis.samples.map(
+        ({date, y}): Sample => ({
+          date: progressedDateOf(date, natalData.date),
+          y
+        })
+      )
     }
   }, [isProgressed, graphicYears, startYear, natalData, transitData])
 
@@ -276,21 +313,7 @@ export default function GraphicChart() {
         xmlns="http://www.w3.org/2000/svg"
       >
         {/* Lets draw some grid */}
-        {zodiacSigns.map((sign, index) => (
-          <Fragment key={sign}>
-            <line
-              className={s.signline}
-              data-testid="sign-line"
-              x1={index * 100}
-              y1="0"
-              x2={index * 100}
-              y2={H}
-            />
-            <text x={index * 100 + 45} y="-10" opacity=".5">
-              {sign}
-            </text>
-          </Fragment>
-        ))}
+        <AxisX modulo={modulo} />
 
         {grid.map(({y, label, showLabel}) => (
           <Fragment key={label}>
@@ -329,23 +352,99 @@ export default function GraphicChart() {
 
         {/* Natal planets */}
         {natalPlanets.map(body => (
-          <NatalLine key={body} body={body} />
+          <NatalLine key={body} body={body} modulo={modulo} />
         ))}
 
         {/* Transit / progressed planets */}
         {transitPlanets.map(body => (
-          <Lines key={body} body={body} samples={samples} />
+          <Lines
+            key={body}
+            body={body}
+            modulo={modulo}
+            samples={samples}
+          />
         ))}
       </svg>
     </div>
   )
 }
 
-function NatalLine({body}: {body: PlanetName}) {
+/**
+ * X axis of the graphic ephemeris:
+ * - 360° modulo: one line per zodiac sign
+ * - 90° modulo: degree ticks every 10° (10..90)
+ * - 30° modulo: degree ticks every 5° (5..30)
+ */
+function AxisX({modulo}: {modulo: number}) {
+  if (modulo === 360) {
+    const segWidth = W / 12
+
+    return (
+      <>
+        {zodiacSigns.map((sign, index) => (
+          <Fragment key={sign}>
+            <line
+              className={s.signline}
+              data-testid="sign-line"
+              x1={index * segWidth}
+              y1="0"
+              x2={index * segWidth}
+              y2={H}
+            />
+            <text x={index * segWidth + 45} y="-10" opacity=".5">
+              {sign}
+            </text>
+          </Fragment>
+        ))}
+      </>
+    )
+  }
+
+  const step = modulo === 90 ? 10 : 5
+
+  return (
+    <>
+      {Array.from({length: modulo / step}, (_, i) => {
+        const deg = (i + 1) * step
+        const x = (deg / modulo) * W
+
+        return (
+          <Fragment key={deg}>
+            <line
+              className={s.signline}
+              data-testid="sign-line"
+              x1={x}
+              y1="0"
+              x2={x}
+              y2={H}
+            />
+            <text
+              x={x}
+              y="-10"
+              textAnchor="middle"
+              opacity=".5"
+              fontSize="8px"
+            >
+              {deg}°
+            </text>
+          </Fragment>
+        )
+      })}
+    </>
+  )
+}
+
+function NatalLine({
+  body,
+  modulo
+}: {
+  body: PlanetName
+  modulo: number
+}) {
   const {natalData} = useContext(
     CelestialContext
   ) as CelestialContextType
-  const x = pos(body, natalData.date)
+  const x = pos(body, natalData.date, modulo)
   return (
     <>
       <line
@@ -356,7 +455,12 @@ function NatalLine({body}: {body: PlanetName}) {
         x2={x}
         y2={H}
       />
-      <text className={s.natalText} data-testid="natal-label" x={x - 4} y={8}>
+      <text
+        className={s.natalText}
+        data-testid="natal-label"
+        x={x - 4}
+        y={8}
+      >
         {planets[body]}
       </text>
     </>
@@ -365,23 +469,30 @@ function NatalLine({body}: {body: PlanetName}) {
 
 const Lines = memo(function Lines({
   body,
+  modulo,
   samples
 }: {
   body: PlanetName
+  modulo: number
   samples: Sample[]
 }) {
   const lines = useMemo(() => {
     const points: Point[] = samples.map(sample => ({
-      x: pos(body, sample.date),
+      x: pos(body, sample.date, modulo),
       y: sample.y
     }))
     return splitArray(points)
-  }, [body, samples])
+  }, [body, modulo, samples])
 
   return (
     <>
       {lines.map((line, index) => (
-        <Path key={index} points={line} color={color[body]} body={body} />
+        <Path
+          key={index}
+          points={line}
+          color={color[body]}
+          body={body}
+        />
       ))}
 
       {lines.map((line, index) => (
@@ -416,11 +527,6 @@ function Path({
     tail.map(p => `L ${p.x}, ${p.y}`).join(' ')
 
   return (
-    <path
-      data-body={body}
-      d={d}
-      stroke={color}
-      fill="transparent"
-    />
+    <path data-body={body} d={d} stroke={color} fill="transparent" />
   )
 }

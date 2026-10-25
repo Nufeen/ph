@@ -1,6 +1,7 @@
 import React, {useContext} from 'react'
 import {
   GraphicChartType,
+  GraphicModulo,
   GraphicYearsSpan,
   SettingContext,
   SettingContextType
@@ -40,6 +41,15 @@ const PlanetCheckboxTable = () => {
     const s = {
       ...settings,
       graphicYears: +e.target.value as GraphicYearsSpan
+    }
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleGraphicModuloSelect(e: {target: {value: any}}) {
+    const s = {
+      ...settings,
+      graphicModulo: +e.target.value as GraphicModulo
     }
     setSettings(s)
     LS.setItem('settings', JSON.stringify(s))
@@ -519,6 +529,19 @@ const PlanetCheckboxTable = () => {
             <option value={30}>30 years</option>
             <option value={100}>100 years</option>
           </select>
+
+          <div>
+            <h3 className={s.thead}>Modulo</h3>
+
+            <select
+              value={settings?.graphicModulo ?? 360}
+              onChange={handleGraphicModuloSelect}
+            >
+              <option value={360}>360°</option>
+              <option value={90}>90°</option>
+              <option value={30}>30°</option>
+            </select>
+          </div>
 
           <div>
             <h3 className={s.thead}>Start year</h3>

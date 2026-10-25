@@ -4,6 +4,8 @@ export type GraphicChartType = 'transit' | 'progressed'
 
 export type GraphicYearsSpan = 1 | 10 | 30 | 100
 
+export type GraphicModulo = 360 | 90 | 30
+
 interface Settings {
   objects: any
   interface: any
@@ -13,6 +15,7 @@ interface Settings {
   graphicType?: GraphicChartType
   graphicYears?: GraphicYearsSpan
   graphicStartYear?: number
+  graphicModulo?: GraphicModulo
 }
 
 export interface SettingContextType {

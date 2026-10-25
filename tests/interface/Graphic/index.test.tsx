@@ -33,7 +33,8 @@ const makeSettings = (
   graphicType = 'transit',
   graphicYears = 1,
   graphicStartYear?: number,
-  transitPlanets?: Record<string, boolean>
+  transitPlanets?: Record<string, boolean>,
+  graphicModulo?: number
 ) => ({
   objects: {
     planets: {...planetsOff, ...planetsEnabled},
@@ -45,7 +46,8 @@ const makeSettings = (
   chartType: 'transit',
   graphicType,
   graphicYears,
-  graphicStartYear
+  graphicStartYear,
+  ...(graphicModulo ? {graphicModulo} : {})
 })
 
 const makeCelestial = (transitDate: Date, natalDate: Date) => ({
@@ -62,6 +64,7 @@ interface RenderChartProps {
   graphicType?: 'transit' | 'progressed'
   graphicYears?: number
   graphicStartYear?: number
+  graphicModulo?: number
 }
 
 const renderChart = ({
@@ -71,7 +74,8 @@ const renderChart = ({
   transitPlanets,
   graphicType = 'transit',
   graphicYears = 1,
-  graphicStartYear
+  graphicStartYear,
+  graphicModulo
 }: RenderChartProps = {}) =>
   render(
     <SettingContext.Provider
@@ -81,7 +85,8 @@ const renderChart = ({
           graphicType,
           graphicYears,
           graphicStartYear,
-          transitPlanets
+          transitPlanets,
+          graphicModulo
         )
       } as any}
     >
@@ -183,6 +188,19 @@ describe('pos', () => {
     const moon1 = pos('Moon', new Date(Date.UTC(2024, 0, 1)))
     const moon2 = pos('Moon', new Date(Date.UTC(2024, 0, 15)))
     expect(moon1).not.toBe(moon2)
+  })
+
+  test('wraps a position beyond the modulo into the range', () => {
+    // Sun is at ~99° on July 1st 2024 -> 99 mod 90 = 9°
+    const x = pos('Sun', new Date(Date.UTC(2024, 6, 1, 12)), 90)
+    expect(x).toBeGreaterThanOrEqual(0)
+    expect(x).toBeLessThan(W / 2)
+  })
+
+  test('returns the plain position for the 360 modulo', () => {
+    expect(pos('Sun', new Date(Date.UTC(2024, 6, 1, 12)), 360)).toBe(
+      pos('Sun', new Date(Date.UTC(2024, 6, 1, 12)))
+    )
   })
 })
 
@@ -537,5 +555,86 @@ describe('GraphicChart (multi-year span)', () => {
       container.querySelectorAll('[data-testid="grid-line"]')
     ).toHaveLength(12)
     expect(getLabels(container)[0]).toBe('January 2024')
+  })
+})
+
+describe('GraphicChart (modulo)', () => {
+  const getSignLines = (container: Element) =>
+    container.querySelectorAll('[data-testid="sign-line"]')
+
+  test('draws 12 sign lines for the 360° modulo', () => {
+    const {container} = renderChart({graphicModulo: 360})
+    expect(getSignLines(container)).toHaveLength(12)
+  })
+
+  test('draws degree ticks every 10° for the 90° modulo', () => {
+    const {container} = renderChart({graphicModulo: 90})
+    const lines = getSignLines(container)
+    expect(lines).toHaveLength(9)
+    expect(
+      parseFloat(lines[0].getAttribute('x1')!)
+    ).toBeCloseTo((10 / 90) * W, 5)
+    expect(
+      parseFloat(lines[8].getAttribute('x1')!)
+    ).toBeCloseTo(W, 5)
+
+    const labels = Array.from(
+      container.querySelectorAll('text')
+    ).map(t => t.textContent)
+    expect(labels).toContain('10°')
+    expect(labels).toContain('90°')
+  })
+
+  test('draws degree ticks every 5° for the 30° modulo', () => {
+    const {container} = renderChart({graphicModulo: 30})
+    const lines = getSignLines(container)
+    expect(lines).toHaveLength(6)
+    expect(
+      parseFloat(lines[0].getAttribute('x1')!)
+    ).toBeCloseTo((5 / 30) * W, 5)
+    expect(
+      parseFloat(lines[5].getAttribute('x1')!)
+    ).toBeCloseTo(W, 5)
+
+    const labels = Array.from(
+      container.querySelectorAll('text')
+    ).map(t => t.textContent)
+    expect(labels).toContain('5°')
+    expect(labels).toContain('30°')
+  })
+
+  test('maps curve positions into the 90° modulo range', () => {
+    const {container} = renderChart({graphicModulo: 90})
+    const path = container.querySelector('path[data-body="Sun"]')!
+    const points = parsePath(path.getAttribute('d')!)
+
+    // first axis sample is January 1st 2024
+    const expectedX = pos('Sun', new Date(2024, 0, 1), 90)
+    expect(points[0].x).toBeCloseTo(expectedX, 5)
+    expect(points.every(p => p.x >= 0 && p.x < W)).toBe(true)
+  })
+
+  test('maps the natal line into the 90° modulo range', () => {
+    const {container} = renderChart({graphicModulo: 90})
+    const line = container.querySelector('[data-testid="natal-line"]')!
+    expect(parseFloat(line.getAttribute('x1')!)).toBeCloseTo(
+      pos('Sun', new Date(2024, 0, 15), 90),
+      5
+    )
+  })
+
+  test('doubles the axis samples for the 30° modulo', () => {
+    const base = renderChart({graphicYears: 10, graphicModulo: 360})
+    const doubled = renderChart({graphicYears: 10, graphicModulo: 30})
+
+    const count = (root: HTMLElement) =>
+      Array.from(
+        root.querySelectorAll('path[data-body="Sun"]')
+      ).flatMap(p => parsePath(p.getAttribute('d')!)).length
+
+    // samples double per year; the axis start/end sample stays single
+    expect(count(doubled.container)).toBe(
+      (count(base.container) - 1) * 2 + 1
+    )
   })
 })
