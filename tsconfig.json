@@ -19,6 +19,7 @@
   "include": [
     "src",
     "tests/hooks/useData.test.ts",
+    "tests/compute/barbo.test.ts",
     "tests/interface/Graphic/index.test.tsx",
     "tests/interface/Settings/index.test.tsx",
     "tests/interface/Zodiac/TransitPlanets/index.test.tsx",

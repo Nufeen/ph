@@ -70,5 +70,8 @@
   "chartType": "natal",
   "graphicType": "transit",
   "graphicYears": 1,
-  "graphicModulo": 360
+  "graphicModulo": 360,
+  "barboStartYear": 2000,
+  "barboEndYear": 2050,
+  "subgraphs": false
 }

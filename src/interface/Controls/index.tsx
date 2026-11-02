@@ -213,13 +213,8 @@ export default function ControlPane(props) {
       )}
 
       <div className={s.chartTypeSelector}>
-        {['natal', 'transit', 'progressed', 'graphic']
-          .concat(
-            JSON.parse(window.localStorage.barbo || 'false')
-              ? ['barbo']
-              : []
-          )
-          .map(type => (
+        {['natal', 'transit', 'progressed', 'graphic', 'barbo'].map(
+          type => (
             <button
               key={type}
               disabled={settings.chartType === type}
@@ -227,7 +222,8 @@ export default function ControlPane(props) {
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </button>
-          ))}
+          )
+        )}
       </div>
 
       {(['transit', 'progressed', 'graphic', 'barbo'].includes(

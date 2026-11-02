@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useState} from 'react'
 import {
   GraphicChartType,
   GraphicModulo,
@@ -6,11 +6,15 @@ import {
   SettingContext,
   SettingContextType
 } from '../../SettingContext.js'
-import {CelestialContext, CelestialContextType} from '../../CelestialContext.js'
+import {
+  CelestialContext,
+  CelestialContextType
+} from '../../CelestialContext.js'
 
 import s from './index.module.css'
 
 import planets from '../../assets/planets.json'
+import {upperPlanets, MIN_BARBO_YEAR, MAX_BARBO_YEAR} from '../Barbo'
 import {
   clampStartYear,
   defaultStartYear,
@@ -18,15 +22,26 @@ import {
   MIN_START_YEAR
 } from '../../compute/graphic'
 
+// cap the year draft: digits only, at most 4 of them
+function capYearDraft(raw: string) {
+  return raw.replace(/\D/g, '').slice(0, 4)
+}
+
 const LS = window.localStorage
 
 const PlanetCheckboxTable = () => {
-  const {settings, setSettings} = useContext(SettingContext) as SettingContextType
+  const {settings, setSettings} = useContext(
+    SettingContext
+  ) as SettingContextType
   const {natalData, transitData} = useContext(
     CelestialContext
   ) as CelestialContextType
 
   const isGraphic = settings.chartType == 'graphic'
+  const isBarbo = settings.chartType == 'barbo'
+
+  // in Barbo mode only natal visibility of the upper planets matters
+  const shownPlanets = isBarbo ? upperPlanets : Object.keys(planets)
 
   function handleGraphicTypeSelect(e: {target: {value: any}}) {
     const s = {
@@ -59,7 +74,8 @@ const PlanetCheckboxTable = () => {
     const s = {
       ...settings,
       // an empty input falls back to the span default
-      graphicStartYear: e.target.value === '' ? undefined : +e.target.value
+      graphicStartYear:
+        e.target.value === '' ? undefined : +e.target.value
     }
     setSettings(s)
     LS.setItem('settings', JSON.stringify(s))
@@ -80,6 +96,53 @@ const PlanetCheckboxTable = () => {
       setSettings(s)
       LS.setItem('settings', JSON.stringify(s))
     }
+  }
+
+  // local draft: the chart recompute is heavy, so the settings
+  // are committed only on blur, not on every keystroke
+  const [yearDraft, setYearDraft] = useState(() => ({
+    start: String(settings?.barboStartYear ?? 2000),
+    end: String(settings?.barboEndYear ?? 2050)
+  }))
+
+  function handleBarboYearBlur(key: 'start' | 'end', raw: string) {
+    // empty or partial input falls back to the default bounds
+    const start = Math.min(
+      Math.max(
+        (key === 'start' ? +raw : +yearDraft.start) || 2000,
+        MIN_BARBO_YEAR
+      ),
+      MAX_BARBO_YEAR - 1
+    )
+    const end = Math.min(
+      Math.max(
+        (key === 'end' ? +raw : +yearDraft.end) || 2050,
+        start + 1
+      ),
+      MAX_BARBO_YEAR
+    )
+
+    // sync the (possibly clamped) values back into the inputs
+    setYearDraft({start: String(start), end: String(end)})
+
+    if (
+      start !== settings.barboStartYear ||
+      end !== settings.barboEndYear
+    ) {
+      const s = {
+        ...settings,
+        barboStartYear: start,
+        barboEndYear: end
+      }
+      setSettings(s)
+      LS.setItem('settings', JSON.stringify(s))
+    }
+  }
+
+  function handleSubgraphsToggle(e: {target: {checked: any}}) {
+    const s = {...settings, subgraphs: e.target.checked}
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
   }
 
   function handlePlanetVisibility(planet: string) {
@@ -278,11 +341,11 @@ const PlanetCheckboxTable = () => {
           <tr>
             <th></th>
             <th>Natal</th>
-            <th>Transit</th>
+            {!isBarbo && <th>Transit</th>}
           </tr>
         </thead>
         <tbody>
-          {Object.keys(planets).map(planet => (
+          {shownPlanets.map(planet => (
             <tr key={planet}>
               <td>{planets[planet]}</td>
               <td>
@@ -292,45 +355,53 @@ const PlanetCheckboxTable = () => {
                   onChange={() => handlePlanetVisibility(planet)}
                 />
               </td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={
-                    settings.objects.transitPlanets?.[planet] ??
-                    settings.objects.planets[planet]
-                  }
-                  onChange={() => handleTransitPlanetVisibility(planet)}
-                />
-              </td>
+              {!isBarbo && (
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={
+                      settings.objects.transitPlanets?.[planet] ??
+                      settings.objects.planets[planet]
+                    }
+                    onChange={() =>
+                      handleTransitPlanetVisibility(planet)
+                    }
+                  />
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
 
-      <table className={s.fictive}>
-        <thead className={s.thead}>
-          <tr>
-            <th></th>
-            <th>On</th>
-          </tr>
-        </thead>
-        <tbody>
-          {['lilith', 'northnode', 'southnode'].map(point => (
-            <tr key={point}>
-              <td>{point}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={settings.objects.celestialPoints?.[point]}
-                  onChange={() => handlePointVisibility(point)}
-                />
-              </td>
+      {!isBarbo && (
+        <table className={s.fictive}>
+          <thead className={s.thead}>
+            <tr>
+              <th></th>
+              <th>On</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {['lilith', 'northnode', 'southnode'].map(point => (
+              <tr key={point}>
+                <td>{point}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={
+                      settings.objects.celestialPoints?.[point]
+                    }
+                    onChange={() => handlePointVisibility(point)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-      {!isGraphic && (
+      {!(isGraphic || isBarbo) && (
         <table className={s.other}>
           <thead className={s.thead}>
             <tr>
@@ -345,7 +416,8 @@ const PlanetCheckboxTable = () => {
                 <input
                   type="checkbox"
                   checked={
-                    settings.objects.celestialPoints?.fixedStars?.chart
+                    settings.objects.celestialPoints?.fixedStars
+                      ?.chart
                   }
                   onChange={() => handleStarsVisibility('chart')}
                 />
@@ -357,7 +429,8 @@ const PlanetCheckboxTable = () => {
                 <input
                   type="checkbox"
                   checked={
-                    settings.objects.celestialPoints?.fixedStars?.table
+                    settings.objects.celestialPoints?.fixedStars
+                      ?.table
                   }
                   onChange={() => handleStarsVisibility('table')}
                 />
@@ -367,7 +440,7 @@ const PlanetCheckboxTable = () => {
         </table>
       )}
 
-      {!isGraphic && (
+      {!(isGraphic || isBarbo) && (
         <table className={s.elements}>
           <thead className={s.thead}>
             <tr>
@@ -390,7 +463,7 @@ const PlanetCheckboxTable = () => {
         </table>
       )}
 
-      {!isGraphic && (
+      {!(isGraphic || isBarbo) && (
         <table className={s.thirty}>
           <thead className={s.thead}>
             <tr>
@@ -435,7 +508,7 @@ const PlanetCheckboxTable = () => {
         </table>
       )}
 
-      {!isGraphic && (
+      {!(isGraphic || isBarbo) && (
         <table className={s.lots}>
           <thead className={s.thead}>
             <tr>
@@ -489,7 +562,7 @@ const PlanetCheckboxTable = () => {
         </div>
       )}
 
-      {!isGraphic && (
+      {!(isGraphic || isBarbo) && (
         <div className={s.orb}>
           <h3 className={s.thead}>Orb for all planets</h3>
 
@@ -565,9 +638,70 @@ const PlanetCheckboxTable = () => {
         </div>
       )}
 
-      {!isGraphic && (
+      {isBarbo && (
+        <div className={s.graphic}>
+          <h3 className={s.thead}>Barbo chart</h3>
+
+          <div>
+            <h3 className={s.thead}>First year</h3>
+
+            <input
+              type="number"
+              min={MIN_BARBO_YEAR}
+              max={MAX_BARBO_YEAR}
+              value={yearDraft.start}
+              onChange={e =>
+                setYearDraft({
+                  ...yearDraft,
+                  start: capYearDraft(e.target.value)
+                })
+              }
+              onBlur={e =>
+                handleBarboYearBlur('start', e.target.value)
+              }
+            />
+          </div>
+
+          <div>
+            <h3 className={s.thead}>Last year</h3>
+
+            <input
+              type="number"
+              min={MIN_BARBO_YEAR}
+              max={MAX_BARBO_YEAR}
+              value={yearDraft.end}
+              onChange={e =>
+                setYearDraft({
+                  ...yearDraft,
+                  end: capYearDraft(e.target.value)
+                })
+              }
+              onBlur={e =>
+                handleBarboYearBlur('end', e.target.value)
+              }
+            />
+          </div>
+
+          <div>
+            <h3 className={s.thead}>Subgraphs</h3>
+
+            <label className={s.subgraphs}>
+              <input
+                type="checkbox"
+                checked={settings?.subgraphs ?? false}
+                onChange={handleSubgraphsToggle}
+              />
+              on
+            </label>
+          </div>
+        </div>
+      )}
+
+      {!(isGraphic || isBarbo) && (
         <div className={s.houseSelector}>
-          {JSON.parse(window.localStorage.zodiacButton || 'false') && (
+          {JSON.parse(
+            window.localStorage.zodiacButton || 'false'
+          ) && (
             <select
               value={settings?.zodiacType ?? 'Tropical'}
               onChange={e => {
@@ -612,7 +746,8 @@ const PlanetCheckboxTable = () => {
 export default PlanetCheckboxTable
 
 // Ensure CelestialContext is non‑null
-const useCelestial = () => useContext(CelestialContext) as CelestialContextType
+const useCelestial = () =>
+  useContext(CelestialContext) as CelestialContextType
 
 function DayOrNight() {
   const {

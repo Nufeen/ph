@@ -9,6 +9,8 @@
   --sun-color: #ff6a00;
 
   --circle-color: gray;
+
+  --barbo-total-color: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,6 +29,8 @@
     --sun-color: #ffd700;
 
     --circle-color: gray;
+
+    --barbo-total-color: #ffffff;
   }
 }
 

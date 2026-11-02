@@ -4,7 +4,7 @@
   height: 100%;
   font-family: 'Noto Emoji';
   font-weight: 700;
-  fill: azure;
+  fill: var(--text-color);
   padding-top: 20px;
   padding-bottom: 20px;
   box-sizing: border-box;
@@ -17,6 +17,14 @@
   font-weight: bold;
   font-family: monospace;
   font-weight: 700;
+}
+
+.axis {
+  stroke: var(--text-color);
+}
+
+.total {
+  stroke: var(--barbo-total-color);
 }
 .month {
   font-weight: normal;

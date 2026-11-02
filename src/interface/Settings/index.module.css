@@ -182,3 +182,7 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.subgraphs {
+  display: flex;
+}

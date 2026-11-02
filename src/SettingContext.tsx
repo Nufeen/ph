@@ -16,6 +16,9 @@ interface Settings {
   graphicYears?: GraphicYearsSpan
   graphicStartYear?: number
   graphicModulo?: GraphicModulo
+  barboStartYear?: number
+  barboEndYear?: number
+  subgraphs?: boolean
 }
 
 export interface SettingContextType {
