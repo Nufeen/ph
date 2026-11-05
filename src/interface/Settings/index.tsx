@@ -640,11 +640,8 @@ const PlanetCheckboxTable = () => {
 
       {isBarbo && (
         <div className={s.graphic}>
-          <h3 className={s.thead}>Barbo chart</h3>
-
           <div>
             <h3 className={s.thead}>First year</h3>
-
             <input
               type="number"
               min={MIN_BARBO_YEAR}

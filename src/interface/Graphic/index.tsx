@@ -206,7 +206,7 @@ function buildMultiYearAxis(
   // Keep the axis inside the fast ephemeris range
   const clampedStartYear = clampStartYear(startYear, span)
   const spy =
-    modulo === 30 ? samplesPerYear(span) * 3 : samplesPerYear(span)
+    modulo === 30 ? samplesPerYear(span) * 2 : samplesPerYear(span)
   const count = span * spy
   const start = new Date(clampedStartYear, 0, 1).getTime()
   const yearMs = DAYS_PER_YEAR * MS_PER_DAY

@@ -42,6 +42,16 @@ export const MAX_BARBO_YEAR = 2100
 // distinct hue per pair curve (golden angle stepping)
 const colorFor = index => `hsl(${(index * 137) % 360}, 100%, 70%)`
 
+// pair values under this arc (deg) are marked with a dot:
+// the curve is nearly invisible at a near-conjunction moment
+const NEAR_ZERO_DEG = 1
+
+// horizontal reference lines at aspect angles; the prominent
+// ones (45, 90, 135) are drawn red on top of the faint set
+const DEG_LINES = [60, 120, 180]
+  .map(v => ({v, prominent: false}))
+  .concat([45, 90, 135].map(v => ({v, prominent: true})))
+
 export default function Barbo() {
   const {settings} = useContext(SettingContext) as SettingContextType
 
@@ -132,6 +142,64 @@ export default function Barbo() {
     return year >= y1 && year <= y2
   }
 
+  // pointer position in svg units, null when the cursor is away
+  const [cursor, setCursor] = useState(null)
+
+  // client px -> viewBox units, the svg is css-scaled
+  const trackCursor = e => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setCursor({
+      x: ((e.clientX - rect.left) * W) / rect.width,
+      y: ((e.clientY - rect.top) * H) / rect.height
+    })
+  }
+
+  // one sample per year in wide range, otherwise per month
+  const samplesPerYear = isWideRange ? 1 : 12
+
+  // date label of the nearest sample: MM.YYYY per month,
+  // plain year in wide range
+  const cursorDate = (() => {
+    if (!cursor) return null
+    const i = Math.min(
+      Math.max(
+        Math.round((cursor.x * span * samplesPerYear) / W - 1),
+        0
+      ),
+      span * samplesPerYear - 1
+    )
+    return samplesPerYear === 1
+      ? String(y1 + i)
+      : `${String((i % 12) + 1).padStart(2, '0')}.${y1 + Math.floor(i / 12)}`
+  })()
+
+  // degree readout follows the chart's own y scale: the padded
+  // drawing area runs from min at the floor to max at the top,
+  // so pointing at a curve point reads that curve's value
+  const cursorDegree = (() => {
+    if (cursor == null) return null
+    if (max <= min) return min.toFixed(1)
+    const v = min + (H - pad - cursor.y) / scale
+    return Math.min(Math.max(v, min), max).toFixed(1)
+  })()
+
+  // tooltip hugs the pointer, flipping sides near the edges
+  const TOOLTIP_W = 56
+  const TOOLTIP_H = 22
+  const tooltipX =
+    cursor == null
+      ? 0
+      : cursor.x + 8 + TOOLTIP_W > W
+        ? cursor.x - 8 - TOOLTIP_W
+        : cursor.x + 8
+  const tooltipY =
+    cursor == null
+      ? 0
+      : Math.min(
+          Math.max(cursor.y - TOOLTIP_H / 2, 2),
+          H - TOOLTIP_H - 2
+        )
+
   // x position of a year, matching the year gridlines
   const xForYear = (date: Date) =>
     ((date.getFullYear() - y1 + 1) * W) / span
@@ -143,6 +211,8 @@ export default function Barbo() {
         height={H}
         viewBox={`0 0 ${W} ${H}`}
         xmlns="http://www.w3.org/2000/svg"
+        onMouseMove={trackCursor}
+        onMouseLeave={() => setCursor(null)}
       >
         {/* Lets draw some grid */}
         {range(y1, y2)
@@ -174,6 +244,22 @@ export default function Barbo() {
             )
           })}
 
+        {/* horizontal degree reference lines */}
+        {DEG_LINES.filter(({v}) => v >= min && v <= max).map(
+          ({v, prominent}) => (
+            <line
+              key={v}
+              x1="0"
+              y1={H - pad - (v - min) * scale}
+              x2={W}
+              y2={H - pad - (v - min) * scale}
+              stroke={prominent ? 'red' : 'var(--barbo-total-color)'}
+              strokeWidth=".4"
+              opacity=".5"
+            />
+          )
+        )}
+
         {/* total index, always visible */}
         <Curve
           H={H}
@@ -183,7 +269,7 @@ export default function Barbo() {
           min={min}
           y1={y1}
           y2={y2}
-          samplesPerYear={isWideRange ? 1 : 12}
+          samplesPerYear={samplesPerYear}
           className={s.total}
         />
 
@@ -199,9 +285,13 @@ export default function Barbo() {
               min={min}
               y1={y1}
               y2={y2}
-              samplesPerYear={isWideRange ? 1 : 12}
+              samplesPerYear={samplesPerYear}
               color={colorFor(i)}
-              name={series.name.split('-').map(p => planets[p]).join('')}
+              name={series.name
+                .split('-')
+                .map(p => planets[p])
+                .join('')}
+              nearZeroMark={NEAR_ZERO_DEG}
             />
           ))}
 
@@ -227,6 +317,54 @@ export default function Barbo() {
             stroke="green"
             opacity={1.4}
           />
+        )}
+
+        {/* vertical line following the mouse */}
+        {cursor != null && (
+          <line
+            x1={cursor.x}
+            y1="0"
+            x2={cursor.x}
+            y2={H}
+            stroke="var(--barbo-total-color)"
+            strokeWidth=".5"
+            strokeDasharray="4 4"
+            opacity={0.6}
+            pointerEvents="none"
+          />
+        )}
+
+        {/* tooltip: date and degree right at the pointer */}
+        {cursor != null && cursorDate != null && (
+          <g pointerEvents="none">
+            <rect
+              x={tooltipX}
+              y={tooltipY}
+              width={TOOLTIP_W}
+              height={TOOLTIP_H}
+              rx={3}
+              fill="var(--background-color)"
+              opacity={0.85}
+            />
+            <text
+              x={tooltipX + TOOLTIP_W / 2}
+              y={tooltipY + 9}
+              textAnchor="middle"
+              fontSize={9}
+              fill="var(--text-color)"
+            >
+              {cursorDate}
+            </text>
+            <text
+              x={tooltipX + TOOLTIP_W / 2}
+              y={tooltipY + 19}
+              textAnchor="middle"
+              fontSize={9}
+              fill="var(--text-color)"
+            >
+              {cursorDegree}°
+            </text>
+          </g>
         )}
         {/* Y axis: top, central and bottom values */}
         <line
@@ -275,7 +413,8 @@ function Curve({
   samplesPerYear,
   color,
   className,
-  name
+  name,
+  nearZeroMark
 }) {
   if (!values.length) {
     return null
@@ -290,6 +429,16 @@ function Curve({
   const d =
     `M ${x(0)} ${y(head)} ` +
     tail.map((v, i) => `L ${x(i + 1)} ${y(v)}`).join(' ')
+
+  // indices where the arc dips under the near-zero threshold,
+  // each becomes a dot since the curve itself hugs the floor
+  const nearZeroIdx =
+    nearZeroMark == null
+      ? []
+      : values.reduce((acc, v, i) => {
+          if (v <= nearZeroMark) acc.push(i)
+          return acc
+        }, [])
 
   // caption sits near the highest point of the series
   let peakIndex = 0
@@ -309,6 +458,17 @@ function Curve({
         fill="transparent"
         className={className}
       />
+      {nearZeroIdx.map(i => (
+        <circle
+          key={i}
+          cx={x(i)}
+          cy={y(values[i])}
+          r={3}
+          fill={color ?? 'var(--barbo-total-color)'}
+        >
+          <title>{`${name}: ${values[i].toFixed(2)}°`}</title>
+        </circle>
+      ))}
       {name && (
         <text
           x={captionX}
