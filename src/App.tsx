@@ -339,7 +339,7 @@ function App() {
             {/* Cycle indexes chart */}
             {settings.chartType == 'barbo' && (
               <section className={s.center} ref={centerSectionRef}>
-                <Barbo />
+                <Barbo setNatalData={setNatalData} />
               </section>
             )}
 

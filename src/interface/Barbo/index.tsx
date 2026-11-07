@@ -52,7 +52,7 @@ const DEG_LINES = [60, 120, 180]
   .map(v => ({v, prominent: false}))
   .concat([45, 90, 135].map(v => ({v, prominent: true})))
 
-export default function Barbo() {
+export default function Barbo({setNatalData}) {
   const {settings} = useContext(SettingContext) as SettingContextType
 
   const {natalData, transitData} = useContext(
@@ -146,16 +146,38 @@ export default function Barbo() {
   const [cursor, setCursor] = useState(null)
 
   // client px -> viewBox units, the svg is css-scaled
-  const trackCursor = e => {
+  const cursorPos = e => {
     const rect = e.currentTarget.getBoundingClientRect()
-    setCursor({
+    return {
       x: ((e.clientX - rect.left) * W) / rect.width,
       y: ((e.clientY - rect.top) * H) / rect.height
-    })
+    }
   }
+
+  const trackCursor = e => setCursor(cursorPos(e))
 
   // one sample per year in wide range, otherwise per month
   const samplesPerYear = isWideRange ? 1 : 12
+
+  // click -> the date under the pointer, interpolated between the
+  // neighbouring samples for day precision, set as the natal date
+  const handleClick = e => {
+    if (dts.length < 2) return
+
+    const fi = (cursorPos(e).x * span * samplesPerYear) / W - 1
+    const i = Math.min(Math.max(Math.floor(fi), 0), dts.length - 2)
+    const t = Math.min(Math.max(fi - i, 0), 1)
+
+    setNatalData({
+      ...natalData,
+      date: new Date(
+        dts[i].getTime() + (dts[i + 1].getTime() - dts[i].getTime()) * t
+      ),
+      // hack to rerender uncontrolled input via key,
+      // same as the current-time setter does
+      name: new Date().toString()
+    })
+  }
 
   // date label of the nearest sample: MM.YYYY per month,
   // plain year in wide range
@@ -213,6 +235,7 @@ export default function Barbo() {
         xmlns="http://www.w3.org/2000/svg"
         onMouseMove={trackCursor}
         onMouseLeave={() => setCursor(null)}
+        onClick={handleClick}
       >
         {/* Lets draw some grid */}
         {range(y1, y2)
