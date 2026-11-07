@@ -139,6 +139,28 @@ test('subgraphDeltas: the pair series sum up to the full index', () => {
   expect(total).toBeCloseTo(sumAngleDistances(classic, date), 8)
 })
 
+test('subgraphDeltas: signs carry the first planet zodiac sign index', () => {
+  const dates = [
+    new Date(Date.UTC(2026, 0, 1)),
+    new Date(Date.UTC(2026, 5, 1)),
+    new Date(Date.UTC(2026, 11, 1))
+  ]
+  const subgraphs = subgraphDeltas(['Jupiter', 'Saturn'], dates)
+
+  for (const series of subgraphs) {
+    expect(series.signs).toHaveLength(dates.length)
+
+    const first = series.name.split('-')[0]
+    for (let k = 0; k < dates.length; k++) {
+      // sign index 0..11: Aries starts at 0 deg, wrapping at 360
+      const expected = Math.floor(pos(first, dates[k]) / 30) % 12
+      expect(series.signs[k]).toBe(expected)
+      expect(series.signs[k]).toBeGreaterThanOrEqual(0)
+      expect(series.signs[k]).toBeLessThanOrEqual(11)
+    }
+  }
+})
+
 test('Uranus+Neptune+Pluto stay at exactly 360 deg through 2050-2070', () => {
   // for THREE bodies with all gaps between adjacent planets < 180,
   // every pairwise shortest arc equals its adjacent gap, so the

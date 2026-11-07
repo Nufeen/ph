@@ -16,7 +16,7 @@ import {useEffect, useState} from 'react'
 import {useMemo} from 'react'
 
 import planets from '../../assets/planets.json'
-import {} from '../../assets/zodiac.json'
+import zodiac from '../../assets/zodiac.json'
 
 import {sumAngleDistances, subgraphDeltas} from '../../compute/barbo'
 
@@ -292,6 +292,7 @@ export default function Barbo() {
                 .map(p => planets[p])
                 .join('')}
               nearZeroMark={NEAR_ZERO_DEG}
+              signs={series.signs}
             />
           ))}
 
@@ -414,7 +415,8 @@ function Curve({
   color,
   className,
   name,
-  nearZeroMark
+  nearZeroMark,
+  signs
 }) {
   if (!values.length) {
     return null
@@ -468,6 +470,18 @@ function Curve({
         >
           <title>{`${name}: ${values[i].toFixed(2)}°`}</title>
         </circle>
+      ))}
+      {nearZeroIdx.map(i => (
+        <text
+          key={'s' + i}
+          x={x(i)}
+          y={y(values[i]) + 14}
+          textAnchor="middle"
+          fontSize={9}
+          fill={color ?? 'var(--barbo-total-color)'}
+        >
+          {signs && signs[i] != null ? zodiac[signs[i]] : null}
+        </text>
       ))}
       {name && (
         <text

@@ -45,18 +45,25 @@ export function sumAngleDistances(
 
 /**
  * The index decomposed: one series per unique pair, each value
- * being the pair's shortest arc on the given dates
+ * being the pair's shortest arc on the given dates. Also carries
+ * the zodiac sign index (0..11, tropical, Aries first) of the
+ * first planet of the pair at every date, reusing the longitudes
+ * already computed here
  */
 export function subgraphDeltas(
   selectedPlanets: string[],
   dates: Date[]
-): {name: string; values: number[]}[] {
+): {name: string; values: number[]; signs: number[]}[] {
   const longitudes = selectedPlanets.map(planet => ({
     planet,
     values: dates.map(date => pos(planet, date))
   }))
 
-  const pairs: {name: string; values: number[]}[] = []
+  const pairs: {
+    name: string
+    values: number[]
+    signs: number[]
+  }[] = []
 
   for (let i = 0; i < longitudes.length; i++) {
     for (let j = i + 1; j < longitudes.length; j++) {
@@ -65,7 +72,8 @@ export function subgraphDeltas(
         values: dates.map(
           (_, k) =>
             angleDistance(longitudes[i].values[k], longitudes[j].values[k])
-        )
+        ),
+        signs: longitudes[i].values.map(lon => Math.floor(lon / 30) % 12)
       })
     }
   }
