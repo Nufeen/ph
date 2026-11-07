@@ -38,6 +38,13 @@
   stroke-dasharray: 4 4;
 }
 
+.cursorline {
+  stroke: var(--text-color);
+  stroke-width: 0.5;
+  stroke-dasharray: 4 4;
+  opacity: 0.6;
+}
+
 .monthline {
   stroke: var(--text-color);
   stroke-width: 0.2;

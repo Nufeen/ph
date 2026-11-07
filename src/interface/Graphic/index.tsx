@@ -1,7 +1,14 @@
 import s from './index.module.css'
 
 import {Body, Ecliptic, GeoVector} from 'astronomy-engine'
-import {Fragment, memo, useContext, useMemo} from 'react'
+import {
+  Fragment,
+  memo,
+  useContext,
+  useMemo,
+  useState,
+  type MouseEvent as ReactMouseEvent
+} from 'react'
 import {
   SettingContext,
   SettingContextType
@@ -36,12 +43,13 @@ const DAYS_PER_YEAR = 365.25
 // 1 year axis resolution: weekly samples
 const AXIS_SAMPLES_PER_YEAR = 52
 
-// Multi-year spans use adaptive resolution: keep the total
-// amount of curve samples per planet around MAX_SAMPLES
-const MAX_SAMPLES = 60
-
+// Multi-year spans use fixed per-year resolution, dense enough to
+// keep consecutive samples well inside the wrap threshold:
+// weekly for spans up to 10 years, bi-weekly for 30, monthly for 100
 function samplesPerYear(span: number): number {
-  return Math.max(1, Math.round(MAX_SAMPLES / span))
+  if (span <= 10) return 52
+  if (span <= 30) return 26
+  return 12
 }
 
 const posCache = new Map<string, number>()
@@ -94,15 +102,33 @@ export function splitArray(points: Point[]): Point[][] {
   const groups: Point[][] = []
   let group: Point[] = []
   for (let i = 0; i < points.length - 1; i++) {
-    group.push(points[i])
-    if (Math.abs(points[i].x - points[i + 1].x) > WRAP_GAP) {
+    const [p1, p2] = [points[i], points[i + 1]]
+    group.push(p1)
+    if (Math.abs(p1.x - p2.x) > WRAP_GAP) {
+      // the curve wraps around the modulo boundary between the
+      // samples: cut both segments exactly at the chart edge
+      const crossing = wrapCrossing(p1, p2)
+      group.push(crossing)
       groups.push(group)
-      group = []
+      group = [{x: W - crossing.x, y: crossing.y}]
     }
   }
   group.push(points[points.length - 1])
   groups.push(group)
   return groups
+}
+
+/**
+ * The point where the p1 -> p2 segment crosses the modulo
+ * boundary (x = 0/W), with y interpolated along the segment
+ */
+function wrapCrossing(p1: Point, p2: Point): Point {
+  const forward = p2.x < p1.x
+  const edge = forward ? W : 0
+  // unwrap p2 so the segment is continuous
+  const x2 = p2.x + (forward ? W : -W)
+  const t = (edge - p1.x) / (x2 - p1.x)
+  return {x: edge, y: p1.y + t * (p2.y - p1.y)}
 }
 
 export function dayNum(date: Date): number {
@@ -174,7 +200,9 @@ function buildTransitAxis(startYear: number, date: Date) {
     currentY:
       date.getFullYear() === startYear
         ? ((dayNum(date) - 1) / daysInYear) * H
-        : null
+        : null,
+    startMs: start,
+    endMs: start + yearMs
   }
 }
 
@@ -192,12 +220,11 @@ function progressedDateOf(date: Date, natal: Date): Date {
 
 /**
  * Multi-year spans (10/30/100): the y axis is the years range
- * from startYear to startYear + span. Resolution adapts to the
- * span so the total sample count stays around MAX_SAMPLES.
- * The 30° modulo wraps often: samples per year are doubled
- * so the curves keep enough points per segment
+ * from startYear to startYear + span, sampled at a fixed
+ * per-year rate. The 30° modulo wraps often: samples per year
+ * are doubled so the curves keep enough points per segment
  */
-function buildMultiYearAxis(
+export function buildMultiYearAxis(
   startYear: number,
   span: number,
   transit: Date,
@@ -238,7 +265,9 @@ function buildMultiYearAxis(
     currentY:
       yearsSinceStart >= 0 && yearsSinceStart <= span
         ? (yearsSinceStart / span) * H
-        : null
+        : null,
+    startMs: start,
+    endMs: start + span * yearMs
   }
 }
 
@@ -257,7 +286,7 @@ export default function GraphicChart() {
 
   const modulo = settings.graphicModulo ?? 360
 
-  const {samples, grid, currentY} = useMemo(() => {
+  const {samples, grid, currentY, startMs, endMs} = useMemo(() => {
     // 1 year span keeps the month axis, other spans use years
     const axis =
       graphicYears > 1
@@ -280,7 +309,7 @@ export default function GraphicChart() {
         })
       )
     }
-  }, [isProgressed, graphicYears, startYear, natalData, transitData])
+  }, [isProgressed, graphicYears, startYear, natalData, transitData, modulo])
 
   const natalPlanets = useMemo(
     () =>
@@ -304,6 +333,52 @@ export default function GraphicChart() {
     [settings.objects.transitPlanets, settings.objects.planets]
   )
 
+  // pointer position in svg units, null when the cursor is away
+  const [cursor, setCursor] = useState<Point | null>(null)
+
+  // client px -> viewBox units, the svg is css-scaled
+  const trackCursor = (e: ReactMouseEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setCursor({
+      x: ((e.clientX - rect.left) * W) / rect.width,
+      y: ((e.clientY - rect.top) * H) / rect.height
+    })
+  }
+
+  // date label under the pointer: the y axis runs from the axis
+  // start to the axis end, formatted as DD.MM.YYYY
+  const cursorDate = (() => {
+    if (cursor == null) return null
+    const d = new Date(
+      startMs + (cursor.y / H) * (endMs - startMs)
+    )
+    const day = String(d.getDate()).padStart(2, '0')
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    return `${day}.${month}.${d.getFullYear()}`
+  })()
+
+  // degree readout follows the chart's own x scale: the modulo
+  // range runs from 0 at the left edge to modulo at the right
+  const cursorDegree =
+    cursor == null ? null : ((cursor.x / W) * modulo).toFixed(1)
+
+  // tooltip hugs the pointer, flipping sides near the edges
+  const TOOLTIP_W = 72
+  const TOOLTIP_H = 22
+  const tooltipX =
+    cursor == null
+      ? 0
+      : cursor.x + 8 + TOOLTIP_W > W
+        ? cursor.x - 8 - TOOLTIP_W
+        : cursor.x + 8
+  const tooltipY =
+    cursor == null
+      ? 0
+      : Math.min(
+          Math.max(cursor.y - TOOLTIP_H / 2, 2),
+          H - TOOLTIP_H - 2
+        )
+
   return (
     <div className={s.wrap}>
       <svg
@@ -311,6 +386,8 @@ export default function GraphicChart() {
         height={H}
         viewBox={`0 0 ${W} ${H}`}
         xmlns="http://www.w3.org/2000/svg"
+        onMouseMove={trackCursor}
+        onMouseLeave={() => setCursor(null)}
       >
         {/* Lets draw some grid */}
         <AxisX modulo={modulo} />
@@ -364,6 +441,52 @@ export default function GraphicChart() {
             samples={samples}
           />
         ))}
+
+        {/* vertical line following the mouse */}
+        {cursor != null && (
+          <line
+            className={s.cursorline}
+            data-testid="cursor-line"
+            x1={cursor.x}
+            y1="0"
+            x2={cursor.x}
+            y2={H}
+            pointerEvents="none"
+          />
+        )}
+
+        {/* tooltip: date and degree right at the pointer */}
+        {cursor != null && cursorDate != null && (
+          <g data-testid="cursor-tooltip" pointerEvents="none">
+            <rect
+              x={tooltipX}
+              y={tooltipY}
+              width={TOOLTIP_W}
+              height={TOOLTIP_H}
+              rx={3}
+              fill="var(--background-color)"
+              opacity={0.85}
+            />
+            <text
+              x={tooltipX + TOOLTIP_W / 2}
+              y={tooltipY + 9}
+              textAnchor="middle"
+              fontSize={9}
+              fill="var(--text-color)"
+            >
+              {cursorDate}
+            </text>
+            <text
+              x={tooltipX + TOOLTIP_W / 2}
+              y={tooltipY + 19}
+              textAnchor="middle"
+              fontSize={9}
+              fill="var(--text-color)"
+            >
+              {cursorDegree}°
+            </text>
+          </g>
+        )}
       </svg>
     </div>
   )

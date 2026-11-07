@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 
-import {render, cleanup} from '@testing-library/react'
+import {render, cleanup, fireEvent} from '@testing-library/react'
 import {afterEach, describe, expect, test} from 'vitest'
 import GraphicChart, {
+  buildMultiYearAxis,
   dayNum,
   getStartDatesOfEveryDayPerYear,
   pos,
@@ -162,10 +163,31 @@ describe('splitArray', () => {
   })
 
   test('splits when the x jump exceeds the wrap threshold', () => {
-    const groups = splitArray([pt(1190), pt(1195), pt(3), pt(8)])
+    const groups = splitArray([
+      {x: 1190, y: 0},
+      {x: 1195, y: 10},
+      {x: 3, y: 20},
+      {x: 8, y: 30}
+    ])
     expect(groups).toHaveLength(2)
-    expect(groups[0]).toEqual([pt(1190), pt(1195)])
-    expect(groups[1]).toEqual([pt(3), pt(8)])
+    // the wrap is cut exactly at the chart edges, y interpolated
+    expect(groups[0]).toEqual([
+      {x: 1190, y: 0},
+      {x: 1195, y: 10},
+      {x: 1200, y: 16.25}
+    ])
+    expect(groups[1]).toEqual([
+      {x: 0, y: 16.25},
+      {x: 3, y: 20},
+      {x: 8, y: 30}
+    ])
+  })
+
+  test('cuts a backward wrap (retrograde) at the left edge', () => {
+    const groups = splitArray([{x: 5, y: 0}, {x: 1180, y: 10}])
+    expect(groups).toHaveLength(2)
+    expect(groups[0]).toEqual([{x: 5, y: 0}, {x: 0, y: 2}])
+    expect(groups[1]).toEqual([{x: 1200, y: 2}, {x: 1180, y: 10}])
   })
 })
 
@@ -519,17 +541,15 @@ describe('GraphicChart (multi-year span)', () => {
     expect(last.y).toBeCloseTo(H, 5)
   })
 
-  test('keeps curve resolution bounded on multi-year spans', () => {
-    const {container} = renderChart({
-      transitDate,
-      natalDate,
-      graphicYears: 10
-    })
-    // 6 samples per year for a 10 years span -> 61 points in total
-    const points = Array.from(
-      container.querySelectorAll('path[data-body="Sun"]')
-    ).flatMap(p => parsePath(p.getAttribute('d')!))
-    expect(points).toHaveLength(61)
+  test('samples multi-year spans weekly', () => {
+    // 52 samples per year for a 10 years span -> 521 points in total
+    const axis = buildMultiYearAxis(
+      2020,
+      10,
+      new Date(2024, 6, 1),
+      360
+    )
+    expect(axis.samples).toHaveLength(521)
   })
 
   test('clamps the axis to the fast ephemeris range', () => {
@@ -611,7 +631,8 @@ describe('GraphicChart (modulo)', () => {
     // first axis sample is January 1st 2024
     const expectedX = pos('Sun', new Date(2024, 0, 1), 90)
     expect(points[0].x).toBeCloseTo(expectedX, 5)
-    expect(points.every(p => p.x >= 0 && p.x < W)).toBe(true)
+    // wrap cuts land exactly on the edges
+    expect(points.every(p => p.x >= 0 && p.x <= W)).toBe(true)
   })
 
   test('maps the natal line into the 90° modulo range', () => {
@@ -623,18 +644,81 @@ describe('GraphicChart (modulo)', () => {
     )
   })
 
-  test('doubles the axis samples for the 30° modulo', () => {
-    const base = renderChart({graphicYears: 10, graphicModulo: 360})
-    const doubled = renderChart({graphicYears: 10, graphicModulo: 30})
+  test('cuts multi-year curves at the chart edges', () => {
+    const {container} = renderChart({graphicYears: 10})
+    const segments = Array.from(
+      container.querySelectorAll('path[data-body="Sun"]')
+    ).map(p => parsePath(p.getAttribute('d')!))
+    expect(segments.length).toBeGreaterThan(1)
 
-    const count = (root: HTMLElement) =>
-      Array.from(
-        root.querySelectorAll('path[data-body="Sun"]')
-      ).flatMap(p => parsePath(p.getAttribute('d')!)).length
+    // segments wrap exactly at the edges: every one but the first
+    // starts at x=0, every one but the last ends at x=W
+    for (const [i, pts] of segments.entries()) {
+      if (i > 0) expect(pts[0].x).toBe(0)
+      if (i < segments.length - 1)
+        expect(pts[pts.length - 1].x).toBe(W)
+    }
+  })
+
+  test('doubles the axis samples for the 30° modulo', () => {
+    const transit = new Date(2024, 6, 1)
+    const base = buildMultiYearAxis(2020, 10, transit, 360)
+    const doubled = buildMultiYearAxis(2020, 10, transit, 30)
 
     // samples double per year; the axis start/end sample stays single
-    expect(count(doubled.container)).toBe(
-      (count(base.container) - 1) * 2 + 1
+    expect(doubled.samples).toHaveLength(
+      (base.samples.length - 1) * 2 + 1
     )
+  })
+})
+
+describe('GraphicChart (cursor)', () => {
+  // jsdom has no layout: the svg is mapped to a 600x300 box
+  // offset by (10, 20) client px, so client (310, 170) lands
+  // on the svg units point (600, 300)
+  const pointAtCursor = (container: HTMLElement) => {
+    const svg = container.querySelector('svg')!
+    Object.defineProperty(svg, 'getBoundingClientRect', {
+      value: () => ({left: 10, top: 20, width: 600, height: 300}),
+      configurable: true
+    })
+    fireEvent.mouseMove(svg, {clientX: 310, clientY: 170})
+  }
+
+  test('draws a dashed line following the mouse', () => {
+    const {container} = renderChart()
+    expect(
+      container.querySelector('[data-testid="cursor-line"]')
+    ).toBeNull()
+
+    pointAtCursor(container)
+    const line = container.querySelector('[data-testid="cursor-line"]')!
+    expect(line.getAttribute('x1')).toBe('600')
+  })
+
+  test('shows a tooltip with the date and degree under the pointer', () => {
+    const {container} = renderChart()
+    pointAtCursor(container)
+
+    const [date, degree] = Array.from(
+      container.querySelectorAll('[data-testid="cursor-tooltip"] text')
+    ).map(t => t.textContent)
+
+    // half of the 2024 axis is July 2nd, half of the width is 180°
+    expect(date).toBe('02.07.2024')
+    expect(degree).toBe('180.0°')
+  })
+
+  test('hides the line and tooltip when the pointer leaves', () => {
+    const {container} = renderChart()
+    pointAtCursor(container)
+
+    fireEvent.mouseOut(container.querySelector('svg')!)
+    expect(
+      container.querySelector('[data-testid="cursor-line"]')
+    ).toBeNull()
+    expect(
+      container.querySelector('[data-testid="cursor-tooltip"]')
+    ).toBeNull()
   })
 })
