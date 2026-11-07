@@ -99,11 +99,15 @@ export default function Barbo({setNatalData}) {
 
   const subgraphsOn = settings.subgraphs ?? false
 
+  // zodiac circle (360) or quadrant cycle (90, conjunctions and
+  // squares both collapse to zero)
+  const modulo = settings.barboModulo ?? 360
+
   useEffect(() => {
     if (subgraphsOn) {
       // the index decomposed into one series per pair;
       // the total is the exact elementwise sum of those series
-      const pairs = subgraphDeltas(P, dts)
+      const pairs = subgraphDeltas(P, dts, modulo)
       setSubgraphs(pairs)
       setDeltas(
         pairs.length
@@ -114,9 +118,9 @@ export default function Barbo({setNatalData}) {
       )
     } else {
       setSubgraphs([])
-      setDeltas(dts.map(date => sumAngleDistances(P, date)))
+      setDeltas(dts.map(date => sumAngleDistances(P, date, modulo)))
     }
-  }, [dts, P, subgraphsOn])
+  }, [dts, P, subgraphsOn, modulo])
 
   // fit the real [min, max] of the drawn series into the padded height
   const pad = 20

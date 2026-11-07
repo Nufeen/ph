@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react'
 import {
+  BarboModulo,
   GraphicChartType,
   GraphicModulo,
   GraphicYearsSpan,
@@ -141,6 +142,15 @@ const PlanetCheckboxTable = () => {
 
   function handleSubgraphsToggle(e: {target: {checked: any}}) {
     const s = {...settings, subgraphs: e.target.checked}
+    setSettings(s)
+    LS.setItem('settings', JSON.stringify(s))
+  }
+
+  function handleBarboModuloSelect(e: {target: {value: any}}) {
+    const s = {
+      ...settings,
+      barboModulo: +e.target.value as BarboModulo
+    }
     setSettings(s)
     LS.setItem('settings', JSON.stringify(s))
   }
@@ -677,6 +687,18 @@ const PlanetCheckboxTable = () => {
                 handleBarboYearBlur('end', e.target.value)
               }
             />
+          </div>
+
+          <div>
+            <h3 className={s.thead}>Modulo</h3>
+
+            <select
+              value={settings?.barboModulo ?? 360}
+              onChange={handleBarboModuloSelect}
+            >
+              <option value={360}>360°</option>
+              <option value={90}>90°</option>
+            </select>
           </div>
 
           <div>

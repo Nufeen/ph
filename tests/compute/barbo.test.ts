@@ -1,6 +1,7 @@
 import {test, expect} from 'vitest'
 import {
   angleDistance,
+  angleDistanceMod,
   pos,
   subgraphDeltas,
   sumAngles,
@@ -157,6 +158,35 @@ test('subgraphDeltas: signs carry the first planet zodiac sign index', () => {
       expect(series.signs[k]).toBe(expected)
       expect(series.signs[k]).toBeGreaterThanOrEqual(0)
       expect(series.signs[k]).toBeLessThanOrEqual(11)
+    }
+  }
+})
+
+test('angleDistanceMod: quadrant cycle folds at 45 deg', () => {
+  // square collapses to zero on the 90 deg circle
+  expect(angleDistanceMod(0, 90, 90)).toBe(0)
+  expect(angleDistanceMod(350, 10, 90)).toBe(20)
+  // the max is half the circle
+  expect(angleDistanceMod(0, 45, 90)).toBe(45)
+  expect(angleDistanceMod(0, 80, 90)).toBe(10)
+})
+
+test('angleDistanceMod: 360 matches the plain angleDistance', () => {
+  expect(angleDistanceMod(250, 0, 360)).toBe(angleDistance(250, 0))
+  expect(angleDistanceMod(359, 1, 360)).toBe(angleDistance(359, 1))
+})
+
+test('subgraphDeltas: mod 90 keeps every pair arc within 0..45', () => {
+  const subgraphs = subgraphDeltas(
+    classic,
+    [new Date(Date.UTC(2026, 0, 1)), new Date(Date.UTC(2026, 5, 1))],
+    90
+  )
+
+  for (const series of subgraphs) {
+    for (const v of series.values) {
+      expect(v).toBeGreaterThanOrEqual(0)
+      expect(v).toBeLessThanOrEqual(45)
     }
   }
 })

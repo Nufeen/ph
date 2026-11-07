@@ -6,6 +6,8 @@ export type GraphicYearsSpan = 1 | 10 | 30 | 100
 
 export type GraphicModulo = 360 | 90 | 30
 
+export type BarboModulo = 360 | 90
+
 interface Settings {
   objects: any
   interface: any
@@ -18,6 +20,7 @@ interface Settings {
   graphicModulo?: GraphicModulo
   barboStartYear?: number
   barboEndYear?: number
+  barboModulo?: BarboModulo
   subgraphs?: boolean
 }
 
