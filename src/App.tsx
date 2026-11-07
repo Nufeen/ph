@@ -332,7 +332,7 @@ function App() {
             {/* graphic ephemeris chart */}
             {settings.chartType == 'graphic' && (
               <section className={s.center} ref={centerSectionRef}>
-                <GraphicChart />
+                <GraphicChart setTransitData={setTransitData} />
               </section>
             )}
 

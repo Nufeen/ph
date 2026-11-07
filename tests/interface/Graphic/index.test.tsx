@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import {render, cleanup, fireEvent} from '@testing-library/react'
-import {afterEach, describe, expect, test} from 'vitest'
+import {afterEach, describe, expect, test, vi} from 'vitest'
 import GraphicChart, {
   buildMultiYearAxis,
   dayNum,
@@ -66,6 +66,7 @@ interface RenderChartProps {
   graphicYears?: number
   graphicStartYear?: number
   graphicModulo?: number
+  setTransitData?: (data: any) => void
 }
 
 const renderChart = ({
@@ -76,7 +77,8 @@ const renderChart = ({
   graphicType = 'transit',
   graphicYears = 1,
   graphicStartYear,
-  graphicModulo
+  graphicModulo,
+  setTransitData = () => {}
 }: RenderChartProps = {}) =>
   render(
     <SettingContext.Provider
@@ -94,7 +96,7 @@ const renderChart = ({
       <CelestialContext.Provider
         value={makeCelestial(transitDate, natalDate) as any}
       >
-        <GraphicChart />
+        <GraphicChart setTransitData={setTransitData} />
       </CelestialContext.Provider>
     </SettingContext.Provider>
   )
@@ -720,5 +722,29 @@ describe('GraphicChart (cursor)', () => {
     expect(
       container.querySelector('[data-testid="cursor-tooltip"]')
     ).toBeNull()
+  })
+
+  test('sets the transit date to the clicked y position', () => {
+    const setTransitData = vi.fn()
+    const {container} = renderChart({setTransitData})
+
+    const svg = container.querySelector('svg')!
+    Object.defineProperty(svg, 'getBoundingClientRect', {
+      value: () => ({left: 10, top: 20, width: 600, height: 300}),
+      configurable: true
+    })
+    // client (310, 170) -> svg (600, 300) -> the middle of the axis
+    fireEvent.click(svg, {clientX: 310, clientY: 170})
+
+    expect(setTransitData).toHaveBeenCalledTimes(1)
+    const payload = setTransitData.mock.calls[0][0]
+    // half of the 2024 axis is July 2nd, like the tooltip shows
+    expect(payload.date.getFullYear()).toBe(2024)
+    expect(payload.date.getMonth()).toBe(6)
+    expect(payload.date.getDate()).toBe(2)
+    // the rest of the transit data is preserved
+    expect(payload.city).toBe('Berlin')
+    // the rerender hack for the uncontrolled input is in place
+    expect(payload.name).toBeDefined()
   })
 })

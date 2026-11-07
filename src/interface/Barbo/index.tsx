@@ -19,6 +19,7 @@ import planets from '../../assets/planets.json'
 import zodiac from '../../assets/zodiac.json'
 
 import {sumAngleDistances, subgraphDeltas} from '../../compute/barbo'
+import useFullscreenToggle from '../../hooks/useFullscreen'
 
 export const upperPlanets = [
   'Jupiter',
@@ -92,6 +93,9 @@ export default function Barbo({setNatalData}) {
     () => upperPlanets.filter(p => settings.objects.planets[p]),
     [settings.objects.planets]
   )
+
+  // F key toggles the fullscreen container class
+  const fullscreen = useFullscreenToggle()
 
   // heavy ephemeris walk: deferred so UI changes stay responsive
   const [deltas, setDeltas] = useState([])
@@ -231,7 +235,9 @@ export default function Barbo({setNatalData}) {
     ((date.getFullYear() - y1 + 1) * W) / span
 
   return (
-    <div className={s.wrap}>
+    <div
+      className={fullscreen ? `${s.wrap} ${s.fullscreen}` : s.wrap}
+    >
       <svg
         width={W}
         height={H}

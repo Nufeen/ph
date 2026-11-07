@@ -25,6 +25,7 @@ import {
 
 import planets from '../../assets/planets.json'
 import zodiacSigns from '../../assets/zodiac.json'
+import useFullscreenToggle from '../../hooks/useFullscreen'
 
 // SVG Canvas Height
 const H = 600
@@ -271,7 +272,7 @@ export function buildMultiYearAxis(
   }
 }
 
-export default function GraphicChart() {
+export default function GraphicChart({setTransitData}) {
   const {settings} = useContext(SettingContext) as SettingContextType
   const {transitData, natalData} = useContext(
     CelestialContext
@@ -336,6 +337,9 @@ export default function GraphicChart() {
   // pointer position in svg units, null when the cursor is away
   const [cursor, setCursor] = useState<Point | null>(null)
 
+  // F key toggles the fullscreen container class
+  const fullscreen = useFullscreenToggle()
+
   // client px -> viewBox units, the svg is css-scaled
   const trackCursor = (e: ReactMouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -345,17 +349,33 @@ export default function GraphicChart() {
     })
   }
 
+  // the date under the pointer on the y axis
+  const dateAt = (y: number) =>
+    new Date(startMs + (y / H) * (endMs - startMs))
+
   // date label under the pointer: the y axis runs from the axis
   // start to the axis end, formatted as DD.MM.YYYY
   const cursorDate = (() => {
     if (cursor == null) return null
-    const d = new Date(
-      startMs + (cursor.y / H) * (endMs - startMs)
-    )
+    const d = dateAt(cursor.y)
     const day = String(d.getDate()).padStart(2, '0')
     const month = String(d.getMonth() + 1).padStart(2, '0')
     return `${day}.${month}.${d.getFullYear()}`
   })()
+
+  // click -> set the transit date to the y axis date value
+  const handleClick = (e: ReactMouseEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const y = ((e.clientY - rect.top) * H) / rect.height
+
+    setTransitData({
+      ...transitData,
+      date: dateAt(y),
+      // hack to rerender uncontrolled input via key,
+      // same as the current-time setter does
+      name: new Date().toString()
+    })
+  }
 
   // degree readout follows the chart's own x scale: the modulo
   // range runs from 0 at the left edge to modulo at the right
@@ -380,7 +400,9 @@ export default function GraphicChart() {
         )
 
   return (
-    <div className={s.wrap}>
+    <div
+      className={fullscreen ? `${s.wrap} ${s.fullscreen}` : s.wrap}
+    >
       <svg
         width={W}
         height={H}
@@ -388,6 +410,7 @@ export default function GraphicChart() {
         xmlns="http://www.w3.org/2000/svg"
         onMouseMove={trackCursor}
         onMouseLeave={() => setCursor(null)}
+        onClick={handleClick}
       >
         {/* Lets draw some grid */}
         <AxisX modulo={modulo} />
